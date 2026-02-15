@@ -376,6 +376,7 @@ public function exportTimesheetTX($start_date, $end_date)
                         $output_rows[] = [
                             $employeeName,
                             $formattedDate,
+                            'Hourly Rate',
                             number_format($decimalHours, 2, '.', '')
                         ];
                     }
@@ -383,17 +384,17 @@ public function exportTimesheetTX($start_date, $end_date)
             }
         }
         
-        // Generate TXT file with Reckon format
-        $filename = "Reckon_timesheet_{$start_date}_to_{$end_date}.txt";
+        // Generate IIF file with Reckon format
+        $filename = "Reckon_timesheet_{$start_date}_to_{$end_date}.iif";
         
-        header('Content-Type: text/plain; charset=utf-8');
+        header('Content-Type: application/octet-stream');
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header('Cache-Control: max-age=0');
         
         $output = fopen('php://output', 'w');
         
         // Write header
-        fputcsv($output, ['Employee Name', 'Date', 'Total Hours']);
+        fputcsv($output, ['Employee Name', 'Date', 'Pay Item', 'Hours']);
         
         // Write data rows
         foreach ($output_rows as $row) {
@@ -704,7 +705,7 @@ public function exportTimesheetTX($start_date, $end_date)
     }
     
     $rolesToAccess = ['Manager', 'Admin'];
-    if (!in_array($this->roleName, $rolesToAccess) || $this->roleId == 1) {
+    if (!in_array($this->roleName, $rolesToAccess) && $this->roleId != 1) {
         echo json_encode(['status' => 'error', 'message' => 'Unauthorized Access']);
         return;
     }
@@ -743,7 +744,7 @@ public function approve_single_timesheet() {
     
     $rolesToAccess = ['Manager', 'Admin'];
     
-    if (!in_array($this->roleName, $rolesToAccess) || $this->roleId == 1) {
+    if (!in_array($this->roleName, $rolesToAccess) && $this->roleId != 1) {
         echo json_encode(['status' => 'error', 'message' => 'Unauthorized Access']);
         return;
     }
@@ -775,7 +776,7 @@ public function set_manual_break_override() {
 
     $rolesToAccess = ['Manager', 'Admin'];
     
-    if (!in_array($this->roleName, $rolesToAccess) || $this->roleId == 1) {
+    if (!in_array($this->roleName, $rolesToAccess) && $this->roleId != 1) {
         echo json_encode(['status' => 'error', 'message' => 'Unauthorized Access']);
         return;
     }
@@ -830,7 +831,7 @@ public function save_manager_comment() {
     
     $rolesToAccess = ['Manager', 'Admin'];
     
-    if (!in_array($this->roleName, $rolesToAccess) || $this->roleId == 1) {
+    if (!in_array($this->roleName, $rolesToAccess) && $this->roleId != 1) {
         echo json_encode(['status' => 'error', 'message' => 'Unauthorized Access']);
         return;
     }
@@ -1285,7 +1286,7 @@ if ($clockInTime) {
     
     $rolesToAccess = ['Manager', 'Admin'];
     
-    if (!in_array($this->roleName, $rolesToAccess) || $this->roleId == 1) {
+    if (!in_array($this->roleName, $rolesToAccess) && $this->roleId != 1) {
         echo json_encode(['status' => 'error', 'message' => 'Unauthorized Access']);
         return;
     }
