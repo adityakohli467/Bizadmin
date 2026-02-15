@@ -627,6 +627,59 @@
                                                             </span>
                                                         </div>
                                                         
+                                                        <!-- ALL Roster Shifts for this employee on this day -->
+                                                        <?php 
+                                                        $emp_id_roster = isset($timesheet['employee_id']) ? $timesheet['employee_id'] : '';
+                                                        $roster_date_check = isset($timesheet['roster_date']) ? $timesheet['roster_date'] : '';
+                                                        $all_shifts = isset($allRosterShifts[$emp_id_roster][$roster_date_check]) ? $allRosterShifts[$emp_id_roster][$roster_date_check] : [];
+                                                        
+                                                        if (!empty($all_shifts) && count($all_shifts) > 1): ?>
+                                                        <!-- Multiple Shifts Display -->
+                                                        <div class="flex items-start text-sm text-gray-600">
+                                                            <i class="fa-regular fa-calendar mr-1.5 mt-0.5"></i>
+                                                            <div class="flex flex-col">
+                                                                <span class="font-medium text-gray-700 mb-1">Roster Shifts (<?php echo count($all_shifts); ?>):</span>
+                                                                <div class="flex flex-wrap gap-1.5">
+                                                                <?php foreach ($all_shifts as $shift_idx => $shift): ?>
+                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                                                        <span class="mr-1"><?php echo ($shift_idx + 1); ?>.</span>
+                                                                        <?php 
+                                                                        echo isset($shift['start']) && $shift['start'] 
+                                                                            ? htmlspecialchars(date('h:i A', strtotime($shift['start']))) 
+                                                                            : '-'; 
+                                                                        ?> – 
+                                                                        <?php 
+                                                                        echo isset($shift['end']) && $shift['end'] 
+                                                                            ? htmlspecialchars(date('h:i A', strtotime($shift['end']))) 
+                                                                            : '-'; 
+                                                                        ?>
+                                                                        <?php if (!empty($shift['prep_name'])): ?>
+                                                                        <span class="ml-1 text-blue-500">(<?php echo htmlspecialchars($shift['prep_name']); ?>)</span>
+                                                                        <?php endif; ?>
+                                                                    </span>
+                                                                <?php endforeach; ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <?php elseif (!empty($all_shifts) && count($all_shifts) == 1): ?>
+                                                        <!-- Single Shift Display -->
+                                                        <div class="flex items-center text-sm text-gray-600">
+                                                            <i class="fa-regular fa-calendar mr-1.5"></i>
+                                                            <span>Roster: 
+                                                                <?php 
+                                                                echo isset($all_shifts[0]['start']) && $all_shifts[0]['start'] 
+                                                                    ? htmlspecialchars(date('h:i A', strtotime($all_shifts[0]['start']))) 
+                                                                    : '-'; 
+                                                                ?> – 
+                                                                <?php 
+                                                                echo isset($all_shifts[0]['end']) && $all_shifts[0]['end'] 
+                                                                    ? htmlspecialchars(date('h:i A', strtotime($all_shifts[0]['end']))) 
+                                                                    : '-'; 
+                                                                ?>
+                                                            </span>
+                                                        </div>
+                                                        <?php else: ?>
+                                                        <!-- Fallback to original roster data from join -->
                                                         <div class="flex items-center text-sm text-gray-600">
                                                             <i class="fa-regular fa-calendar mr-1.5"></i>
                                                             <span>Roster: 
@@ -642,6 +695,7 @@
                                                                 ?>
                                                             </span>
                                                         </div>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center space-x-2"> 

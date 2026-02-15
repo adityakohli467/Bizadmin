@@ -456,10 +456,48 @@ public function index($system_id = '')
         $timesheetDetailsData = array();
         $timesheetDetailsData = $this->timesheet_model->getTimesheetForDate($currentDate, $this->location_id);
        
-
-        // Fallback to active employees if no timesheet records
+        // Group timesheet entries by employee for multi-shift display
+        $groupedByEmployee = [];
+        foreach ($timesheetDetailsData as $entry) {
+            $empId = $entry['employee_id'];
+            if (!isset($groupedByEmployee[$empId])) {
+                $groupedByEmployee[$empId] = [
+                    'employee_id' => $empId,
+                    'name' => $entry['name'],
+                    'employee_type' => $entry['employee_type'] ?? '',
+                    'pin' => $entry['pin'] ?? '',
+                    'position_name' => $entry['position_name'] ?? 'Not Assigned',
+                    'shifts' => [],
+                    'total_worked_seconds' => 0
+                ];
+            }
+            
+            // Add this shift to the employee's shifts array
+            $groupedByEmployee[$empId]['shifts'][] = [
+                'timesheet_id' => $entry['timesheet_id'],
+                'prep_area_id' => $entry['prep_area_id'],
+                'prep_name' => $entry['prep_name'] ?? 'None',
+                'position_id' => $entry['position_id'],
+                'position_name' => $entry['position_name'] ?? 'Not Assigned',
+                'clock_in_time' => $entry['clock_in_time'],
+                'clock_out_time' => $entry['clock_out_time'],
+                'actual_break_duration' => $entry['actual_break_duration'] ?? 0,
+                'latest_break_start_time' => $entry['latest_break_start_time'] ?? null,
+                'latest_break_end_time' => $entry['latest_break_end_time'] ?? null,
+                'roster_start_time' => $entry['roster_start_time'] ?? null,
+                'roster_end_time' => $entry['roster_end_time'] ?? null,
+                'approval_status' => $entry['approval_status'] ?? 'pending'
+            ];
+            
+            // Calculate total worked seconds for this employee
+            if (!empty($entry['clock_in_time']) && !empty($entry['clock_out_time'])) {
+                $diff = strtotime($entry['clock_out_time']) - strtotime($entry['clock_in_time']) - (($entry['actual_break_duration'] ?? 0) * 60);
+                $groupedByEmployee[$empId]['total_worked_seconds'] += max(0, $diff);
+            }
+        }
         
-        $data['empLists'] = $timesheetDetailsData;
+        $data['empLists'] = array_values($groupedByEmployee);
+        $data['empListsFlat'] = $timesheetDetailsData; // Keep flat list for backward compatibility
 
         // Fetch prep areas
         $prepConditions = ['location_id' => $this->location_id, 'is_deleted' => 0, 'status' => 1];

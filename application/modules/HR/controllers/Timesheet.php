@@ -135,13 +135,62 @@ class Timesheet extends MY_Controller {
 
     
     $data['timesheets'] = $this->timesheet_model->get_timesheets_by_date_range($start_date, $end_date, $this->location_id);
-    // echo "<pre>"; print_r($data['timesheets']); exit;
+    
+    // Fetch ALL roster shifts for employees in this date range (for multi-shift display)
+    $data['allRosterShifts'] = $this->getRosterShiftsForDateRange($start_date, $end_date);
+    
     $data['start_date'] = $start_date;
     $data['end_date'] = $end_date;
     
     $this->load->view('general/header');
     $this->load->view('timesheet/weeklyTimesheet', $data);
     $this->load->view('general/footer');
+}
+
+/**
+ * Get all roster shifts grouped by employee_id and date
+ * Returns array: [employee_id][date] => [array of shifts]
+ */
+private function getRosterShiftsForDateRange($start_date, $end_date) {
+    $this->tenantDb->select([
+        'rd.employee_id',
+        'rd.roster_date',
+        'rd.shift_start_time',
+        'rd.shift_end_time',
+        'p.prep_name'
+    ])
+    ->from('HR_roster_details rd')
+    ->join('HR_roster r', 'rd.roster_id = r.roster_id', 'inner')
+    ->join('HR_prepArea p', 'rd.prep_area_id = p.id', 'left')
+    ->where('rd.roster_date >=', $start_date)
+    ->where('rd.roster_date <=', $end_date)
+    ->where('rd.is_deleted', 0)
+    ->where('r.location_id', $this->location_id)
+    ->where('r.is_deleted', 0)
+    ->order_by('rd.roster_date', 'ASC')
+    ->order_by('rd.shift_start_time', 'ASC');
+    
+    $results = $this->tenantDb->get()->result_array();
+    
+    // Group by employee_id and date
+    $grouped = [];
+    foreach ($results as $row) {
+        $empId = $row['employee_id'];
+        $date = $row['roster_date'];
+        if (!isset($grouped[$empId])) {
+            $grouped[$empId] = [];
+        }
+        if (!isset($grouped[$empId][$date])) {
+            $grouped[$empId][$date] = [];
+        }
+        $grouped[$empId][$date][] = [
+            'start' => $row['shift_start_time'],
+            'end' => $row['shift_end_time'],
+            'prep_name' => $row['prep_name'] ?? ''
+        ];
+    }
+    
+    return $grouped;
 }
 
 // Export timesheet to excel file 
@@ -960,7 +1009,27 @@ public function save_manager_comment() {
             exit;
         }
 
-        
+        // Validate: Prevent clock_in if another shift is active for this employee on today
+        if ($action === 'clock_in') {
+            $activeShift = $this->tenantDb
+                ->select('timesheet_id')
+                ->from('HR_timesheet_details')
+                ->where([
+                    'employee_id' => $employeeId,
+                    'roster_date' => date('Y-m-d'),
+                    'is_deleted' => 0,
+                    'location_id' => $this->location_id
+                ])
+                ->where('clock_in_time IS NOT NULL', NULL, FALSE)
+                ->where('clock_out_time IS NULL', NULL, FALSE)
+                ->get()
+                ->row_array();
+            
+            if ($activeShift && $activeShift['timesheet_id'] != $timesheetId) {
+                echo json_encode(['status' => 'error', 'message' => 'Please clock out from current shift before clocking in to another shift']);
+                exit;
+            }
+        }
 
         $this->tenantDb->trans_start();
 

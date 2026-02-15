@@ -21,6 +21,13 @@
         .highlighted-section { outline: 2px solid #3F20FB; background-color: rgba(63, 32, 251, 0.1); }
         .edit-button { position: absolute; z-index: 1000; }
         .pinpad-btn { width: 60px; height: 60px; font-size: 1.2rem; }
+        .shift-toggle-icon { transition: transform 0.2s ease; }
+        .shift-toggle-icon.rotate-90 { transform: rotate(90deg); }
+        .shift-detail-row { animation: slideDown 0.2s ease; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="font-sans bg-gray-50">
@@ -132,7 +139,7 @@
                     <thead>
                         <tr class="bg-gray-100 border-b border-gray-200">
                             <th class="py-3 px-4 text-left font-semibold text-gray-700">Employee</th>
-                            <th class="py-3 px-4 text-left font-semibold text-gray-700">Outlet</th>
+                            <th class="py-3 px-4 text-left font-semibold text-gray-700">Outlet / Shift</th>
                             <th class="py-3 px-4 text-left font-semibold text-gray-700">Clock In</th>
                             <th class="py-3 px-4 text-left font-semibold text-gray-700">Break</th>
                             <th class="py-3 px-4 text-left font-semibold text-gray-700">Clock Out</th>
@@ -140,70 +147,140 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
-                        <?php foreach ($empLists as $index => $emp): ?>
-                            <tr id="employee-<?php echo htmlspecialchars($emp['employee_id']); ?>" class="border-b border-gray-200 hover:bg-gray-50" data-prep-id="<?php echo htmlspecialchars($emp['prep_area_id']); ?>">
+                        <?php foreach ($empLists as $index => $emp): 
+                            $shiftCount = count($emp['shifts'] ?? []);
+                            $hasMultipleShifts = $shiftCount > 1;
+                            
+                            // Calculate total hours across all shifts
+                            $totalSeconds = $emp['total_worked_seconds'] ?? 0;
+                            $totalHours = floor($totalSeconds / 3600);
+                            $totalMinutes = floor(($totalSeconds % 3600) / 60);
+                            
+                            // Check if any shift is active (clocked in but not out)
+                            $hasActiveShift = false;
+                            $allShiftsCompleted = true;
+                            foreach ($emp['shifts'] as $shift) {
+                                if (!empty($shift['clock_in_time']) && empty($shift['clock_out_time'])) {
+                                    $hasActiveShift = true;
+                                    $allShiftsCompleted = false;
+                                }
+                                if (empty($shift['clock_out_time'])) {
+                                    $allShiftsCompleted = false;
+                                }
+                            }
+                        ?>
+                            <!-- Employee Header Row -->
+                            <tr id="employee-<?php echo htmlspecialchars($emp['employee_id']); ?>" 
+                                class="border-b border-gray-200 <?php echo $hasMultipleShifts ? 'bg-gray-50 cursor-pointer hover:bg-gray-100' : 'hover:bg-gray-50'; ?>" 
+                                data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>"
+                                <?php if ($hasMultipleShifts): ?>onclick="toggleShifts(<?php echo htmlspecialchars($emp['employee_id']); ?>)"<?php endif; ?>>
                                 <td class="py-4 px-4">
                                     <div class="flex items-center">
-                                        <!--<img src="<?php echo htmlspecialchars('https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-' . (($index % 1) + 1) . '.jpg'); ?>" alt="Employee" class="w-10 h-10 rounded-full mr-3">-->
+                                        <?php if ($hasMultipleShifts): ?>
+                                        <i class="fa-solid fa-chevron-right text-gray-400 mr-3 shift-toggle-icon transition-transform" id="toggle-icon-<?php echo htmlspecialchars($emp['employee_id']); ?>"></i>
+                                        <?php endif; ?>
                                         <div>
-                                            <p class="font-medium text-gray-800"><?php echo htmlspecialchars($emp['name']); ?></p>
+                                            <p class="font-medium text-gray-800">
+                                                <?php echo htmlspecialchars($emp['name']); ?>
+                                                <?php if ($hasMultipleShifts): ?>
+                                                <span class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium"><?php echo $shiftCount; ?> shifts</span>
+                                                <?php endif; ?>
+                                            </p>
                                             <p class="text-sm text-gray-500"><?php echo htmlspecialchars($emp['position_name'] ?? 'Not Assigned'); ?></p>
                                         </div>
                                     </div>
                                 </td>
+                                
+                                <?php if ($hasMultipleShifts): ?>
+                                <!-- Multi-shift summary row -->
+                                <td class="py-4 px-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        <?php foreach ($emp['shifts'] as $sIdx => $shift): ?>
+                                        <span class="text-xs px-2 py-1 rounded-full <?php echo !empty($shift['clock_out_time']) ? 'bg-green-100 text-green-700' : (!empty($shift['clock_in_time']) ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'); ?>">
+                                            <?php echo htmlspecialchars($shift['prep_name']); ?>
+                                        </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4" colspan="3">
+                                    <span class="text-sm text-gray-600">
+                                        <i class="fa-solid fa-info-circle mr-1"></i> Click to expand shifts
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center timer font-medium">
+                                        <i class="fa-regular fa-clock text-gray-500 mr-2"></i>
+                                        <?php if ($totalSeconds > 0): ?>
+                                            <?php echo sprintf('%d Hours %d Min', $totalHours, $totalMinutes); ?>
+                                        <?php elseif ($hasActiveShift): ?>
+                                            <span class="text-green-600">Active</span>
+                                        <?php else: ?>
+                                            0 Hours
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <?php else: 
+                                    // Single shift - show inline controls
+                                    $shift = $emp['shifts'][0];
+                                ?>
                                 <td class="py-4 px-4">
                                     <div>
-                                        <p class="text-gray-700"><?php echo htmlspecialchars($emp['prep_name'] ?? 'None'); ?></p>
+                                        <p class="text-gray-700"><?php echo htmlspecialchars($shift['prep_name'] ?? 'None'); ?></p>
+                                        <?php if (!empty($shift['roster_start_time']) && !empty($shift['roster_end_time'])): ?>
+                                        <p class="text-xs text-gray-500">
+                                            <i class="fa-regular fa-calendar mr-1"></i>
+                                            <?php echo date('h:i A', strtotime($shift['roster_start_time'])); ?> - <?php echo date('h:i A', strtotime($shift['roster_end_time'])); ?>
+                                        </p>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                                 <td class="py-4 px-4">
-                                    <?php if ($emp['clock_in_time']): ?>
-                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full flex items-center clock-in-btn opacity-50 cursor-not-allowed" disabled>
+                                    <?php if ($shift['clock_in_time']): ?>
+                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full flex items-center clock-in-btn opacity-50 cursor-not-allowed" disabled data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
                                             <i class="fa-solid fa-play mr-2"></i>
-                                            <?php echo date('h:i A', strtotime($emp['clock_in_time'])); ?>
+                                            <?php echo date('h:i A', strtotime($shift['clock_in_time'])); ?>
                                         </button>
                                     <?php else: ?>
-                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full hover:bg-green-600 flex items-center clock-in-btn cursor-pointer" data-action="clock_in" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>">
+                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full hover:bg-green-600 flex items-center clock-in-btn cursor-pointer" data-action="clock_in" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" data-prep-area-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>">
                                             <i class="fa-solid fa-play mr-2"></i> Clock In
                                         </button>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 px-4">
-    <?php if ($emp['latest_break_start_time'] && !$emp['latest_break_end_time']): ?>
-        <button class="px-3 py-2 bg-sky-primary text-white rounded-full hover:bg-blue-600 flex items-center break-btn cursor-pointer" data-action="break_end" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>">
-            <i class="fa-solid fa-pause mr-2"></i> End Break @ <?php echo htmlspecialchars(date('h:i A', strtotime($emp['latest_break_start_time']))); ?>
-        </button>
-    <?php else: ?>
-        <button class="px-3 py-2 bg-sky-primary text-white rounded-full flex items-center break-btn <?php echo $emp['clock_in_time'] && !$emp['clock_out_time'] ? 'hover:bg-blue-600 cursor-pointer' : 'opacity-50 cursor-not-allowed'; ?>" data-action="break_start" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>" <?php echo $emp['clock_in_time'] && !$emp['clock_out_time'] ? '' : 'disabled'; ?>>
-            <i class="fa-solid fa-pause mr-2"></i> Start Break
-        </button>
-    <?php endif; ?>
-</td>
-                                <td class="py-4 px-4">
-                                    <?php if ($emp['clock_out_time']): ?>
-                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed" disabled data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>">
-                                            <i class="fa-solid fa-stop mr-2"></i> <?php echo date('h:i A', strtotime($emp['clock_out_time'])); ?>
+                                    <?php if ($shift['latest_break_start_time'] && !$shift['latest_break_end_time']): ?>
+                                        <button class="px-3 py-2 bg-sky-primary text-white rounded-full hover:bg-blue-600 flex items-center break-btn cursor-pointer" data-action="break_end" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-pause mr-2"></i> End Break @ <?php echo htmlspecialchars(date('h:i A', strtotime($shift['latest_break_start_time']))); ?>
                                         </button>
-                                    <?php elseif ($emp['clock_in_time']): ?>
-                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full hover:bg-orange-600 flex items-center clock-out-btn cursor-pointer" data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>">
+                                    <?php else: ?>
+                                        <button class="px-3 py-2 bg-sky-primary text-white rounded-full flex items-center break-btn <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? 'hover:bg-blue-600 cursor-pointer' : 'opacity-50 cursor-not-allowed'; ?>" data-action="break_start" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? '' : 'disabled'; ?>>
+                                            <i class="fa-solid fa-pause mr-2"></i> Start Break
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <?php if ($shift['clock_out_time']): ?>
+                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed" disabled data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-stop mr-2"></i> <?php echo date('h:i A', strtotime($shift['clock_out_time'])); ?>
+                                        </button>
+                                    <?php elseif ($shift['clock_in_time']): ?>
+                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full hover:bg-orange-600 flex items-center clock-out-btn cursor-pointer" data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
                                             <i class="fa-solid fa-stop mr-2"></i> Clock Out
                                         </button>
                                     <?php else: ?>
-                                        <button class="px-3 py-2 bg-gray-200 text-gray-500 rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed" data-action="clock_out" disabled data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($emp['timesheet_id'] ?: 0); ?>">
+                                        <button class="px-3 py-2 bg-gray-200 text-gray-500 rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed" data-action="clock_out" disabled data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
                                             <i class="fa-solid fa-stop mr-2"></i> Clock Out
                                         </button>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-4 px-4">
-                                    <div class="flex items-center timer">
+                                    <div class="flex items-center timer" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
                                         <?php
-                                        if ($emp['clock_in_time'] && $emp['clock_out_time']) {
-                                            $diff = strtotime($emp['clock_out_time']) - strtotime($emp['clock_in_time']) - (($emp['actual_break_duration'] ?? 0) * 60);
+                                        if ($shift['clock_in_time'] && $shift['clock_out_time']) {
+                                            $diff = strtotime($shift['clock_out_time']) - strtotime($shift['clock_in_time']) - (($shift['actual_break_duration'] ?? 0) * 60);
                                             $hours = floor($diff / 3600);
                                             $minutes = floor(($diff % 3600) / 60);
                                             echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>' . sprintf('%d Hours %d Min', max(0, $hours), max(0, $minutes));
-                                        } elseif ($emp['clock_in_time']) {
+                                        } elseif ($shift['clock_in_time']) {
                                             echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>Active';
                                         } else {
                                             echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>0 Hours';
@@ -211,11 +288,103 @@
                                         ?>
                                     </div>
                                 </td>
+                                <?php endif; ?>
                             </tr>
+                            
+                            <?php if ($hasMultipleShifts): ?>
+                            <!-- Individual Shift Rows (hidden by default) -->
+                            <?php foreach ($emp['shifts'] as $shiftIndex => $shift): 
+                                // Check if THIS shift is the active one (clocked in but not out)
+                                $isThisShiftActive = !empty($shift['clock_in_time']) && empty($shift['clock_out_time']);
+                                // Check if another shift is active (block clock-in for this shift)
+                                $anotherShiftActive = $hasActiveShift && !$isThisShiftActive;
+                            ?>
+                            <tr id="shift-row-<?php echo htmlspecialchars($emp['employee_id']); ?>-<?php echo $shiftIndex; ?>" 
+                                class="shift-detail-row border-b border-gray-100 bg-blue-50/30 hidden" 
+                                data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>"
+                                data-prep-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>">
+                                <td class="py-3 px-4 pl-12">
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs flex items-center justify-center font-medium mr-2">
+                                            <?php echo $shiftIndex + 1; ?>
+                                        </span>
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700">Shift <?php echo $shiftIndex + 1; ?></span>
+                                            <?php if (!empty($shift['roster_start_time']) && !empty($shift['roster_end_time'])): ?>
+                                            <p class="text-xs font-semibold text-blue-600">
+                                                <i class="fa-regular fa-clock mr-1"></i>
+                                                <?php echo date('h:i A', strtotime($shift['roster_start_time'])); ?> - <?php echo date('h:i A', strtotime($shift['roster_end_time'])); ?>
+                                            </p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <p class="text-gray-700 font-medium"><?php echo htmlspecialchars($shift['prep_name'] ?? 'None'); ?></p>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <?php if ($shift['clock_in_time']): ?>
+                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full flex items-center clock-in-btn opacity-50 cursor-not-allowed text-sm" disabled data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
+                                            <i class="fa-solid fa-play mr-2"></i>
+                                            <?php echo date('h:i A', strtotime($shift['clock_in_time'])); ?>
+                                        </button>
+                                    <?php elseif ($anotherShiftActive): ?>
+                                        <!-- Another shift is active, disable clock-in -->
+                                        <button class="px-3 py-2 bg-gray-300 text-gray-500 rounded-full flex items-center clock-in-btn opacity-50 cursor-not-allowed text-sm shift-blocked" disabled data-action="clock_in" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" data-prep-area-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>" title="Complete current shift first">
+                                            <i class="fa-solid fa-lock mr-2"></i> Waiting
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="px-3 py-2 bg-green-primary text-white rounded-full hover:bg-green-600 flex items-center clock-in-btn cursor-pointer text-sm" data-action="clock_in" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" data-prep-area-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>">
+                                            <i class="fa-solid fa-play mr-2"></i> Clock In
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <?php if ($shift['latest_break_start_time'] && !$shift['latest_break_end_time']): ?>
+                                        <button class="px-3 py-2 bg-sky-primary text-white rounded-full hover:bg-blue-600 flex items-center break-btn cursor-pointer text-sm" data-action="break_end" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-pause mr-2"></i> End @ <?php echo htmlspecialchars(date('h:i A', strtotime($shift['latest_break_start_time']))); ?>
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="px-3 py-2 bg-sky-primary text-white rounded-full flex items-center break-btn text-sm <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? 'hover:bg-blue-600 cursor-pointer' : 'opacity-50 cursor-not-allowed'; ?>" data-action="break_start" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? '' : 'disabled'; ?>>
+                                            <i class="fa-solid fa-pause mr-2"></i> Break
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <?php if ($shift['clock_out_time']): ?>
+                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed text-sm" disabled data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-stop mr-2"></i> <?php echo date('h:i A', strtotime($shift['clock_out_time'])); ?>
+                                        </button>
+                                    <?php elseif ($shift['clock_in_time']): ?>
+                                        <button class="px-3 py-2 bg-orange-primary text-white rounded-full hover:bg-orange-600 flex items-center clock-out-btn cursor-pointer text-sm" data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-stop mr-2"></i> Clock Out
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="px-3 py-2 bg-gray-200 text-gray-500 rounded-full flex items-center clock-out-btn opacity-50 cursor-not-allowed text-sm" data-action="clock_out" disabled data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                            <i class="fa-solid fa-stop mr-2"></i> Clock Out
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center timer text-sm" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
+                                        <?php
+                                        if ($shift['clock_in_time'] && $shift['clock_out_time']) {
+                                            $diff = strtotime($shift['clock_out_time']) - strtotime($shift['clock_in_time']) - (($shift['actual_break_duration'] ?? 0) * 60);
+                                            $hours = floor($diff / 3600);
+                                            $minutes = floor(($diff % 3600) / 60);
+                                            echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>' . sprintf('%dh %dm', max(0, $hours), max(0, $minutes));
+                                        } elseif ($shift['clock_in_time']) {
+                                            echo '<i class="fa-regular fa-clock text-green-500 mr-2"></i><span class="text-green-600">Active</span>';
+                                        } else {
+                                            echo '<i class="fa-regular fa-clock text-gray-400 mr-2"></i><span class="text-gray-400">Pending</span>';
+                                        }
+                                        ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
                         <?php endforeach; ?>
-                        
-                        
-                        
                     </tbody>
                 </table>
                 <?php } else {  ?>
@@ -245,7 +414,32 @@
 
             // Global variable to store pending action
             let pendingAction = null;
+            let pinVerifiedSuccess = false; // Flag to track if PIN was successfully verified
             
+            // Toggle shift expansion for employees with multiple shifts
+            function toggleShifts(employeeId) {
+                const shiftRows = document.querySelectorAll(`.shift-detail-row[data-employee-id="${employeeId}"]`);
+                const toggleIcon = document.getElementById(`toggle-icon-${employeeId}`);
+                
+                let isExpanded = false;
+                shiftRows.forEach(row => {
+                    if (row.classList.contains('hidden')) {
+                        row.classList.remove('hidden');
+                        isExpanded = true;
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+                
+                // Rotate chevron icon
+                if (toggleIcon) {
+                    if (isExpanded) {
+                        toggleIcon.classList.add('rotate-90');
+                    } else {
+                        toggleIcon.classList.remove('rotate-90');
+                    }
+                }
+            }
           
 // Modified clockAction function
 function clockAction(timesheetId, employeeId, button) {
@@ -413,7 +607,10 @@ function sendClockActionRequest(timesheetId, employeeId, action, button, origina
         dataType: 'json',
         success: function(response) {
             if (response.status === 'success') {
-                const row = $('#employee-' + employeeId);
+                // Get the specific row containing this button (works for both single and multi-shift rows)
+                const row = button.closest('tr');
+                const employeeId = button.data('employee-id');
+                
                 if (action === 'clock_in') {
                     button.html('<i class="fa-solid fa-play mr-2"></i>' + response.clock_in_time)
                         .prop('disabled', true)
@@ -429,6 +626,22 @@ function sendClockActionRequest(timesheetId, employeeId, action, button, origina
                         .addClass('hover:bg-blue-600 bg-sky-primary text-white')
                         .data('action', 'break_start');
                     updateTimer(row, response.clock_in_time, null, 0);
+                    
+                    // Block other shift clock-in buttons for this employee
+                    $(`.shift-detail-row[data-employee-id="${employeeId}"]`).each(function() {
+                        const otherRow = $(this);
+                        if (!otherRow.is(row)) {
+                            const otherClockInBtn = otherRow.find('.clock-in-btn');
+                            if (otherClockInBtn.data('action') === 'clock_in' && !otherClockInBtn.prop('disabled')) {
+                                otherClockInBtn
+                                    .html('<i class="fa-solid fa-lock mr-2"></i> Waiting')
+                                    .prop('disabled', true)
+                                    .addClass('opacity-50 cursor-not-allowed shift-blocked bg-gray-300 text-gray-500')
+                                    .removeClass('hover:bg-green-600 bg-green-primary text-white cursor-pointer')
+                                    .attr('title', 'Complete current shift first');
+                            }
+                        }
+                    });
                 } else if (action === 'clock_out') {
                     button.html('<i class="fa-solid fa-stop mr-2"></i>' + response.clock_out_time)
                         .prop('disabled', true)
@@ -446,6 +659,20 @@ function sendClockActionRequest(timesheetId, employeeId, action, button, origina
                     // Fetch clock-in time from button and ensure proper format
                     const clockInTime = row.find('.clock-in-btn').text().replace(/.*\s/, '').trim();
                     updateTimer(row, clockInTime, response.clock_out_time, response.break_duration || 0);
+                    
+                    // Enable blocked shift clock-in buttons for this employee
+                    $(`.shift-detail-row[data-employee-id="${employeeId}"]`).each(function() {
+                        const otherRow = $(this);
+                        const otherClockInBtn = otherRow.find('.clock-in-btn');
+                        if (otherClockInBtn.hasClass('shift-blocked')) {
+                            otherClockInBtn
+                                .html('<i class="fa-solid fa-play mr-2"></i> Clock In')
+                                .prop('disabled', false)
+                                .removeClass('opacity-50 cursor-not-allowed shift-blocked bg-gray-300 text-gray-500')
+                                .addClass('hover:bg-green-600 bg-green-primary text-white cursor-pointer')
+                                .removeAttr('title');
+                        }
+                    });
                 } else if (action === 'break_start') {
                     button.html('<i class="fa-solid fa-pause mr-2"></i>End Break ' + response.break_start_time)
                         .data('action', 'break_end')
@@ -564,8 +791,11 @@ $(document).ready(function() {
         verifyPin(pendingAction.employeeId, pin, (success) => {
              $('#pinSubmit').html("Submit");
             if (success) {
+                pinVerifiedSuccess = true; // Set flag BEFORE hiding modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('pinVerificationModal'));
                 modal.hide();
+                // Show loading state on button immediately after modal hides
+                pendingAction.button.html('<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing...').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
                 performClockAction(pendingAction.timesheetId, pendingAction.employeeId, pendingAction.button, pendingAction.action);
             }
            
@@ -574,12 +804,15 @@ $(document).ready(function() {
 
     // Handle modal close event (cross icon or outside click)
     $('#pinVerificationModal').on('hidden.bs.modal', function () {
-        if (pendingAction && pendingAction.button) {
+        // Only reset button if PIN was NOT successfully verified (e.g., user cancelled)
+        if (pendingAction && pendingAction.button && !pinVerifiedSuccess) {
             pendingAction.button.html(pendingAction.originalContent)
                 .prop('disabled', false)
                 .removeClass('opacity-50 cursor-not-allowed');
             pendingAction = null; // Clear pending action
         }
+        // Reset the flag for next time
+        pinVerifiedSuccess = false;
         $('#pinSubmit').html("Submit")
         $('#pinInput').val('');
         $('#pinError').addClass('d-none');

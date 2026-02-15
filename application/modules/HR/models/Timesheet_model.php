@@ -45,6 +45,8 @@ class Timesheet_model extends CI_Model{
             'HR_timesheet_details.clock_out_time',
             'HR_timesheet_details.actual_break_duration',
             'HR_timesheet_details.approval_status',
+            'HR_timesheet_details.roster_start_time',
+            'HR_timesheet_details.roster_end_time',
             'CONCAT(e.first_name, " ", e.last_name) as name',
             'e.employee_type',
             'e.pin',

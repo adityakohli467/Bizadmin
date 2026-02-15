@@ -120,7 +120,9 @@ class Roster extends MY_Controller {
         'weekRange',
         'rosterStartDate',
         'rosterInfo',
-        'allDayRosterData'
+        'allDayRosterData',
+        'debugInfo',  // DEBUG: Added for troubleshooting
+        'codeVersion' // DEBUG: Version marker
     ];
 
     foreach ($allowedKeys as $key) {
@@ -140,6 +142,15 @@ class Roster extends MY_Controller {
     $data['rosterInfo']       = is_array($data['rosterInfo']) ? $data['rosterInfo'] : [];
     $data['allDayRosterData'] = is_array($data['allDayRosterData']) ? $data['allDayRosterData'] : [];
     $data['rosterId']         = (int) ($data['rosterId'] ?? 0);
+    
+    // DEBUG V4: Force diagnostic info
+    $data['codeVersion'] = 'V4_INDEX_FUNCTION';
+    $data['debugInfo'] = [
+        'totalFromDb' => count($data['allDayRosterData']),
+        'rosterDataExists' => !empty($rosterData),
+        'rosterDataKeys' => array_keys($rosterData ?? []),
+        'allDayRosterDataKeys' => array_keys($data['allDayRosterData'] ?? [])
+    ];
 
     // ---------- Views ----------
     $this->load->view('general/header');
@@ -210,10 +221,28 @@ class Roster extends MY_Controller {
 
     // Format roster details for localStorage
     $allDayRosterData = [];
+    $debugKeyCollisions = [];
+    $debugRecordCount = count($rosterDetails ?? []);
+    
+    // DEBUG MARKER V3 - This proves the new code is running
+    $data['codeVersion'] = 'V3_UPDATED';
+    
     if (isset($rosterDetails) && !empty($rosterDetails)) {
-        foreach ($rosterDetails as $detail) {
+        foreach ($rosterDetails as $idx => $detail) {
             $shiftBoxName = date('d', strtotime($detail['roster_date'] ?? date('Y-m-d'))) . '_' . ($detail['prep_area_id'] ?? 0);
-            $key = "emp_{$shiftBoxName}_" . ($detail['employee_id'] ?? 0);
+            
+            // Create truly unique key using shift_start_time formatted without colons
+            // This ensures same employee can have multiple shifts with different start times
+            $startTimeKey = isset($detail['shift_start_time']) ? str_replace(':', '', $detail['shift_start_time']) : '';
+            $dbId = isset($detail['id']) ? $detail['id'] : $idx;
+            
+            // Key format: emp_DAY_PREPAREA_EMPLOYEEID_STARTTIME_DBID
+            $key = "emp_{$shiftBoxName}_" . ($detail['employee_id'] ?? 0) . "_" . $startTimeKey . "_" . $dbId;
+            
+            // DEBUG: Track key collisions
+            if (isset($allDayRosterData[$key])) {
+                $debugKeyCollisions[] = "Key collision at record $idx: $key (emp={$detail['employee_id']}, start={$detail['shift_start_time']}, dbId=$dbId)";
+            }
 
             $dataEmp = [
                 'employeeId' => $detail['employee_id'] ?? 0,
@@ -232,6 +261,15 @@ class Roster extends MY_Controller {
     }
     $data['rosterId'] = $rosterId ?? 0;
     $data['allDayRosterData'] = $allDayRosterData;
+    
+    // DEBUG: Add collision info
+    $data['debugInfo'] = [
+        'totalFromDb' => $debugRecordCount,
+        'totalAfterProcessing' => count($allDayRosterData),
+        'keyCollisions' => $debugKeyCollisions,
+        'firstRecordFields' => isset($rosterDetails[0]) ? array_keys($rosterDetails[0]) : [],
+        'firstRecordId' => isset($rosterDetails[0]['id']) ? $rosterDetails[0]['id'] : 'NOT_FOUND'
+    ];
 
     if ($returnData) {
         return $data;
@@ -260,6 +298,17 @@ class Roster extends MY_Controller {
         // Get the posted data
         $empDatas = $this->input->post();
         $parentTimesheetId = null;
+        
+        // DEBUG: Count how many emp_ keys we received
+        $empKeyCount = 0;
+        $empKeys = [];
+        foreach ($empDatas as $key => $value) {
+            if (strpos($key, 'emp_') === 0) {
+                $empKeyCount++;
+                $empKeys[] = $key;
+            }
+        }
+        error_log("addRoster DEBUG: Received $empKeyCount emp_ keys: " . implode(', ', $empKeys));
 
         // Parse the week range (e.g., "26 May - 01 Jun")
         $rosterWeek = $this->createDateForRoster($empDatas['week']);
@@ -356,7 +405,9 @@ class Roster extends MY_Controller {
         $employeeScheduleCheck = []; // Track employee schedules to prevent duplicates/overlaps
         
         foreach ($empDatas as $key => $value) {
-            if (!preg_match('/^emp_\d+_\d+_\d+$/', $key)) continue;
+            // Pattern supports optional 4th segment for unique identifier (to allow multiple shifts for same employee/day/prep area)
+            // Pattern: emp_DAY_PREPAREA_EMPLOYEEID_STARTTIME_DBID or older formats
+            if (!preg_match('/^emp_\d+_\d+_\d+(_\d+)?(_\d+)?$/', $key)) continue;
             $shiftData = json_decode($value, true);
             if (!$shiftData) continue;
 
@@ -394,14 +445,7 @@ class Roster extends MY_Controller {
             
             $employeeId = $shiftData['employeeId'];
             
-            // VALIDATION 3: Check for duplicate employee on same date/prep area
-            $checkKey = $employeeId . '_' . $formattedRosterDate . '_' . $prepAreaId;
-            if (isset($employeeScheduleCheck[$checkKey])) {
-                echo json_encode(['status' => 'error', 'message' => $employeeName . ' cannot be scheduled twice in the same prep area on ' . $dayName . ' (' . $dateFormatted . ')']);
-                return;
-            }
-            
-            // VALIDATION 4: Check for time overlaps for same employee on same date
+            // VALIDATION 3: Check for time overlaps for same employee on same date (allows multiple non-overlapping shifts)
             $empDateKey = $employeeId . '_' . $formattedRosterDate;
             if (isset($employeeScheduleCheck[$empDateKey]) && $shiftStartTime && $shiftEndTime) {
                 foreach ($employeeScheduleCheck[$empDateKey] as $existingShift) {
@@ -414,8 +458,7 @@ class Roster extends MY_Controller {
                 }
             }
             
-            // Track this schedule
-            $employeeScheduleCheck[$checkKey] = true;
+            // Track this schedule for overlap detection
             if (!isset($employeeScheduleCheck[$empDateKey])) {
                 $employeeScheduleCheck[$empDateKey] = [];
             }
@@ -443,26 +486,64 @@ class Roster extends MY_Controller {
             ];
         }
 
+        // DEBUG: Log how many roster entries we're about to save
+        error_log("addRoster DEBUG: Built " . count($rosterData) . " roster entries to save");
+        foreach ($rosterData as $idx => $rd) {
+            error_log("addRoster DEBUG: Entry $idx - emp={$rd['employee_id']}, date={$rd['roster_date']}, prep={$rd['prep_area_id']}, start={$rd['shift_start_time']}");
+        }
+
         // Synchronize roster details
         if ($updateRecord) {
-            $this->synchronizeRosterDetails($rosterId, $rosterData);
+            $syncResult = $this->synchronizeRosterDetails($rosterId, $rosterData);
+            if (isset($syncResult['status']) && $syncResult['status'] === 'error') {
+                $this->tenantDb->trans_rollback();
+                echo json_encode($syncResult);
+                return;
+            }
         } else {
             if (!empty($rosterData)) {
+                // Remove 'id' field from each record for new inserts
+                foreach ($rosterData as &$record) {
+                    unset($record['id']);
+                }
+                unset($record);
+                
+                log_message('error', 'addRoster: Creating new roster details - sample data: ' . json_encode($rosterData[0]));
                 $this->common_model->commonBulkRecordCreate('HR_roster_details', $rosterData);
+                
+                // Check for errors
+                $dbError = $this->tenantDb->error();
+                if (!empty($dbError['code']) && $dbError['code'] != 0) {
+                    log_message('error', 'addRoster: New roster insert failed - ' . json_encode($dbError));
+                    $this->tenantDb->trans_rollback();
+                    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $dbError['message']]);
+                    return;
+                }
             }
         }
 
         // Synchronize timesheet
-        $this->synchronizeTimesheetFromRoster($rosterId,$parentTimesheetId);
+        $timesheetResult = $this->synchronizeTimesheetFromRoster($rosterId,$parentTimesheetId);
+        if (isset($timesheetResult['status']) && $timesheetResult['status'] === 'error') {
+            $this->tenantDb->trans_rollback();
+            echo json_encode($timesheetResult);
+            return;
+        }
 
         $this->tenantDb->trans_complete();
         if ($this->tenantDb->trans_status() === FALSE) {
-            echo json_encode(['status' => 'error', 'message' => 'Database error occurred']);
+            // Log the actual database error for debugging
+            $error = $this->tenantDb->error();
+            log_message('error', 'addRoster transaction failed: ' . json_encode($error));
+            log_message('error', 'Last query: ' . $this->tenantDb->last_query());
+            echo json_encode(['status' => 'error', 'message' => 'Database error occurred: ' . ($error['message'] ?? 'Unknown error')]);
             return;
         }
 
         $message = $updateRecord ? 'Roster updated successfully' : 'Roster created successfully';
-        echo json_encode(['status' => 'success', 'message' => $message]);
+        // DEBUG: Include count info in response
+        $message .= ' (DEBUG: ' . count($rosterData) . ' shifts saved)';
+        echo json_encode(['status' => 'success', 'message' => $message, 'debug_shift_count' => count($rosterData)]);
     }
     
 // used when we create/edit a roster we have to accordingly make changes in timesheet table
@@ -501,73 +582,49 @@ class Roster extends MY_Controller {
         
         log_message('error', 'synchronizeRosterDetails: Processing ' . count($newRosterData) . ' entries for roster_id ' . $rosterId);
         
-        // Fetch all existing roster details (including soft-deleted)
-        $existingDetails = $this->common_model->fetchRecordsDynamically(
-            'HR_roster_details',
-            ['id', 'employee_id', 'roster_date', 'is_deleted'],
-            ['roster_id' => $rosterId]
-        );
-
-        log_message('error', 'synchronizeRosterDetails: Found ' . count($existingDetails) . ' existing entries');
-
-        // Create a lookup for new roster data
-        $newRosterLookup = [];
-
-        foreach ($newRosterData as $new) {
-            $key = $new['employee_id'] . '|' . $new['roster_date'];
-            $newRosterLookup[$key] = $new;
-        }
-
-        // Mark existing records as deleted if not in new data
-        $deletedCount = 0;
-        foreach ($existingDetails as $existing) {
-            $key = $existing['employee_id'] . '|' . $existing['roster_date'];
-            if (!isset($newRosterLookup[$key])) {
-                if ($existing['is_deleted'] == 0) {
-                    log_message('error', 'synchronizeRosterDetails: Marking as deleted - Emp: ' . $existing['employee_id'] . ', Date: ' . $existing['roster_date']);
-                    $this->common_model->commonRecordUpdate(
-                        'HR_roster_details',
-                        'id',
-                        $existing['id'],
-                        ['is_deleted' => 1, 'updated_at' => date('Y-m-d H:i:s')]
-                    );
-                    $deletedCount++;
-                }
+        // HARD DELETE approach: Delete all existing, then bulk insert all new
+        // Soft-delete doesn't work because unique key doesn't include is_deleted column
+        
+        // Step 1: HARD DELETE all existing roster details for this roster
+        $this->tenantDb->where('roster_id', $rosterId);
+        $this->tenantDb->delete('HR_roster_details');
+        
+        log_message('error', 'synchronizeRosterDetails: Hard-deleted existing entries, affected rows: ' . $this->tenantDb->affected_rows());
+        
+        // Step 2: Bulk insert all new roster details
+        if (!empty($newRosterData)) {
+            // Ensure all records have the correct roster_id and timestamps
+            // Also remove 'id' field if present (let DB auto-increment handle it)
+            foreach ($newRosterData as &$record) {
+                unset($record['id']); // Remove id to let auto-increment work
+                $record['roster_id'] = $rosterId;
+                $record['is_deleted'] = 0;
+                $record['created_at'] = date('Y-m-d H:i:s');
+                $record['updated_at'] = date('Y-m-d H:i:s');
             }
+            unset($record);
+            
+            // Log ALL data for debugging - see what's actually being inserted
+            log_message('error', 'synchronizeRosterDetails: Total records to insert: ' . count($newRosterData));
+            foreach ($newRosterData as $idx => $rec) {
+                log_message('error', 'synchronizeRosterDetails: Record ' . $idx . ': emp=' . $rec['employee_id'] . ', date=' . $rec['roster_date'] . ', prep=' . $rec['prep_area_id'] . ', start=' . $rec['shift_start_time']);
+            }
+            
+            $result = $this->common_model->commonBulkRecordCreate('HR_roster_details', $newRosterData);
+            $affectedRows = $this->tenantDb->affected_rows();
+            
+            // Check for errors after insert
+            $dbError = $this->tenantDb->error();
+            if (!empty($dbError['code']) && $dbError['code'] != 0) {
+                log_message('error', 'synchronizeRosterDetails: Insert failed - ' . json_encode($dbError));
+                log_message('error', 'synchronizeRosterDetails: Last query - ' . $this->tenantDb->last_query());
+                return ['status' => 'error', 'message' => 'Database insert failed: ' . $dbError['message']];
+            }
+            
+            log_message('error', 'synchronizeRosterDetails: Requested ' . count($newRosterData) . ' inserts, affected_rows=' . $affectedRows);
         }
         
-        log_message('error', 'synchronizeRosterDetails: Marked ' . $deletedCount . ' entries as deleted');
-
-        // Insert or update new roster details
-        $recordsToInsert = [];
-        foreach ($newRosterData as $new) {
-            $key = $new['employee_id'] . '|' . $new['roster_date'];
-            $existingRecord = null;
-            foreach ($existingDetails as $existing) {
-                if ($existing['employee_id'] == $new['employee_id'] && $existing['roster_date'] == $new['roster_date']) {
-                    $existingRecord = $existing;
-                    break;
-                }
-            }
-
-            if ($existingRecord) {
-                // Update existing record, even if soft-deleted
-                $updateData = array_merge($new, ['is_deleted' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
-                $this->common_model->commonRecordUpdate(
-                    'HR_roster_details',
-                    'id',
-                    $existingRecord['id'],
-                    $updateData
-                );
-            } else {
-                // New record to insert
-                $recordsToInsert[] = $new;
-            }
-        }
-
-        if (!empty($recordsToInsert)) {
-            $this->common_model->commonBulkRecordCreate('HR_roster_details', $recordsToInsert);
-        }
+        return ['status' => 'success', 'message' => 'Roster details synchronized successfully'];
     }
     
 // used when we create/edit a roster we have to accordingly make changes in timesheet table
@@ -591,10 +648,6 @@ class Roster extends MY_Controller {
             log_message('error', 'SECURITY VIOLATION: Attempt to access roster from different location. Roster ID: ' . $rosterId . ', Location ID: ' . $this->location_id);
             return ['status' => 'error', 'message' => 'Unauthorized roster access'];
         }
-        if (empty($rosterId) || !is_numeric($rosterId)) {
-            log_message('error', 'synchronizeTimesheetFromRoster: Invalid roster_id - ' . $rosterId);
-            return ['status' => 'error', 'message' => 'Invalid roster ID'];
-        }
 
         // Fetch roster details
         $rosterDetails = $this->common_model->fetchRecordsDynamically(
@@ -611,25 +664,53 @@ class Roster extends MY_Controller {
         
         log_message('error', 'synchronizeTimesheetFromRoster: Processing ' . count($rosterDetails) . ' roster entries for roster_id ' . $rosterId);
 
-        // Fetch all existing timesheet entries (including soft-deleted)
+        // Fetch all existing timesheet entries that have clock data (to preserve)
         $existingTimesheets = $this->common_model->fetchRecordsDynamically(
             'HR_timesheet_details',
-            ['timesheet_id', 'employee_id', 'roster_date', 'clock_in_time', 'clock_out_time', 'actual_break_duration', 'approval_status', 'is_deleted'],
+            ['timesheet_id', 'employee_id', 'roster_date', 'prep_area_id', 'roster_start_time', 'clock_in_time', 'clock_out_time', 'actual_break_duration', 'approval_status', 'is_deleted'],
             ['roster_id' => $rosterId]
         );
-
-        // Create a lookup for existing timesheet entries
-        $timesheetLookup = [];
+        
+        // Build a map of timesheet entries that have clock data (employee_id + date + prep_area + start_time)
+        // We need to preserve these
+        $clockedInTimesheets = [];
         foreach ($existingTimesheets as $ts) {
-            $key = $ts['employee_id'] . '|' . $ts['roster_date'];
-            $timesheetLookup[$key] = $ts;
+            if (!empty($ts['clock_in_time']) || !empty($ts['clock_out_time'])) {
+                // Store by a composite key that can handle multiple entries
+                $clockedInTimesheets[] = [
+                    'timesheet_id' => $ts['timesheet_id'],
+                    'employee_id' => $ts['employee_id'],
+                    'roster_date' => $ts['roster_date'],
+                    'prep_area_id' => $ts['prep_area_id'],
+                    'roster_start_time' => $ts['roster_start_time'],
+                    'clock_in_time' => $ts['clock_in_time'],
+                    'clock_out_time' => $ts['clock_out_time'],
+                    'actual_break_duration' => $ts['actual_break_duration'],
+                    'approval_status' => $ts['approval_status']
+                ];
+            }
         }
+        
+        log_message('error', 'synchronizeTimesheetFromRoster: Found ' . count($clockedInTimesheets) . ' entries with clock data to preserve');
+        
+        // HARD DELETE approach (unique key doesn't include is_deleted)
+        // But preserve entries that have clock data
+        
+        // Step 1: Hard delete timesheet details that DON'T have clock data
+        $this->tenantDb->where('roster_id', $rosterId);
+        $this->tenantDb->group_start();
+        $this->tenantDb->where('clock_in_time IS NULL', null, false);
+        $this->tenantDb->where('clock_out_time IS NULL', null, false);
+        $this->tenantDb->group_end();
+        $this->tenantDb->delete('HR_timesheet_details');
+        
+        log_message('error', 'synchronizeTimesheetFromRoster: Hard-deleted entries without clock data');
 
-        // Prepare timesheet entries
+        // Step 2: Process each roster detail
         $recordsToInsert = [];
-        $recordsToUpdate = [];
+        $usedClockedTimesheets = []; // Track which clocked timesheets we've used
+        
         foreach ($rosterDetails as $detail) {
-            $key = $detail['employee_id'] . '|' . $detail['roster_date'];
             $timesheetData = [
                 'roster_id' => $rosterId,
                 'employee_id' => $detail['employee_id'] ?? 0,
@@ -644,21 +725,42 @@ class Roster extends MY_Controller {
                 'task_description' => $detail['task_description'] ?? '',
                 'approval_status' => 'pending',
                 'is_deleted' => 0,
-                 'status' => 1,
-                'location_id' =>$this->location_id,
+                'status' => 1,
+                'location_id' => $this->location_id,
                 'updated_at' => date('Y-m-d H:i:s')
             ];
-
-            if (isset($timesheetLookup[$key])) {
-                // Update existing timesheet, preserving clock-in/out times
-                $existing = $timesheetLookup[$key];
-                $timesheetData['clock_in_time'] = $existing['clock_in_time'];
-                $timesheetData['clock_out_time'] = $existing['clock_out_time'];
-                $timesheetData['actual_break_duration'] = $existing['actual_break_duration'];
-                $timesheetData['approval_status'] = $existing['approval_status'];
-                $recordsToUpdate[] = array_merge($timesheetData, ['timesheet_id' => $existing['timesheet_id']]);
+            
+            // Check if there's a matching clocked timesheet entry that hasn't been used yet
+            $matchingClocked = null;
+            foreach ($clockedInTimesheets as $idx => $clocked) {
+                if (in_array($idx, $usedClockedTimesheets)) {
+                    continue; // Already used this one
+                }
+                if ($clocked['employee_id'] == $detail['employee_id'] && 
+                    $clocked['roster_date'] == $detail['roster_date'] && 
+                    $clocked['prep_area_id'] == $detail['prep_area_id'] &&
+                    $clocked['roster_start_time'] == $detail['shift_start_time']) {
+                    $matchingClocked = $clocked;
+                    $usedClockedTimesheets[] = $idx;
+                    break;
+                }
+            }
+            
+            if ($matchingClocked) {
+                // Update existing timesheet to restore it and preserve clock data
+                $timesheetData['clock_in_time'] = $matchingClocked['clock_in_time'];
+                $timesheetData['clock_out_time'] = $matchingClocked['clock_out_time'];
+                $timesheetData['actual_break_duration'] = $matchingClocked['actual_break_duration'];
+                $timesheetData['approval_status'] = $matchingClocked['approval_status'];
+                
+                $this->common_model->commonRecordUpdate(
+                    'HR_timesheet_details',
+                    'timesheet_id',
+                    $matchingClocked['timesheet_id'],
+                    $timesheetData
+                );
             } else {
-     // New timesheet entry, we need to enter parent_timesheet_id just when creating new row in "HR_timesheet_details" table parent id will not change so no need in update case
+                // New timesheet entry
                 $timesheetData['clock_in_time'] = null;
                 $timesheetData['clock_out_time'] = null;
                 $timesheetData['parent_timesheet_id'] = $parentTimesheetId;
@@ -668,36 +770,27 @@ class Roster extends MY_Controller {
             }
         }
 
-        // Mark timesheet entries as deleted if not in roster details
-        foreach ($existingTimesheets as $ts) {
-            $key = $ts['employee_id'] . '|' . $ts['roster_date'];
-            $found = false;
-            foreach ($rosterDetails as $detail) {
-                if ($detail['employee_id'] == $ts['employee_id'] && $detail['roster_date'] == $ts['roster_date']) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found && $ts['is_deleted'] == 0) {
-                $this->common_model->commonRecordUpdate(
-                    'HR_timesheet_details',
-                    'timesheet_id',
-                    $ts['timesheet_id'],
-                    ['is_deleted' => 1, 'updated_at' => date('Y-m-d H:i:s')]
-                );
-            }
-        }
-
-        // Insert new timesheet entries
+        // Bulk insert new timesheet entries
         if (!empty($recordsToInsert)) {
+            // Remove 'timesheet_id' if present (let DB auto-increment handle it)
+            foreach ($recordsToInsert as &$record) {
+                unset($record['timesheet_id']);
+            }
+            unset($record);
+            
+            log_message('error', 'synchronizeTimesheetFromRoster: Sample timesheet data: ' . json_encode($recordsToInsert[0]));
+            
             $this->common_model->commonBulkRecordCreate('HR_timesheet_details', $recordsToInsert);
-        }
-
-        // Update existing timesheet entries
-        foreach ($recordsToUpdate as $record) {
-            $timesheetId = $record['timesheet_id'];
-            unset($record['timesheet_id']);
-            $this->common_model->commonRecordUpdate('HR_timesheet_details', 'timesheet_id', $timesheetId, $record);
+            
+            // Check for errors
+            $dbError = $this->tenantDb->error();
+            if (!empty($dbError['code']) && $dbError['code'] != 0) {
+                log_message('error', 'synchronizeTimesheetFromRoster: Insert failed - ' . json_encode($dbError));
+                log_message('error', 'synchronizeTimesheetFromRoster: Last query - ' . $this->tenantDb->last_query());
+                return ['status' => 'error', 'message' => 'Timesheet insert failed: ' . $dbError['message']];
+            }
+            
+            log_message('error', 'synchronizeTimesheetFromRoster: Inserted ' . count($recordsToInsert) . ' new timesheet entries successfully');
         }
 
         return ['status' => 'success', 'message' => 'Timesheet synchronized successfully'];
@@ -840,13 +933,18 @@ class Roster extends MY_Controller {
   $rosterDetails = $this->common_model->fetchRecordsDynamically('HR_roster_details','', $rosterConditions);
  
   $allDayRosterData = [];
-  foreach ($rosterDetails as $detail) {
-    $shiftBoxName = date('d', strtotime($detail['roster_date'])) . '_' . $detail['prep_area_id']; // Adjust prep_area_id if needed
-    $key = "emp_{$shiftBoxName}_{$detail['employee_id']}";
+  foreach ($rosterDetails as $idx => $detail) {
+    $shiftBoxName = date('d', strtotime($detail['roster_date'])) . '_' . $detail['prep_area_id'];
+    
+    // Create unique key including shift_start_time and db id to allow multiple shifts per employee
+    $startTimeKey = isset($detail['shift_start_time']) ? str_replace(':', '', $detail['shift_start_time']) : '';
+    $dbId = isset($detail['id']) ? $detail['id'] : $idx;
+    $key = "emp_{$shiftBoxName}_{$detail['employee_id']}_{$startTimeKey}_{$dbId}";
+    
     $dataEmp = [
       'employeeId' => $detail['employee_id'],
       'position_id' => $detail['position_id'],
-      'selectedEmpName' => $this->getEmployeeName($detail['employee_id']), // Implement this method
+      'selectedEmpName' => $this->getEmployeeName($detail['employee_id']),
       'empShiftStartTime' => $detail['shift_start_time'],
       'empShiftEndTime' => $detail['shift_end_time'],
       'empBreakTime' => $detail['break_start_time'],

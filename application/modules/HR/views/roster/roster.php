@@ -784,6 +784,21 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
 
             // Load existing roster data into localStorage
             var allDayRosterData = <?php echo json_encode($allDayRosterData ?? [], JSON_UNESCAPED_SLASHES); ?>;
+            
+            // DEBUG MARKER v2 - if you see this, PHP cache is cleared
+            console.log('=== DEBUG MARKER v2 - CODE UPDATED ===');
+            console.log('=== CODE VERSION: <?php echo $codeVersion ?? "NOT_SET"; ?> ===');
+            
+            // DEBUG: Show server-side processing info
+            var debugInfo = <?php echo json_encode($debugInfo ?? ['error' => 'debugInfo not set'], JSON_UNESCAPED_SLASHES); ?>;
+            console.log('DEBUG: Full debugInfo:', debugInfo);
+            console.log('DEBUG: Server info - Total from DB:', debugInfo.totalFromDb, '| After processing:', debugInfo.totalAfterProcessing);
+            console.log('DEBUG: Key collisions:', debugInfo.keyCollisions);
+            console.log('DEBUG: First record fields:', debugInfo.firstRecordFields);
+            console.log('DEBUG: First record ID value:', debugInfo.firstRecordId);
+            console.log('DEBUG: allDayRosterData has ' + Object.keys(allDayRosterData).length + ' entries');
+            console.log('DEBUG: allDayRosterData keys:', Object.keys(allDayRosterData));
+            
             for (var key in allDayRosterData) {
                 if (allDayRosterData.hasOwnProperty(key)) {
                     localStorage.setItem(key, allDayRosterData[key]);
@@ -901,16 +916,9 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
             };
 
             let formDataS = JSON.stringify(formData);
-            let keyForStorage = 'emp_' + shiftBoxName + '_' + formData.employeeId;
-            
-            // Clean any existing corrupted keys for this combination
-            for (var key in localStorage) {
-                if (localStorage.hasOwnProperty(key) && key.includes('emp_' + shiftBoxName + '_' + formData.employeeId)) {
-                    if (key !== keyForStorage) {
-                        localStorage.removeItem(key);
-                    }
-                }
-            }
+            // Add timestamp to make key unique for multiple shifts of same employee on same day/prep area
+            let uniqueId = Date.now();
+            let keyForStorage = 'emp_' + shiftBoxName + '_' + formData.employeeId + '_' + uniqueId;
             
             saveInLocalStorage(keyForStorage, formDataS);
 
@@ -1021,8 +1029,9 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
                     // Clean the key - only keep keys that match the expected pattern
                     var cleanKey = key;
                     
-                    // Check if key matches expected pattern: emp_dd_d_dd (e.g., emp_29_1_52)
-                    var keyPattern = /^emp_\d+_\d+_\d+$/;
+                    // Check if key matches expected pattern: emp_DAY_PREPAREA_EMPLOYEEID or with optional STARTTIME and/or DBID
+                    // e.g., emp_29_1_52 or emp_29_1_52_090000 or emp_29_1_52_090000_123
+                    var keyPattern = /^emp_\d+_\d+_\d+(_\d+)?(_\d+)?$/;
                     
                     if (keyPattern.test(key)) {
                         // Key is already clean, use as-is
@@ -1561,26 +1570,9 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
             let newShiftData = Object.assign({}, copiedShiftData.data);
             newShiftData.rosterDate = shiftDate;
             
-            // Generate new storage key
-            let newStorageKey = 'emp_' + shiftBoxName + '_' + newShiftData.employeeId;
-            
-            // Clean any existing corrupted keys for this combination
-            for (var key in localStorage) {
-                if (localStorage.hasOwnProperty(key) && key.includes('emp_' + shiftBoxName + '_' + newShiftData.employeeId)) {
-                    if (key !== newStorageKey) {
-                        localStorage.removeItem(key);
-                    }
-                }
-            }
-            
-            // Check if shift already exists in this slot
-            if (localStorage.getItem(newStorageKey)) {
-                if (!confirm('A shift already exists for this employee in this slot. Do you want to replace it?')) {
-                    return;
-                }
-                // Remove existing shift from display
-                $('#' + newStorageKey).remove();
-            }
+            // Generate new storage key with unique timestamp to allow multiple shifts
+            let uniqueId = Date.now();
+            let newStorageKey = 'emp_' + shiftBoxName + '_' + newShiftData.employeeId + '_' + uniqueId;
             
             // Save to localStorage
             localStorage.setItem(newStorageKey, JSON.stringify(newShiftData));
