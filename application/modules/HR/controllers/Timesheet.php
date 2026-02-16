@@ -437,7 +437,7 @@ public function exportTimesheetTX($start_date, $end_date)
                         $netSeconds = max(0, $workedSeconds - $breakSeconds);
                         $decimalHours = round($netSeconds / 3600, 2);
                         
-                        $formattedDate = date('Y-m-d', strtotime($dateStr));
+                        $formattedDate = date('m/d/y', strtotime($dateStr));
                         
                         // Determine correct payroll item based on day type
                         // Check if it's a public holiday first
