@@ -410,11 +410,17 @@ public function exportTimesheetTX($start_date, $end_date)
                         $workedSeconds = $clockOut - $clockIn;
                         $totalHoursWorked = $workedSeconds / 3600;
                         
-                        // Get break duration - convert TIME format to minutes then seconds
+                        // Get break duration - check if it's TIME format (HH:MM:SS) or numeric minutes
                         $breakMinutes = 0;
                         if (!empty($ts['total_break_duration'])) {
-                            $breakParts = explode(':', $ts['total_break_duration']);
-                            $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
+                            if (strpos($ts['total_break_duration'], ':') !== false) {
+                                // TIME format HH:MM:SS
+                                $breakParts = explode(':', $ts['total_break_duration']);
+                                $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
+                            } else {
+                                // Numeric minutes
+                                $breakMinutes = (int)$ts['total_break_duration'];
+                            }
                         }
                         
                         // Check for manual break override first
@@ -437,7 +443,7 @@ public function exportTimesheetTX($start_date, $end_date)
                         $netSeconds = max(0, $workedSeconds - $breakSeconds);
                         $decimalHours = round($netSeconds / 3600, 2);
                         
-                        $formattedDate = date('m/d/y', strtotime($dateStr));
+                        $formattedDate = date('Y-m-d', strtotime($dateStr));
                         
                         // Determine correct service item and payroll item based on day type
                         // Check if it's a public holiday first
@@ -560,11 +566,17 @@ exit;
                     $workedSeconds = $clockOut - $clockIn;
                     $totalHoursWorked = $workedSeconds / 3600;
                     
-                    // Get break duration - convert TIME format to minutes then seconds
+                    // Get break duration - check if it's TIME format (HH:MM:SS) or numeric minutes
                     $breakMinutes = 0;
                     if (!empty($ts['total_break_duration'])) {
-                        $breakParts = explode(':', $ts['total_break_duration']);
-                        $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
+                        if (strpos($ts['total_break_duration'], ':') !== false) {
+                            // TIME format HH:MM:SS
+                            $breakParts = explode(':', $ts['total_break_duration']);
+                            $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
+                        } else {
+                            // Numeric minutes
+                            $breakMinutes = (int)$ts['total_break_duration'];
+                        }
                     }
                     
                     // Check for manual break override first
