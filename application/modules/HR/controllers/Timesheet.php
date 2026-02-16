@@ -362,6 +362,13 @@ public function exportTimesheetTX($start_date, $end_date)
         // Fetch all timesheets (approved only)
         $timesheets = $this->timesheet_model->get_timesheets_by_date_range($start_date, $end_date, $this->location_id, true);
         
+        // Get public holidays from config for Reckon rate determination
+        $publicHolidays = [];
+        if (isset($superConfigData['public_holidays']) && !empty($superConfigData['public_holidays'])) {
+            $holidayDates = explode(',', $superConfigData['public_holidays']);
+            $publicHolidays = array_map('trim', $holidayDates);
+        }
+        
         // Organize timesheets by employee and date
         $timesheetsByEmpDate = [];
         foreach ($timesheets as $ts) {
@@ -374,9 +381,19 @@ public function exportTimesheetTX($start_date, $end_date)
         
         $output_rows = [];
         
+        // Track processed employees to avoid duplicates
+        $processedEmployees = [];
+        
         // Process each employee for all dates (grouped by employee)
         foreach ($employees as $employee) {
             $empId = $employee['emp_id'];
+            
+            // Skip if this employee was already processed (avoid duplicates from position join)
+            if (isset($processedEmployees[$empId])) {
+                continue;
+            }
+            $processedEmployees[$empId] = true;
+            
             $employeeName = trim($employee['first_name'] . ' ' . $employee['last_name']);
             
             // Process each date for this employee
@@ -420,12 +437,30 @@ public function exportTimesheetTX($start_date, $end_date)
                         $netSeconds = max(0, $workedSeconds - $breakSeconds);
                         $decimalHours = round($netSeconds / 3600, 2);
                         
-                        $formattedDate = date('d/m/Y', strtotime($dateStr));
+                        $formattedDate = date('Y-m-d', strtotime($dateStr));
+                        
+                        // Determine correct payroll item based on day type
+                        // Check if it's a public holiday first
+                        $isPublicHoliday = in_array($dateStr, $publicHolidays);
+                        $dayOfWeek = date('N', strtotime($dateStr)); // 1=Mon, 7=Sun
+                        
+                        if ($isPublicHoliday) {
+                            $payItem = 'Pub Hol';
+                        } elseif ($dayOfWeek == 6) {
+                            // Saturday
+                            $payItem = 'Sat Rate';
+                        } elseif ($dayOfWeek == 7) {
+                            // Sunday
+                            $payItem = 'Sun Rate';
+                        } else {
+                            // Monday to Friday
+                            $payItem = 'M-F Rate';
+                        }
                         
                         $output_rows[] = [
                             $employeeName,
                             $formattedDate,
-                            'Hourly Rate',
+                            $payItem,
                             number_format($decimalHours, 2, '.', '')
                         ];
                     }
@@ -434,24 +469,38 @@ public function exportTimesheetTX($start_date, $end_date)
         }
         
         // Generate IIF file with Reckon format
-        $filename = "Reckon_timesheet_{$start_date}_to_{$end_date}.iif";
-        
-        header('Content-Type: application/octet-stream');
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header('Cache-Control: max-age=0');
-        
-        $output = fopen('php://output', 'w');
-        
-        // Write header
-        fputcsv($output, ['Employee Name', 'Date', 'Pay Item', 'Hours']);
-        
-        // Write data rows
-        foreach ($output_rows as $row) {
-            fputcsv($output, $row);
-        }
-        
-        fclose($output);
-        exit;
+        // Generate REAL IIF file for Reckon
+$filename = "Reckon_timesheet_{$start_date}_to_{$end_date}.iif";
+
+header('Content-Type: text/plain');
+header("Content-Disposition: attachment; filename=\"$filename\"");
+header('Cache-Control: max-age=0');
+
+$output = fopen('php://output', 'w');
+
+// TAB delimiter for IIF
+$tab = "\t";
+
+// IIF HEADER (VERY IMPORTANT)
+fwrite($output, "!TIMEACT\tDATE\tEMP\tITEM\tDURATION\n");
+
+// DATA ROWS
+foreach ($output_rows as $row) {
+
+    $employeeName = $row[0];
+    $date         = $row[1];
+    $payItem      = $row[2];
+    $hours        = $row[3];
+
+    fwrite(
+        $output,
+        "TIMEACT{$tab}{$date}{$tab}{$employeeName}{$tab}{$payItem}{$tab}{$hours}\n"
+    );
+}
+
+fclose($output);
+exit;
+
     }
     
     // MYOB FORMAT (Original format)
