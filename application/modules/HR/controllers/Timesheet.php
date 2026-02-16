@@ -372,7 +372,7 @@ public function exportTimesheetTX($start_date, $end_date)
         // Organize timesheets by employee and date
         $timesheetsByEmpDate = [];
         foreach ($timesheets as $ts) {
-            if ($ts['approval_status'] === 'approved') {
+            if (strtolower($ts['approval_status']) === 'approved') {
                 $empId = $ts['employee_id'];
                 $date = $ts['roster_date'];
                 $timesheetsByEmpDate[$empId][$date] = $ts;
@@ -439,28 +439,33 @@ public function exportTimesheetTX($start_date, $end_date)
                         
                         $formattedDate = date('m/d/y', strtotime($dateStr));
                         
-                        // Determine correct payroll item based on day type
+                        // Determine correct service item and payroll item based on day type
                         // Check if it's a public holiday first
                         $isPublicHoliday = in_array($dateStr, $publicHolidays);
                         $dayOfWeek = date('N', strtotime($dateStr)); // 1=Mon, 7=Sun
                         
                         if ($isPublicHoliday) {
-                            $payItem = 'Pub Hol';
+                            $serviceItem = 'PubHol-Hours';
+                            $payrollItem = 'Pub Hol';
                         } elseif ($dayOfWeek == 6) {
                             // Saturday
-                            $payItem = 'Sat Rate';
+                            $serviceItem = 'Sat-Hours';
+                            $payrollItem = 'Sat Rate';
                         } elseif ($dayOfWeek == 7) {
                             // Sunday
-                            $payItem = 'Sun Rate';
+                            $serviceItem = 'Sun-Hours';
+                            $payrollItem = 'Sun Rate';
                         } else {
                             // Monday to Friday
-                            $payItem = 'M-F Rate';
+                            $serviceItem = 'MF-Hours';
+                            $payrollItem = 'M-F Rate';
                         }
                         
                         $output_rows[] = [
                             $employeeName,
                             $formattedDate,
-                            $payItem,
+                            $serviceItem,
+                            $payrollItem,
                             number_format($decimalHours, 2, '.', '')
                         ];
                     }
@@ -482,19 +487,20 @@ $output = fopen('php://output', 'w');
 $tab = "\t";
 
 // IIF HEADER (VERY IMPORTANT)
-fwrite($output, "!TIMEACT\tDATE\tEMP\tITEM\tDURATION\n");
+fwrite($output, "!TIMEACT\tDATE\tEMP\tITEM\tPAYROLLITEM\tDURATION\n");
 
 // DATA ROWS
 foreach ($output_rows as $row) {
 
     $employeeName = $row[0];
     $date         = $row[1];
-    $payItem      = $row[2];
-    $hours        = $row[3];
+    $serviceItem  = $row[2];
+    $payrollItem  = $row[3];
+    $hours        = $row[4];
 
     fwrite(
         $output,
-        "TIMEACT{$tab}{$date}{$tab}{$employeeName}{$tab}{$payItem}{$tab}{$hours}\n"
+        "TIMEACT{$tab}{$date}{$tab}{$employeeName}{$tab}{$serviceItem}{$tab}{$payrollItem}{$tab}{$hours}\n"
     );
 }
 
@@ -510,7 +516,7 @@ exit;
     // Organize timesheets by employee and date
     $timesheetsByEmpDate = [];
     foreach ($timesheets as $ts) {
-        if ($ts['approval_status'] === 'approved') {
+        if (strtolower($ts['approval_status']) === 'approved') {
             $empId = $ts['employee_id'];
             $date = $ts['roster_date'];
             $timesheetsByEmpDate[$empId][$date] = $ts;
