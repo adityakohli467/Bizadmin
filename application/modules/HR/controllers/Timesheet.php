@@ -734,8 +734,9 @@ public function downloadWeeklyReport($start_date, $end_date)
                 $employeeData[$empId]['daily'][$date] = [
                     'clock_in' => null,
                     'clock_out' => null,
-                    'roster_start' => $ts['roster_start_time'],
-                    'roster_end' => $ts['roster_end_time'],
+                    'break_minutes' => 0,
+                    'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
+                    'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
                     'hours' => 0
                 ];
             }
@@ -790,6 +791,7 @@ public function downloadWeeklyReport($start_date, $end_date)
         $employeeData[$empId]['daily'][$date] = [
             'clock_in' => date('H:i', $clockIn),
             'clock_out' => date('H:i', $clockOut),
+            'break_minutes' => $breakMinutes,
             'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
             'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
             'hours' => $hoursWorked
@@ -812,6 +814,7 @@ public function downloadWeeklyReport($start_date, $end_date)
                 $empData['daily'][$date] = [
                     'clock_in' => null,
                     'clock_out' => null,
+                    'break_minutes' => 0,
                     'roster_start' => $rosterStart,
                     'roster_end' => $rosterEnd,
                     'hours' => 0
@@ -907,9 +910,13 @@ public function downloadWeeklyReport($start_date, $end_date)
             
             $sheet->setCellValue('A' . $row, $dayName . ' (' . $dateFormatted . ')');
             
-            // Timesheet times
+            // Timesheet times with break duration
             if ($dayData['clock_in'] && $dayData['clock_out']) {
                 $timesheetValue = $dayData['clock_in'] . ' - ' . $dayData['clock_out'];
+                // Add break duration in brackets if > 0
+                if (isset($dayData['break_minutes']) && $dayData['break_minutes'] > 0) {
+                    $timesheetValue .= ' (' . $dayData['break_minutes'] . 'm break)';
+                }
             } else {
                 $timesheetValue = '-';
             }
