@@ -36,7 +36,7 @@ class Leaves extends MY_Controller {
             'csrf_hash' => $this->security->get_csrf_hash()
         ];
       $this->load->view('general/header');
-	  $this->load->view('Leaves/leavesDashboard',$data);
+	  $this->load->view('Leaves/leavesDashboardDynamic',$data);
 	  $this->load->view('general/footer');
         
         
