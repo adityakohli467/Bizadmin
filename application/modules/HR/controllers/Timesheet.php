@@ -673,6 +673,288 @@ exit;
     exit;
 }
 
+/**
+ * Download Weekly Timesheet Report
+ * Shows employee hours breakdown: weekday/weekend hours with costs
+ * and daily clock-in/out vs roster times
+ * 
+ * @param string $start_date Format: YYYY-MM-DD
+ * @param string $end_date Format: YYYY-MM-DD
+ */
+public function downloadWeeklyReport($start_date, $end_date)
+{
+    ini_set('memory_limit', '512M');
+    
+    // Fetch timesheet data with hourly rates
+    $timesheets = $this->timesheet_model->getWeeklyReportData($start_date, $end_date, $this->location_id);
+    
+    if (empty($timesheets)) {
+        show_error('No timesheet data found for this period');
+    }
+    
+    // Fetch roster details for the date range
+    $rosterData = $this->timesheet_model->getRosterDetailsForReport($start_date, $end_date, $this->location_id);
+    
+    // Generate all dates for the week (Monday to Sunday)
+    $weekDates = [];
+    $currentDate = new DateTime($start_date);
+    $endDateObj = new DateTime($end_date);
+    while ($currentDate <= $endDateObj) {
+        $weekDates[] = $currentDate->format('Y-m-d');
+        $currentDate->modify('+1 day');
+    }
+    
+    // Group timesheets by employee
+    $employeeData = [];
+    foreach ($timesheets as $ts) {
+        $empId = $ts['employee_id'];
+        $empName = $ts['employee_name'];
+        
+        if (!isset($employeeData[$empId])) {
+            $employeeData[$empId] = [
+                'name' => $empName,
+                'weekday_hours' => 0,
+                'weekday_cost' => 0,
+                'weekend_hours' => 0,
+                'weekend_cost' => 0,
+                'daily' => []
+            ];
+        }
+        
+        $date = $ts['roster_date'];
+        $dayOfWeek = date('N', strtotime($date)); // 1 = Monday, 7 = Sunday
+        
+        // Calculate hours worked
+        $clockIn = strtotime($ts['clock_in_time']);
+        $clockOut = strtotime($ts['clock_out_time']);
+        
+        if (!$clockIn || !$clockOut) {
+            // Store entry even if no clock times (for roster display)
+            if (!isset($employeeData[$empId]['daily'][$date])) {
+                $employeeData[$empId]['daily'][$date] = [
+                    'clock_in' => null,
+                    'clock_out' => null,
+                    'roster_start' => $ts['roster_start_time'],
+                    'roster_end' => $ts['roster_end_time'],
+                    'hours' => 0
+                ];
+            }
+            continue;
+        }
+        
+        $workedSeconds = $clockOut - $clockIn;
+        $totalHoursWorked = $workedSeconds / 3600;
+        
+        // Handle break deduction
+        $breakMinutes = (int)($ts['total_break_duration'] ?? 0);
+        $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+        $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
+        
+        if ($manualOverride && $manualBreakMinutes !== null) {
+            $breakMinutes = $manualBreakMinutes;
+        } elseif ($breakMinutes == 0) {
+            // Apply automatic break logic
+            if ($totalHoursWorked > 10) {
+                $breakMinutes = 60;
+            } elseif ($totalHoursWorked > 5) {
+                $breakMinutes = 30;
+            }
+        }
+        
+        $workedSeconds -= ($breakMinutes * 60);
+        if ($workedSeconds < 0) $workedSeconds = 0;
+        
+        $hoursWorked = round($workedSeconds / 3600, 2);
+        
+        // Determine rate based on day of week
+        $weekdayRate = floatval($ts['weekday_rate'] ?? 0);
+        $satRate = floatval($ts['Saturday_rate'] ?? $weekdayRate);
+        $sunRate = floatval($ts['Sunday_rate'] ?? $weekdayRate);
+        
+        // Calculate cost
+        if ($dayOfWeek == 6) { // Saturday
+            $rate = $satRate;
+            $employeeData[$empId]['weekend_hours'] += $hoursWorked;
+            $employeeData[$empId]['weekend_cost'] += ($hoursWorked * $rate);
+        } elseif ($dayOfWeek == 7) { // Sunday
+            $rate = $sunRate;
+            $employeeData[$empId]['weekend_hours'] += $hoursWorked;
+            $employeeData[$empId]['weekend_cost'] += ($hoursWorked * $rate);
+        } else { // Weekday
+            $rate = $weekdayRate;
+            $employeeData[$empId]['weekday_hours'] += $hoursWorked;
+            $employeeData[$empId]['weekday_cost'] += ($hoursWorked * $rate);
+        }
+        
+        // Store daily data
+        $employeeData[$empId]['daily'][$date] = [
+            'clock_in' => date('H:i', $clockIn),
+            'clock_out' => date('H:i', $clockOut),
+            'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
+            'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
+            'hours' => $hoursWorked
+        ];
+    }
+    
+    // Add roster data for days without timesheet entries
+    foreach ($employeeData as $empId => &$empData) {
+        foreach ($weekDates as $date) {
+            if (!isset($empData['daily'][$date])) {
+                // Check if there's roster data for this day
+                $rosterStart = null;
+                $rosterEnd = null;
+                if (isset($rosterData[$empId][$date]) && !empty($rosterData[$empId][$date])) {
+                    $rosterEntry = $rosterData[$empId][$date][0]; // Get first roster entry
+                    $rosterStart = $rosterEntry['shift_start_time'] ? date('H:i', strtotime($rosterEntry['shift_start_time'])) : null;
+                    $rosterEnd = $rosterEntry['shift_end_time'] ? date('H:i', strtotime($rosterEntry['shift_end_time'])) : null;
+                }
+                
+                $empData['daily'][$date] = [
+                    'clock_in' => null,
+                    'clock_out' => null,
+                    'roster_start' => $rosterStart,
+                    'roster_end' => $rosterEnd,
+                    'hours' => 0
+                ];
+            }
+        }
+        // Sort daily entries by date
+        ksort($empData['daily']);
+    }
+    
+    // Create Excel Spreadsheet
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Weekly Timesheet Report');
+    
+    // Set column widths
+    $sheet->getColumnDimension('A')->setWidth(25);
+    $sheet->getColumnDimension('B')->setWidth(20);
+    $sheet->getColumnDimension('C')->setWidth(20);
+    
+    $row = 1;
+    
+    foreach ($employeeData as $empId => $data) {
+        // Employee Name Header (spanning 3 columns)
+        $sheet->setCellValue('A' . $row, $data['name']);
+        $sheet->mergeCells('A' . $row . ':C' . $row);
+        $sheet->getStyle('A' . $row)->applyFromArray([
+            'font' => ['bold' => true, 'size' => 14],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '1F3A61']
+            ],
+            'font' => ['bold' => true, 'size' => 14, 'color' => ['rgb' => 'FFFFFF']],
+            'alignment' => ['horizontal' => 'center']
+        ]);
+        $row++;
+        
+        // Hours Summary Section
+        // Headers for hours summary
+        $sheet->setCellValue('A' . $row, '');
+        $sheet->setCellValue('B' . $row, 'Total Hours');
+        $sheet->setCellValue('C' . $row, 'Cost ($)');
+        $sheet->getStyle('A' . $row . ':C' . $row)->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E5E5E5']
+            ],
+            'alignment' => ['horizontal' => 'center']
+        ]);
+        $row++;
+        
+        // Weekday Hours Row
+        $sheet->setCellValue('A' . $row, 'Weekday Hours');
+        $sheet->setCellValue('B' . $row, round($data['weekday_hours'], 2));
+        $sheet->setCellValue('C' . $row, '$' . number_format($data['weekday_cost'], 2));
+        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+        $row++;
+        
+        // Weekend Hours Row
+        $sheet->setCellValue('A' . $row, 'Weekend Hours (Sat/Sun)');
+        $sheet->setCellValue('B' . $row, round($data['weekend_hours'], 2));
+        $sheet->setCellValue('C' . $row, '$' . number_format($data['weekend_cost'], 2));
+        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+        $row++;
+        
+        // Blank row
+        $row++;
+        
+        // Daily Breakdown Header
+        $sheet->setCellValue('A' . $row, 'Day');
+        $sheet->setCellValue('B' . $row, 'Timesheet (Clock In-Out)');
+        $sheet->setCellValue('C' . $row, 'Roster (Start-End)');
+        $sheet->getStyle('A' . $row . ':C' . $row)->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'D0D0D0']
+            ],
+            'alignment' => ['horizontal' => 'center'],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ]
+            ]
+        ]);
+        $row++;
+        
+        // Daily entries (Mon-Sun)
+        foreach ($data['daily'] as $date => $dayData) {
+            $dayName = date('l', strtotime($date));
+            $dateFormatted = date('d/m', strtotime($date));
+            
+            $sheet->setCellValue('A' . $row, $dayName . ' (' . $dateFormatted . ')');
+            
+            // Timesheet times
+            if ($dayData['clock_in'] && $dayData['clock_out']) {
+                $timesheetValue = $dayData['clock_in'] . ' - ' . $dayData['clock_out'];
+            } else {
+                $timesheetValue = '-';
+            }
+            $sheet->setCellValue('B' . $row, $timesheetValue);
+            
+            // Roster times
+            if ($dayData['roster_start'] && $dayData['roster_end']) {
+                $rosterValue = $dayData['roster_start'] . ' - ' . $dayData['roster_end'];
+            } else {
+                $rosterValue = '-';
+            }
+            $sheet->setCellValue('C' . $row, $rosterValue);
+            
+            // Add borders
+            $sheet->getStyle('A' . $row . ':C' . $row)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                    ]
+                ]
+            ]);
+            
+            $row++;
+        }
+        
+        // Add 2 blank rows between employees
+        $row += 2;
+    }
+    
+    // Set print area and page setup
+    $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+    $sheet->getPageSetup()->setFitToWidth(1);
+    
+    // Download file
+    $filename = "Weekly_Timesheet_Report_{$start_date}_to_{$end_date}.xlsx";
+    
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header('Cache-Control: max-age=0');
+    
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
+
 // public function exportTimesheetExcel($start_date, $end_date)
 // {
 //     ini_set('display_errors', 1);

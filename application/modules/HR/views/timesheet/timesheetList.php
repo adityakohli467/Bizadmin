@@ -118,6 +118,12 @@
     <span>Payroll</span>
 </a>  
 
+<a href="/HR/Timesheet/downloadWeeklyReport/<?php echo $date_from; ?>/<?php echo $date_to; ?>" 
+   class="px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-indigo-500 hover:bg-indigo-600">
+    <i class="fa-solid fa-download"></i>
+    <span>Download Report</span>
+</a>
+
                             </div>
                         </td>
 

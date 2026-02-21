@@ -649,6 +649,100 @@ public function getDetailedTimesheetByDateRange($emp_id, $start_date, $end_date,
     return $query->result_array();
 }
 
+/**
+ * Get weekly report data for all employees
+ * Includes timesheet, roster, and hourly rates for cost calculation
+ * 
+ * @param string $start_date Start date (Y-m-d)
+ * @param string $end_date End date (Y-m-d)
+ * @param int $location_id Location ID
+ * @return array Array of employee report data
+ */
+public function getWeeklyReportData($start_date, $end_date, $location_id) {
+    $fields = [
+        'HR_timesheet_details.timesheet_id',
+        'HR_timesheet_details.employee_id',
+        'HR_timesheet_details.position_id',
+        'HR_timesheet_details.roster_date',
+        'HR_timesheet_details.clock_in_time',
+        'HR_timesheet_details.clock_out_time',
+        'HR_timesheet_details.roster_start_time',
+        'HR_timesheet_details.roster_end_time',
+        'HR_timesheet_details.actual_break_duration',
+        'HR_timesheet_details.manual_break_override',
+        'HR_timesheet_details.manual_break_minutes',
+        'CONCAT(e.first_name, " ", e.last_name) as employee_name',
+        'e.first_name',
+        'e.last_name',
+        'pos.position_name',
+        'etp.rate as weekday_rate',
+        'etp.Saturday_rate',
+        'etp.Sunday_rate',
+        'etp.holiday_rate',
+        'SUM(b.break_duration) as total_break_duration'
+    ];
+    
+    $this->tenantDb->select($fields)
+        ->from('HR_timesheet_details')
+        ->join('HR_employee e', 'HR_timesheet_details.employee_id = e.emp_id', 'inner')
+        ->join('HR_emp_position pos', 'HR_timesheet_details.position_id = pos.position_id', 'left')
+        ->join('HR_emp_to_position etp', 'HR_timesheet_details.employee_id = etp.emp_id AND HR_timesheet_details.position_id = etp.position_id', 'left')
+        ->join('HR_timesheet_breaks b', 'HR_timesheet_details.timesheet_id = b.timesheet_id AND HR_timesheet_details.employee_id = b.employee_id AND b.is_deleted = 0', 'left')
+        ->where('HR_timesheet_details.roster_date >=', $start_date)
+        ->where('HR_timesheet_details.roster_date <=', $end_date)
+        ->where([
+            'HR_timesheet_details.is_deleted' => 0,
+            'HR_timesheet_details.location_id' => $location_id
+        ])
+        ->group_by('HR_timesheet_details.timesheet_id')
+        ->order_by('e.first_name', 'ASC')
+        ->order_by('e.last_name', 'ASC')
+        ->order_by('HR_timesheet_details.roster_date', 'ASC');
+    
+    $query = $this->tenantDb->get();
+    return $query->result_array();
+}
+
+/**
+ * Get roster details for date range
+ * 
+ * @param string $start_date Start date (Y-m-d)
+ * @param string $end_date End date (Y-m-d)
+ * @param int $location_id Location ID
+ * @return array Array keyed by employee_id and date
+ */
+public function getRosterDetailsForReport($start_date, $end_date, $location_id) {
+    $this->tenantDb->select([
+        'rd.employee_id',
+        'rd.roster_date',
+        'rd.shift_start_time',
+        'rd.shift_end_time'
+    ])
+    ->from('HR_roster_details rd')
+    ->join('HR_roster r', 'rd.roster_id = r.roster_id', 'inner')
+    ->where('rd.roster_date >=', $start_date)
+    ->where('rd.roster_date <=', $end_date)
+    ->where('rd.is_deleted', 0)
+    ->where('r.location_id', $location_id)
+    ->where('r.is_deleted', 0)
+    ->order_by('rd.roster_date', 'ASC');
+    
+    $results = $this->tenantDb->get()->result_array();
+    
+    // Group by employee_id and date for easy lookup
+    $grouped = [];
+    foreach ($results as $row) {
+        $empId = $row['employee_id'];
+        $date = $row['roster_date'];
+        if (!isset($grouped[$empId][$date])) {
+            $grouped[$empId][$date] = [];
+        }
+        $grouped[$empId][$date][] = $row;
+    }
+    
+    return $grouped;
+}
+
 
 	
 }
