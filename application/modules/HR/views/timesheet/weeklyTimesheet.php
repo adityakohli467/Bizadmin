@@ -166,7 +166,16 @@
                                     $total_hours = 0;
                                   
                                     foreach ($employee_ts as $ts) {
-                                        if (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                        // Calculate directly from clock_in and clock_out for accuracy
+                                        if (isset($ts['clock_in_time']) && isset($ts['clock_out_time']) 
+                                            && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
+                                            $clock_in = strtotime($ts['clock_in_time']);
+                                            $clock_out = strtotime($ts['clock_out_time']);
+                                            if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                                $total_hours += ($clock_out - $clock_in);
+                                            }
+                                        } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                            // Fallback to total_hours field
                                             list($hours, $minutes, $seconds) = explode(':', $ts['total_hours']);
                                             $h = is_numeric($hours) ? (int)$hours : 0;
                                             $m = is_numeric($minutes) ? (int)$minutes : 0;
@@ -187,13 +196,25 @@
                                             // Use manual break value (even if it's 0)
                                             $ts_break = $manual_break_minutes;
                                         } else {
+                                            // Calculate day hours from clock times for auto-break calculation
+                                            $day_seconds = 0;
+                                            if (isset($ts['clock_in_time']) && isset($ts['clock_out_time']) 
+                                                && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
+                                                $clock_in = strtotime($ts['clock_in_time']);
+                                                $clock_out = strtotime($ts['clock_out_time']);
+                                                if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                                    $day_seconds = $clock_out - $clock_in;
+                                                }
+                                            } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                                list($h, $m, $s) = explode(':', $ts['total_hours']);
+                                                $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+                                            }
+                                            
                                             // Use recorded break or apply auto-break logic
                                             $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
                                             
                                             // Apply auto-break logic only if break is 0 and no manual override
-                                            if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
-                                                list($h, $m, $s) = explode(':', $ts['total_hours']);
-                                                $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+                                            if ($ts_break == 0 && $day_seconds > 0) {
                                                 $day_hours = $day_seconds / 3600;
                                                 
                                                 if ($day_hours >= 10) {
@@ -209,8 +230,11 @@
                                     
                                     if ($total_hours > 0) {
                                         $net_seconds = $total_hours - ($total_break * 60);
-                                        // Convert to total minutes and round
-                                        $total_minutes = round($net_seconds / 60);
+                                        // Convert to total minutes with proper rounding
+                                        $total_minutes = floor($net_seconds / 60);
+                                        if (($net_seconds % 60) >= 30) {
+                                            $total_minutes += 1;
+                                        }
                                         $hours = floor($total_minutes / 60);
                                         $minutes = $total_minutes % 60;
                                         $formatted_hours = "{$hours} hrs {$minutes} min";
@@ -407,10 +431,20 @@
                                     $employee_type = (isset($employee_ts[0]['employee_type']) && !empty($employee_ts[0]['employee_type'])) 
                                         ? " ({$employee_ts[0]['employee_type']})" 
                                         : '';
-                                    $total_hours = 0;
-                                  
+                                    
+                                    // Calculate total hours directly from clock_in_time and clock_out_time for accuracy
+                                    $total_hours = 0; // in seconds
                                     foreach ($employee_ts as $ts) {
-                                        if (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                        if (isset($ts['clock_in_time']) && isset($ts['clock_out_time']) && 
+                                            !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
+                                            // Calculate from actual clock times
+                                            $clock_in = strtotime($ts['clock_in_time']);
+                                            $clock_out = strtotime($ts['clock_out_time']);
+                                            if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                                $total_hours += ($clock_out - $clock_in);
+                                            }
+                                        } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                            // Fallback to total_hours if clock times not available
                                             list($hours, $minutes, $seconds) = explode(':', $ts['total_hours']);
                                             $h = is_numeric($hours) ? (int)$hours : 0;
                                             $m = is_numeric($minutes) ? (int)$minutes : 0;
@@ -435,11 +469,22 @@
                                             $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
                                             
                                             // Apply auto-break logic only if break is 0 and no manual override
-                                            if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
-                                                list($h, $m, $s) = explode(':', $ts['total_hours']);
-                                                $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
-                                                $day_hours = $day_seconds / 3600;
+                                            if ($ts_break == 0) {
+                                                // Calculate day_seconds from clock times for accurate auto-break
+                                                $day_seconds = 0;
+                                                if (isset($ts['clock_in_time']) && isset($ts['clock_out_time']) && 
+                                                    !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
+                                                    $clock_in = strtotime($ts['clock_in_time']);
+                                                    $clock_out = strtotime($ts['clock_out_time']);
+                                                    if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                                        $day_seconds = $clock_out - $clock_in;
+                                                    }
+                                                } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                                    list($h, $m, $s) = explode(':', $ts['total_hours']);
+                                                    $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+                                                }
                                                 
+                                                $day_hours = $day_seconds / 3600;
                                                 if ($day_hours >= 10) {
                                                     $ts_break = 60;
                                                 } elseif ($day_hours >= 5) {
@@ -453,8 +498,11 @@
                                     
                                     if ($total_hours > 0) {
                                         $net_seconds = $total_hours - ($total_break * 60);
-                                        // Convert to total minutes and round
-                                        $total_minutes = round($net_seconds / 60);
+                                        // Use floor for minutes, then add 1 if remaining seconds >= 30 (proper rounding)
+                                        $total_minutes = floor($net_seconds / 60);
+                                        if (($net_seconds % 60) >= 30) {
+                                            $total_minutes += 1;
+                                        }
                                         $hours = floor($total_minutes / 60);
                                         $minutes = $total_minutes % 60;
                                         $formatted_hours = "{$hours} hrs {$minutes} min";
@@ -566,12 +614,23 @@
                                                         <?php 
                                           $total_hours_for_each_day = 0; 
                                          
-                                        if (isset($timesheet['total_hours']) && !empty($timesheet['total_hours'])) {
+                                        // Calculate directly from clock_in and clock_out for accuracy (avoids rounding issues with total_hours field)
+                                        if (isset($timesheet['clock_in_time']) && isset($timesheet['clock_out_time']) 
+                                            && !empty($timesheet['clock_in_time']) && !empty($timesheet['clock_out_time'])) {
+                                            $clock_in = strtotime($timesheet['clock_in_time']);
+                                            $clock_out = strtotime($timesheet['clock_out_time']);
+                                            if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                                // Calculate difference in seconds, then round to nearest minute to avoid 1 min discrepancy
+                                                $diff_seconds = $clock_out - $clock_in;
+                                                $total_hours_for_each_day = $diff_seconds;
+                                            }
+                                        } elseif (isset($timesheet['total_hours']) && !empty($timesheet['total_hours'])) {
+                                            // Fallback to total_hours field if clock times not available
                                             list($hours, $minutes, $seconds) = explode(':', $timesheet['total_hours']);
                                             $h = is_numeric($hours) ? (int)$hours : 0;
                                             $m = is_numeric($minutes) ? (int)$minutes : 0;
                                             $s = is_numeric($seconds) ? (int)$seconds : 0;
-                                            $total_hours_for_each_day += ($h * 3600) + ($m * 60) + $s;
+                                            $total_hours_for_each_day = ($h * 3600) + ($m * 60) + $s;
                                         }
                                         
                                         // Calculate break duration with automatic break logic
@@ -623,8 +682,12 @@
                                          if ($total_hours_for_each_day) {
                                         $break_minutes = $break_duration;
                                         $net_seconds = $total_hours_for_each_day - ($break_minutes * 60);
-                                        // Convert to total minutes and round
-                                        $total_minutes = round($net_seconds / 60);
+                                        // Convert to total minutes - use floor for seconds, then calculate hours/mins
+                                        $total_minutes = floor($net_seconds / 60);
+                                        // Add 1 minute if there are remaining seconds >= 30 (proper rounding)
+                                        if (($net_seconds % 60) >= 30) {
+                                            $total_minutes += 1;
+                                        }
                                         $hours = floor($total_minutes / 60);
                                         $minutes = $total_minutes % 60;
                                         $formatted_hours_for_each_day = "{$hours} hrs {$minutes} min";
