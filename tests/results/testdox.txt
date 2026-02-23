@@ -1,0 +1,18 @@
+Roster Timesheet Integration
+ [x] I001 new roster creates timesheet entries
+ [x] I002 roster time update syncs to timesheet
+ [x] I003 add employee to roster creates timesheet
+ [x] I004 remove employee from roster deletes timesheet
+ [x] I005 remove employee with clock preserves timesheet
+ [x] I006 readd employee creates new timesheet
+ [x] I007 roster break time syncs to timesheet
+ [x] I008 multiple shifts create multiple timesheets
+ [x] I009 publish roster activates timesheets
+ [x] I010 unpublish roster preserves timesheets
+ [x] I011 roster timesheet employee consistency
+ [x] I012 time format consistency
+ [x] I013 week range consistency
+ [x] I014 cross midnight shift handling
+ [x] I016 roster time change no duplicate
+ [x] I015 partial week roster
+

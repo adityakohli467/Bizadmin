@@ -1686,5 +1686,6 @@ function exportRosterToPDF() {
 }
 </script>
 
+<?php $this->load->view('components/scroll_to_top'); ?>
 </body>
 </html>

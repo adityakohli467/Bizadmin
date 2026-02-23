@@ -446,7 +446,7 @@
                                     
                                     $all_approved = true;
                                     foreach ($employee_ts as $ts) {
-                                        if (isset($ts['approval_status']) && $ts['approval_status'] !== 'approved') {
+                                        if (!isset($ts['approval_status']) || strtolower($ts['approval_status']) !== 'approved') {
                                             $all_approved = false;
                                             break;
                                         }
@@ -500,9 +500,9 @@
                                                                 : 'N/A'; 
                                                             ?>
                                                         </span>
-                                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium 
-                                                              bg-<?php echo (isset($timesheet['approval_status']) && $timesheet['approval_status'] == 'approved') ? 'success' : 'danger'; ?>-subtle 
-                                                              text-<?php echo (isset($timesheet['approval_status']) && $timesheet['approval_status'] == 'approved') ? 'success' : 'danger'; ?>">
+                                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium status-badge
+                                                              bg-<?php echo (isset($timesheet['approval_status']) && strtolower($timesheet['approval_status']) == 'approved') ? 'success' : 'danger'; ?>-subtle 
+                                                              text-<?php echo (isset($timesheet['approval_status']) && strtolower($timesheet['approval_status']) == 'approved') ? 'success' : 'danger'; ?>">
                                                             <?php echo isset($timesheet['approval_status']) ? htmlspecialchars(ucfirst($timesheet['approval_status'])) : 'Pending'; ?>
                                                         </span>
                                                     </div>
@@ -715,7 +715,7 @@
                                                     <?php endif; ?>
                                                     
                                                     <!-- Approve Button (only show if not approved) -->
-                                                    <?php if (isset($timesheet['approval_status']) && $timesheet['approval_status'] !== 'approved'): ?>
+                                                    <?php if (!isset($timesheet['approval_status']) || strtolower($timesheet['approval_status']) !== 'approved'): ?>
                                                     <?php if ($can_approve_timesheet): ?>
                                                     <button onclick="approveSingle(<?php echo isset($timesheet['timesheet_id']) ? htmlspecialchars($timesheet['timesheet_id']) : 0; ?>)" 
                                                             data-timesheet-id="<?php echo isset($timesheet['timesheet_id']) ? htmlspecialchars($timesheet['timesheet_id']) : 0; ?>"
@@ -1198,8 +1198,8 @@
             dataType: 'json',
             success: function(result) {
                 if (result.status === 'success') {
-                    // Update status badge
-                    let $statusBadge = $timesheetItem.find('.px-2.py-0\\.5.rounded-full');
+                    // Update status badge (use .status-badge class for reliable selection)
+                    let $statusBadge = $timesheetItem.find('.status-badge');
                     $statusBadge
                         .removeClass('bg-danger-subtle text-danger')
                         .addClass('bg-success-subtle text-success')
@@ -1353,5 +1353,7 @@ function updateSummaryCounts() {
             });
         });
     </script>
+
+<?php $this->load->view('components/scroll_to_top'); ?>
 </body>
 </html>

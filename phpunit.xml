@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit 
+    bootstrap="tests/Bootstrap.php"
+    colors="true"
+    stopOnFailure="false"
+    stopOnError="false"
+    verbose="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true">
+    
+    <testsuites>
+        <testsuite name="HR Module Tests">
+            <directory>tests/HR</directory>
+        </testsuite>
+        <testsuite name="Roster Tests">
+            <file>tests/HR/RosterTest.php</file>
+        </testsuite>
+        <testsuite name="Timesheet Tests">
+            <file>tests/HR/TimesheetTest.php</file>
+        </testsuite>
+        <testsuite name="Integration Tests">
+            <file>tests/HR/RosterTimesheetIntegrationTest.php</file>
+        </testsuite>
+    </testsuites>
+    
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">application/modules/HR</directory>
+        </whitelist>
+    </filter>
+    
+    <php>
+        <env name="CI_ENV" value="testing"/>
+        <const name="ENVIRONMENT" value="testing"/>
+    </php>
+    
+    <logging>
+        <log type="testdox-text" target="tests/results/testdox.txt"/>
+    </logging>
+</phpunit>

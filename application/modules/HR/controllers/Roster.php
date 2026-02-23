@@ -731,18 +731,27 @@ class Roster extends MY_Controller {
             ];
             
             // Check if there's a matching clocked timesheet entry that hasn't been used yet
+            // FIX: Don't require roster_start_time to match - the roster time might have changed!
+            // Match by employee_id + roster_date first, then optionally by prep_area_id
             $matchingClocked = null;
             foreach ($clockedInTimesheets as $idx => $clocked) {
                 if (in_array($idx, $usedClockedTimesheets)) {
                     continue; // Already used this one
                 }
+                // Primary match: employee_id + roster_date (roster time can change)
                 if ($clocked['employee_id'] == $detail['employee_id'] && 
-                    $clocked['roster_date'] == $detail['roster_date'] && 
-                    $clocked['prep_area_id'] == $detail['prep_area_id'] &&
-                    $clocked['roster_start_time'] == $detail['shift_start_time']) {
-                    $matchingClocked = $clocked;
-                    $usedClockedTimesheets[] = $idx;
-                    break;
+                    $clocked['roster_date'] == $detail['roster_date']) {
+                    // If prep_area matches too, prefer this match
+                    if ($clocked['prep_area_id'] == $detail['prep_area_id']) {
+                        $matchingClocked = $clocked;
+                        $usedClockedTimesheets[] = $idx;
+                        log_message('error', 'synchronizeTimesheetFromRoster: Found matching clocked timesheet ' . $clocked['timesheet_id'] . ' for employee ' . $detail['employee_id'] . ' on ' . $detail['roster_date']);
+                        break;
+                    } elseif ($matchingClocked === null) {
+                        // Fallback: match by employee + date only (prep area changed)
+                        $matchingClocked = $clocked;
+                        $usedClockedTimesheets[] = $idx;
+                    }
                 }
             }
             
@@ -759,14 +768,53 @@ class Roster extends MY_Controller {
                     $matchingClocked['timesheet_id'],
                     $timesheetData
                 );
+                log_message('error', 'synchronizeTimesheetFromRoster: Updated existing timesheet ' . $matchingClocked['timesheet_id'] . ' with new roster times');
             } else {
-                // New timesheet entry
-                $timesheetData['clock_in_time'] = null;
-                $timesheetData['clock_out_time'] = null;
-                $timesheetData['parent_timesheet_id'] = $parentTimesheetId;
-                $timesheetData['actual_break_duration'] = 0;
-                $timesheetData['created_at'] = date('Y-m-d H:i:s');
-                $recordsToInsert[] = $timesheetData;
+                // SAFEGUARD: Before inserting new entry, check if one already exists with clock data
+                // This prevents duplicates when roster time changes
+                $existingWithClock = $this->common_model->fetchRecordsDynamically(
+                    'HR_timesheet_details',
+                    ['timesheet_id', 'clock_in_time', 'clock_out_time', 'actual_break_duration', 'approval_status'],
+                    [
+                        'parent_timesheet_id' => $parentTimesheetId,
+                        'employee_id' => $detail['employee_id'],
+                        'roster_date' => $detail['roster_date'],
+                        'is_deleted' => 0
+                    ]
+                );
+                
+                // Filter to only get entries with clock data
+                $clockedEntry = null;
+                foreach ($existingWithClock as $existing) {
+                    if (!empty($existing['clock_in_time']) || !empty($existing['clock_out_time'])) {
+                        $clockedEntry = $existing;
+                        break;
+                    }
+                }
+                
+                if ($clockedEntry) {
+                    // Update existing entry instead of creating duplicate
+                    log_message('error', 'synchronizeTimesheetFromRoster: SAFEGUARD - Found existing clocked timesheet ' . $clockedEntry['timesheet_id'] . ' for employee ' . $detail['employee_id'] . ' on ' . $detail['roster_date'] . '. Updating instead of inserting.');
+                    $timesheetData['clock_in_time'] = $clockedEntry['clock_in_time'];
+                    $timesheetData['clock_out_time'] = $clockedEntry['clock_out_time'];
+                    $timesheetData['actual_break_duration'] = $clockedEntry['actual_break_duration'];
+                    $timesheetData['approval_status'] = $clockedEntry['approval_status'];
+                    
+                    $this->common_model->commonRecordUpdate(
+                        'HR_timesheet_details',
+                        'timesheet_id',
+                        $clockedEntry['timesheet_id'],
+                        $timesheetData
+                    );
+                } else {
+                    // No existing entry with clock data - safe to create new
+                    $timesheetData['clock_in_time'] = null;
+                    $timesheetData['clock_out_time'] = null;
+                    $timesheetData['parent_timesheet_id'] = $parentTimesheetId;
+                    $timesheetData['actual_break_duration'] = 0;
+                    $timesheetData['created_at'] = date('Y-m-d H:i:s');
+                    $recordsToInsert[] = $timesheetData;
+                }
             }
         }
 
