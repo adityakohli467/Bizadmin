@@ -36,9 +36,9 @@
     </div>
     <h3 class="text-xl font-bold mb-3">Human Resources</h3>
     <p class="text-gray-600 mb-4">
-        Streamline staff scheduling and timesheets with AI-powered workforce intelligence. 
+        
         Automate roster optimization, detect overtime risks, monitor attendance patterns, 
-        and gain real-time insights into employee productivity — all in one smart dashboard.
+        and gain real-time insights into employee productivity.
     </p>
     <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
         <a href="javascript:void(0)" onclick="toggleAiFeatures()" class="flex items-center">
