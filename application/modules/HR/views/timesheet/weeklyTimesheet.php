@@ -343,29 +343,75 @@
                             <!-- Calculate total hours from all employees -->
                             <?php
                             $total_seconds = 0;
+                            $total_break_seconds = 0;
                             $total_approved = 0;
                             $total_pending = 0;
 
-                            foreach ($employee_timesheets as $ts) {
-                                if (isset($ts[0]['approval_status'])) {
-                                    if ($ts[0]['approval_status'] === 'approved') {
-                                        $total_approved++;
+                            // Iterate through ALL timesheet entries for ALL employees
+                            foreach ($employee_timesheets as $employee_id => $employee_ts_array) {
+                                foreach ($employee_ts_array as $ts) {
+                                    // Count approved/pending
+                                    if (isset($ts['approval_status'])) {
+                                        if (strtolower($ts['approval_status']) === 'approved') {
+                                            $total_approved++;
+                                        } else {
+                                            $total_pending++;
+                                        }
                                     } else {
                                         $total_pending++;
                                     }
-                                }
 
-                                if (isset($ts[0]['total_hours']) && !empty($ts[0]['total_hours'])) {
-                                    list($h, $m, $s) = explode(':', $ts[0]['total_hours']);
-                                    $h = is_numeric($h) ? (int)$h : 0;
-                                    $m = is_numeric($m) ? (int)$m : 0;
-                                    $s = is_numeric($s) ? (int)$s : 0;
-                                    $total_seconds += ($h * 3600) + ($m * 60) + $s;
+                                    // Calculate hours from clock times directly for accuracy
+                                    $day_seconds = 0;
+                                    if (isset($ts['clock_in_time']) && isset($ts['clock_out_time']) 
+                                        && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
+                                        $clock_in = strtotime($ts['clock_in_time']);
+                                        $clock_out = strtotime($ts['clock_out_time']);
+                                        if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                            $day_seconds = $clock_out - $clock_in;
+                                        }
+                                    } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                        // Fallback to total_hours if clock times not available
+                                        list($h, $m, $s) = explode(':', $ts['total_hours']);
+                                        $h = is_numeric($h) ? (int)$h : 0;
+                                        $m = is_numeric($m) ? (int)$m : 0;
+                                        $s = is_numeric($s) ? (int)$s : 0;
+                                        $day_seconds = ($h * 3600) + ($m * 60) + $s;
+                                    }
+                                    
+                                    $total_seconds += $day_seconds;
+                                    
+                                    // Calculate break duration with manual override support
+                                    $manual_override = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+                                    $manual_break_minutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
+                                    
+                                    if ($manual_override && $manual_break_minutes !== null) {
+                                        $break_minutes = $manual_break_minutes;
+                                    } else {
+                                        $break_minutes = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
+                                        
+                                        // Apply auto-break logic if no break recorded and no manual override
+                                        if ($break_minutes == 0 && $day_seconds > 0) {
+                                            $day_hours = $day_seconds / 3600;
+                                            if ($day_hours >= 10) {
+                                                $break_minutes = 60;
+                                            } elseif ($day_hours >= 5) {
+                                                $break_minutes = 30;
+                                            }
+                                        }
+                                    }
+                                    
+                                    $total_break_seconds += ($break_minutes * 60);
                                 }
                             }
 
-                            // Convert to total minutes and round
-                            $total_minutes = round($total_seconds / 60);
+                            // Calculate net hours (total - breaks)
+                            $net_seconds = $total_seconds - $total_break_seconds;
+                            // Use floor for minutes, then add 1 if remaining seconds >= 30 (proper rounding)
+                            $total_minutes = floor($net_seconds / 60);
+                            if (($net_seconds % 60) >= 30) {
+                                $total_minutes += 1;
+                            }
                             $hours = floor($total_minutes / 60);
                             $minutes = $total_minutes % 60;
                             $total_hours_formatted = "{$hours} hrs {$minutes} min";
