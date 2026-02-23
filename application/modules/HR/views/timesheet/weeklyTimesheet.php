@@ -176,20 +176,31 @@
                                     }
                                     
                                     // Calculate total break with auto-break logic applied per timesheet entry
+                                    // IMPORTANT: Respect manual_break_override setting
                                     $total_break = 0;
                                     foreach ($employee_ts as $ts) {
-                                        $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
+                                        // Check if manual break override is set
+                                        $manual_override = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+                                        $manual_break_minutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
                                         
-                                        // Apply auto-break logic if break is 0
-                                        if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
-                                            list($h, $m, $s) = explode(':', $ts['total_hours']);
-                                            $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
-                                            $day_hours = $day_seconds / 3600;
+                                        if ($manual_override && $manual_break_minutes !== null) {
+                                            // Use manual break value (even if it's 0)
+                                            $ts_break = $manual_break_minutes;
+                                        } else {
+                                            // Use recorded break or apply auto-break logic
+                                            $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
                                             
-                                            if ($day_hours >= 10) {
-                                                $ts_break = 60;
-                                            } elseif ($day_hours >= 5) {
-                                                $ts_break = 30;
+                                            // Apply auto-break logic only if break is 0 and no manual override
+                                            if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                                list($h, $m, $s) = explode(':', $ts['total_hours']);
+                                                $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+                                                $day_hours = $day_seconds / 3600;
+                                                
+                                                if ($day_hours >= 10) {
+                                                    $ts_break = 60;
+                                                } elseif ($day_hours >= 5) {
+                                                    $ts_break = 30;
+                                                }
                                             }
                                         }
                                         
@@ -409,20 +420,31 @@
                                     }
                                     
                                     // Calculate total break with auto-break logic applied per timesheet entry
+                                    // IMPORTANT: Respect manual_break_override setting
                                     $total_break = 0;
                                     foreach ($employee_ts as $ts) {
-                                        $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
+                                        // Check if manual break override is set
+                                        $manual_override = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+                                        $manual_break_minutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
                                         
-                                        // Apply auto-break logic if break is 0
-                                        if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
-                                            list($h, $m, $s) = explode(':', $ts['total_hours']);
-                                            $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
-                                            $day_hours = $day_seconds / 3600;
+                                        if ($manual_override && $manual_break_minutes !== null) {
+                                            // Use manual break value (even if it's 0)
+                                            $ts_break = $manual_break_minutes;
+                                        } else {
+                                            // Use recorded break or apply auto-break logic
+                                            $ts_break = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
                                             
-                                            if ($day_hours >= 10) {
-                                                $ts_break = 60;
-                                            } elseif ($day_hours >= 5) {
-                                                $ts_break = 30;
+                                            // Apply auto-break logic only if break is 0 and no manual override
+                                            if ($ts_break == 0 && isset($ts['total_hours']) && !empty($ts['total_hours'])) {
+                                                list($h, $m, $s) = explode(':', $ts['total_hours']);
+                                                $day_seconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+                                                $day_hours = $day_seconds / 3600;
+                                                
+                                                if ($day_hours >= 10) {
+                                                    $ts_break = 60;
+                                                } elseif ($day_hours >= 5) {
+                                                    $ts_break = 30;
+                                                }
                                             }
                                         }
                                         

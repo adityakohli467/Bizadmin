@@ -641,6 +641,313 @@ class TimesheetTest extends TestCase
     }
     
     // =========================================================================
+    // AUTO-BREAK & MANUAL BREAK OVERRIDE TESTS
+    // =========================================================================
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group auto-break
+     * 
+     * Test Case T024: Auto-break 30 minutes for 5-10 hours worked
+     * Expected: 30 minute break auto-applied when no break recorded
+     */
+    public function test_T024_auto_break_30_min_for_5_to_10_hours()
+    {
+        $totalHoursSeconds = 6 * 3600; // 6 hours in seconds
+        $breakDuration = 0; // No break recorded
+        $manualOverride = false;
+        
+        // Apply auto-break logic
+        if (!$manualOverride && $breakDuration == 0 && $totalHoursSeconds > 0) {
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        $this->assertEquals(30, $breakDuration, 'Auto-break should be 30 minutes for 6 hours worked');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group auto-break
+     * 
+     * Test Case T025: Auto-break 60 minutes for 10+ hours worked
+     * Expected: 60 minute break auto-applied when no break recorded
+     */
+    public function test_T025_auto_break_60_min_for_10_plus_hours()
+    {
+        $totalHoursSeconds = 11 * 3600; // 11 hours in seconds
+        $breakDuration = 0; // No break recorded
+        $manualOverride = false;
+        
+        // Apply auto-break logic
+        if (!$manualOverride && $breakDuration == 0 && $totalHoursSeconds > 0) {
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        $this->assertEquals(60, $breakDuration, 'Auto-break should be 60 minutes for 11 hours worked');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group auto-break
+     * 
+     * Test Case T026: No auto-break for less than 5 hours worked
+     * Expected: No break applied for short shifts
+     */
+    public function test_T026_no_auto_break_under_5_hours()
+    {
+        $totalHoursSeconds = 4 * 3600; // 4 hours in seconds
+        $breakDuration = 0; // No break recorded
+        $manualOverride = false;
+        
+        // Apply auto-break logic
+        if (!$manualOverride && $breakDuration == 0 && $totalHoursSeconds > 0) {
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        $this->assertEquals(0, $breakDuration, 'No auto-break should be applied for 4 hours worked');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group manual-break-override
+     * 
+     * Test Case T027: Manual break override with 0 minutes should NOT apply auto-break
+     * Expected: Break stays at 0 even if hours would trigger auto-break
+     */
+    public function test_T027_manual_break_override_zero_no_auto_break()
+    {
+        $totalHoursSeconds = 8 * 3600; // 8 hours - would normally get 30 min auto-break
+        $manualOverride = true;
+        $manualBreakMinutes = 0; // User explicitly set to 0
+        
+        // Calculate break using the CORRECT logic
+        if ($manualOverride && $manualBreakMinutes !== null) {
+            $breakDuration = $manualBreakMinutes;
+        } else {
+            $breakDuration = 0;
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        $this->assertEquals(0, $breakDuration, 'Manual override to 0 should NOT apply auto-break');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group manual-break-override
+     * 
+     * Test Case T028: Manual break override with custom value
+     * Expected: Break uses manual value instead of auto-calculated
+     */
+    public function test_T028_manual_break_override_custom_value()
+    {
+        $totalHoursSeconds = 8 * 3600; // 8 hours - would normally get 30 min auto-break
+        $manualOverride = true;
+        $manualBreakMinutes = 45; // User explicitly set to 45
+        
+        // Calculate break using the CORRECT logic
+        if ($manualOverride && $manualBreakMinutes !== null) {
+            $breakDuration = $manualBreakMinutes;
+        } else {
+            $breakDuration = 0;
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        $this->assertEquals(45, $breakDuration, 'Manual override should use 45 minutes');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group manual-break-override
+     * 
+     * Test Case T029: Total hours calculation with manual break override
+     * Expected: Net hours correctly calculated using manual break, not auto-break
+     */
+    public function test_T029_total_hours_with_manual_break_override()
+    {
+        // 8 hours worked in seconds
+        $totalHoursSeconds = 8 * 3600;
+        
+        // Manual override to 0 breaks
+        $manualOverride = true;
+        $manualBreakMinutes = 0;
+        
+        // Calculate break
+        if ($manualOverride && $manualBreakMinutes !== null) {
+            $breakDuration = $manualBreakMinutes;
+        } else {
+            $breakDuration = 0;
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        // Calculate net hours
+        $netSeconds = $totalHoursSeconds - ($breakDuration * 60);
+        $netMinutes = round($netSeconds / 60);
+        $hours = floor($netMinutes / 60);
+        $minutes = $netMinutes % 60;
+        $formattedHours = "{$hours} hrs {$minutes} min";
+        
+        // With 0 break, should be full 8 hours
+        $this->assertEquals('8 hrs 0 min', $formattedHours, 'With 0 break override, should show full 8 hours');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group manual-break-override
+     * 
+     * Test Case T030: Total hours calculation WITHOUT manual override (auto-break applied)
+     * Expected: Net hours correctly calculated with auto-break deduction
+     */
+    public function test_T030_total_hours_with_auto_break()
+    {
+        // 8 hours worked in seconds
+        $totalHoursSeconds = 8 * 3600;
+        
+        // No manual override
+        $manualOverride = false;
+        $manualBreakMinutes = null;
+        
+        // Calculate break
+        if ($manualOverride && $manualBreakMinutes !== null) {
+            $breakDuration = $manualBreakMinutes;
+        } else {
+            $breakDuration = 0;
+            $hoursWorked = $totalHoursSeconds / 3600;
+            if ($hoursWorked >= 10) {
+                $breakDuration = 60;
+            } elseif ($hoursWorked >= 5) {
+                $breakDuration = 30;
+            }
+        }
+        
+        // Calculate net hours
+        $netSeconds = $totalHoursSeconds - ($breakDuration * 60);
+        $netMinutes = round($netSeconds / 60);
+        $hours = floor($netMinutes / 60);
+        $minutes = $netMinutes % 60;
+        $formattedHours = "{$hours} hrs {$minutes} min";
+        
+        // With 30 min auto-break, should be 7 hrs 30 min
+        $this->assertEquals('7 hrs 30 min', $formattedHours, 'With auto-break, should show 7 hrs 30 min');
+    }
+    
+    /**
+     * @test
+     * @group timesheet-break
+     * @group manual-break-override
+     * 
+     * Test Case T031: Multiple timesheets total with mixed break overrides
+     * Expected: Correct total when some timesheets have manual override, others auto
+     */
+    public function test_T031_multiple_timesheets_mixed_break_overrides()
+    {
+        $timesheets = [
+            [
+                'total_hours' => '08:00:00', // 8 hours - would auto = 30 min
+                'total_break_duration' => 0,
+                'manual_break_override' => 1,
+                'manual_break_minutes' => 0, // Override to 0
+            ],
+            [
+                'total_hours' => '06:00:00', // 6 hours - would auto = 30 min
+                'total_break_duration' => 0,
+                'manual_break_override' => 0,
+                'manual_break_minutes' => null, // No override, use auto
+            ],
+            [
+                'total_hours' => '10:30:00', // 10.5 hours - would auto = 60 min
+                'total_break_duration' => 0,
+                'manual_break_override' => 1,
+                'manual_break_minutes' => 15, // Override to 15
+            ],
+        ];
+        
+        $totalHours = 0;
+        $totalBreak = 0;
+        
+        foreach ($timesheets as $ts) {
+            // Calculate hours
+            list($h, $m, $s) = explode(':', $ts['total_hours']);
+            $daySeconds = ((int)$h * 3600) + ((int)$m * 60) + (int)$s;
+            $totalHours += $daySeconds;
+            
+            // Calculate break with override logic
+            $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+            $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
+            
+            if ($manualOverride && $manualBreakMinutes !== null) {
+                $breakDuration = $manualBreakMinutes;
+            } else {
+                $breakDuration = isset($ts['total_break_duration']) ? (int)$ts['total_break_duration'] : 0;
+                if ($breakDuration == 0 && $daySeconds > 0) {
+                    $hoursWorked = $daySeconds / 3600;
+                    if ($hoursWorked >= 10) {
+                        $breakDuration = 60;
+                    } elseif ($hoursWorked >= 5) {
+                        $breakDuration = 30;
+                    }
+                }
+            }
+            
+            $totalBreak += $breakDuration;
+        }
+        
+        // Expected breaks:
+        // Day 1: 0 (manual override to 0)
+        // Day 2: 30 (auto-break for 6 hours)
+        // Day 3: 15 (manual override to 15)
+        // Total: 45 minutes
+        $this->assertEquals(45, $totalBreak, 'Total break should be 45 minutes');
+        
+        // Calculate net hours
+        $netSeconds = $totalHours - ($totalBreak * 60);
+        $netMinutes = round($netSeconds / 60);
+        $hours = floor($netMinutes / 60);
+        $minutes = $netMinutes % 60;
+        $formattedHours = "{$hours} hrs {$minutes} min";
+        
+        // Total raw: 8 + 6 + 10.5 = 24.5 hours = 24 hrs 30 min
+        // Minus 45 min break = 23 hrs 45 min
+        $this->assertEquals('23 hrs 45 min', $formattedHours, 'Net hours should be 23 hrs 45 min');
+    }
+    
+    // =========================================================================
     // HELPER METHODS
     // =========================================================================
     
