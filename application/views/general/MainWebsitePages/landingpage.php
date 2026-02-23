@@ -4,7 +4,7 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0 md:pr-12">
-                    <span class="text-accent font-semibold">BizAdmin</span>
+                    <span class="text-accent font-semibold">AI-powered Workforce Intelligence Platform</span>
                     <h1 class="text-4xl md:text-5xl font-bold text-primary mt-3 mb-6">All-in-One Admin System for Smooth Business Operations.</h1>
                     <p class="text-gray-600 text-lg mb-8">Streamline your business operations with our comprehensive system that handles task management, schedules, HR processes, and more—all in one place.</p>
                     <div class="flex space-x-4">
@@ -29,17 +29,48 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature Card 1 -->
+
                 <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-list-check text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Checklist Management</h3>
-                    <p class="text-gray-600 mb-4">Ensure staff are performing tasks to standard and at the right time.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
+    <div class="text-accent mb-4">
+        <i class="fa-solid fa-users text-3xl"></i>
+    </div>
+    <h3 class="text-xl font-bold mb-3">Human Resources</h3>
+    <p class="text-gray-600 mb-4">
+        Streamline staff scheduling and timesheets with AI-powered workforce intelligence. 
+        Automate roster optimization, detect overtime risks, monitor attendance patterns, 
+        and gain real-time insights into employee productivity — all in one smart dashboard.
+    </p>
+    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
+        <a href="javascript:void(0)" onclick="toggleAiFeatures()" class="flex items-center">
+    Explore AI HR Features <i class="fa-solid fa-chevron-down ml-2 text-xs" id="aiFeatureChevron"></i>
+</a>
+
+    </span>
+</div>
+
+<div id="aiFeatures" class="hidden mt-6 bg-gray-50 p-6 rounded-lg shadow-inner">
+    <h4 class="text-lg font-bold mb-4">AI-Powered Features</h4>
+
+    <ul class="space-y-3 text-gray-700">
+        <li>🤖 Smart Overtime Alerts – Automatically detect employees exceeding weekly hour limits.</li>
+        <li>📊 Attendance Pattern Insights – Identify frequent late arrivals and absentee trends.</li>
+        <li>🧠 Leave Pattern Detection – Highlight unusual leave behavior (e.g., repeated Mondays/Fridays).</li>
+        <li>💬 Natural Language Dashboard – Ask questions like “Who worked more than 45 hours last week?”</li>
+        <li>📈 Workforce Summary Reports – Auto-generate payroll and shift summaries instantly.</li>
+    </ul>
+</div>
+
+
+<script>
+function toggleAiFeatures() {
+    const section = document.getElementById('aiFeatures');
+    const chevron = document.getElementById('aiFeatureChevron');
+    section.classList.toggle('hidden');
+    if (chevron) chevron.classList.toggle('rotate-180');
+}
+</script>
+
+
                 <!-- Feature Card 2 -->
                 <div class="bg-white rounded-lg p-6 shadow-lg">
                     <div class="text-accent mb-4">
@@ -79,12 +110,12 @@
                 <!-- Feature Card 5 -->
                 <div class="bg-white rounded-lg p-6 shadow-lg">
                     <div class="text-accent mb-4">
-                        <i class="fa-solid fa-users text-3xl"></i>
+                        <i class="fa-solid fa-list-check text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Human Resources</h3>
-                    <p class="text-gray-600 mb-4">Streamline staff scheduling and timesheets for better workforce management.</p>
+                    <h3 class="text-xl font-bold mb-3">Checklist Management</h3>
+                    <p class="text-gray-600 mb-4">Ensure staff are performing tasks to standard and at the right time.</p>
                     <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                    <a href="https://hr.bizadmin.com.au/">    </a>
+                        
                     </span>
                 </div>
                 
