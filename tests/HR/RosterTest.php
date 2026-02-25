@@ -342,19 +342,41 @@ class RosterTest extends TestCase
      * @group roster
      * @group roster-update
      * 
-     * Test Case R010: Fail - Update shift end time before start time
-     * Expected: Error - End time must be after start time
+     * Test Case R010: Fail - Update shift with same start and end time
+     * Expected: Error - Start and end time cannot be the same (0 hour shift)
      */
-    public function test_R010_update_roster_invalid_time_range_should_fail()
+    public function test_R010_update_roster_same_start_end_time_should_fail()
     {
         $invalidShift = [
             'shift_start_time' => '17:00:00',
-            'shift_end_time' => '09:00:00' // End before start - invalid
+            'shift_end_time' => '17:00:00' // Same as start - invalid (0 hour shift)
         ];
         
-        $isValid = strtotime($invalidShift['shift_end_time']) > strtotime($invalidShift['shift_start_time']);
+        $isValid = $invalidShift['shift_start_time'] !== $invalidShift['shift_end_time'];
         
-        $this->assertFalse($isValid, 'End time before start time should be invalid');
+        $this->assertFalse($isValid, 'Same start and end time should be invalid');
+    }
+    
+    /**
+     * @test
+     * @group roster
+     * @group roster-update
+     * 
+     * Test Case R010b: Valid - Overnight shift (end time before start time)
+     * Expected: Success - Overnight shifts are valid (e.g., 10 PM to 2 AM)
+     */
+    public function test_R010b_overnight_shift_should_be_valid()
+    {
+        $overnightShift = [
+            'shift_start_time' => '22:00:00', // 10 PM
+            'shift_end_time' => '02:00:00'    // 2 AM (next day)
+        ];
+        
+        // End time appearing before start time indicates overnight shift (valid scenario)
+        $isOvernightShift = strtotime($overnightShift['shift_end_time']) <= strtotime($overnightShift['shift_start_time']);
+        $isNotSameTime = $overnightShift['shift_start_time'] !== $overnightShift['shift_end_time'];
+        
+        $this->assertTrue($isOvernightShift && $isNotSameTime, 'Overnight shifts should be valid');
     }
     
     // =========================================================================

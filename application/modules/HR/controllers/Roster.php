@@ -429,15 +429,39 @@ class Roster extends MY_Controller {
             $dayName = $rosterDate->format('l'); // Gets day name like "Monday", "Tuesday", etc.
             $dateFormatted = $rosterDate->format('d M Y'); // Gets formatted date like "05 Feb 2026"
             
-            // Validate that end time is after start time
-            if ($shiftStartTime && $shiftEndTime && strtotime($shiftEndTime) <= strtotime($shiftStartTime)) {
-                echo json_encode(['status' => 'error', 'message' => 'Shift end time must be after start time for ' . $employeeName . ' on ' . $dayName . ' (' . $dateFormatted . ')']);
+            // Determine if this is an overnight shift (end time is on the next day)
+            // Overnight shift: start time is PM and end time is AM (e.g., 10 PM to 2 AM)
+            $isOvernightShift = false;
+            if ($shiftStartTime && $shiftEndTime) {
+                $startSeconds = strtotime($shiftStartTime);
+                $endSeconds = strtotime($shiftEndTime);
+                // If end time appears earlier than or equal to start time, it's an overnight shift
+                $isOvernightShift = ($endSeconds <= $startSeconds);
+            }
+            
+            // Validate that start and end times are not exactly the same (0 hour shift is invalid)
+            if ($shiftStartTime && $shiftEndTime && $shiftStartTime === $shiftEndTime) {
+                echo json_encode(['status' => 'error', 'message' => 'Shift start and end time cannot be the same for ' . $employeeName . ' on ' . $dayName . ' (' . $dateFormatted . ')']);
                 return;
             }
             
-            // Validate break time is within shift hours
+            // Validate break time is within shift hours (handles overnight shifts)
             if ($breakStartTime && $shiftStartTime && $shiftEndTime) {
-                if (strtotime($breakStartTime) < strtotime($shiftStartTime) || strtotime($breakStartTime) > strtotime($shiftEndTime)) {
+                $breakSeconds = strtotime($breakStartTime);
+                $startSeconds = strtotime($shiftStartTime);
+                $endSeconds = strtotime($shiftEndTime);
+                
+                if ($isOvernightShift) {
+                    // For overnight shifts, break is valid if:
+                    // - It's after the start time (evening portion), OR
+                    // - It's before the end time (morning portion of next day)
+                    $isBreakValid = ($breakSeconds >= $startSeconds) || ($breakSeconds <= $endSeconds);
+                } else {
+                    // For regular shifts, break must be within start and end times
+                    $isBreakValid = ($breakSeconds >= $startSeconds && $breakSeconds <= $endSeconds);
+                }
+                
+                if (!$isBreakValid) {
                     echo json_encode(['status' => 'error', 'message' => 'Break time must be within shift hours for ' . $employeeName . ' on ' . $dayName . ' (' . $dateFormatted . ')']);
                     return;
                 }
@@ -449,9 +473,20 @@ class Roster extends MY_Controller {
             $empDateKey = $employeeId . '_' . $formattedRosterDate;
             if (isset($employeeScheduleCheck[$empDateKey]) && $shiftStartTime && $shiftEndTime) {
                 foreach ($employeeScheduleCheck[$empDateKey] as $existingShift) {
-                    // Check if times overlap
-                    if (!(strtotime($shiftEndTime) <= strtotime($existingShift['start']) || 
-                          strtotime($shiftStartTime) >= strtotime($existingShift['end']))) {
+                    $existingStart = strtotime($existingShift['start']);
+                    $existingEnd = strtotime($existingShift['end']);
+                    $newStart = strtotime($shiftStartTime);
+                    $newEnd = strtotime($shiftEndTime);
+                    $existingIsOvernight = ($existingEnd <= $existingStart);
+                    
+                    // Calculate effective times (add 24 hours for overnight end times for comparison)
+                    $effectiveNewEnd = $isOvernightShift ? $newEnd + 86400 : $newEnd;
+                    $effectiveExistingEnd = $existingIsOvernight ? $existingEnd + 86400 : $existingEnd;
+                    
+                    // Check if times overlap using effective end times
+                    $noOverlap = ($effectiveNewEnd <= $existingStart) || ($newStart >= $effectiveExistingEnd);
+                    
+                    if (!$noOverlap) {
                         echo json_encode(['status' => 'error', 'message' => $employeeName . ' has overlapping shifts on ' . $dayName . ' (' . $dateFormatted . ')']);
                         return;
                     }
@@ -465,7 +500,8 @@ class Roster extends MY_Controller {
             $employeeScheduleCheck[$empDateKey][] = [
                 'start' => $shiftStartTime,
                 'end' => $shiftEndTime,
-                'prep_area' => $prepAreaId
+                'prep_area' => $prepAreaId,
+                'is_overnight' => $isOvernightShift
             ];
 
             $rosterData[] = [

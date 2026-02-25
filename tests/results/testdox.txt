@@ -1,5 +1,4 @@
-Timesheet
- [x] T024 auto break 30 min for 5 to 10 hours
- [x] T025 auto break 60 min for 10 plus hours
- [x] T026 no auto break under 5 hours
+Roster
+ [x] R010 update roster same start end time should fail
+ [x] R010b overnight shift should be valid
 
