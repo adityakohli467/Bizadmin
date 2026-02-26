@@ -2,28 +2,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
     <style>
-        ::-webkit-scrollbar { display: none;}
-        body { font-family: 'Inter', sans-serif; }
         .captcha-container { background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf0 100%); }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1e293b',
-                        accent: '#3b82f6',
-                        light: '#f8fafc'
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body>
 <div class="container-fluid mb-5" style="margin-top: 130px !important;">

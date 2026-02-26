@@ -2,9 +2,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
 
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
@@ -12,23 +11,7 @@
     <!-- Select2 for dropdown search -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&display=swap">
     <style>
-        body {
-            font-family: 'Inter', sans-serif !important;
-        }
-        .fa, .fas, .far, .fal, .fab {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
-        }
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        html, body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
         .dragEmployeeBox div {
             cursor: pointer;
         }
@@ -170,26 +153,6 @@
         }
      
     </style>
-    <script>
-        tailwind.config = {
-            "theme": {
-                "extend": {
-                    "colors": {
-                        "primary": "#4F46E5",
-                        "primary-light": "#EEF2FF",
-                        "shift-green": "#E6F4EA",
-                        "shift-border": "#CAEBD0"
-                    },
-                    "fontFamily": {
-                        "sans": ["Inter", "sans-serif"]
-                    }
-                },
-                "fontFamily": {
-                    "sans": ["Inter", "sans-serif"]
-                }
-            }
-        };
-    </script>
     
     <style>
     
@@ -818,7 +781,17 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
                 let formDataS = localStorage.getItem(employeeIdPrepId);
                 let formData = JSON.parse(formDataS);
 
-                $("#empName-shift").val(formData.employeeId);
+                // Initialize Select2 if not already done
+                if (!$('#empName-shift').hasClass('select2-hidden-accessible')) {
+                    $('#empName-shift').select2({
+                        placeholder: 'Search and select employee',
+                        allowClear: true,
+                        dropdownParent: $('#addShift-modal'),
+                        width: '100%'
+                    });
+                }
+
+                $("#empName-shift").val(formData.employeeId).trigger('change');
                 $("#empName-shift").prop('disabled', true);
                 $(".empShiftStartTime").val(formData.empShiftStartTime);
                 $(".empShiftEndTime").val(formData.empShiftEndTime);

@@ -6,7 +6,7 @@
 <head>
   <meta charset="utf-8">
   <title>Leave Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <style>body{font-family:Inter, sans-serif}::-webkit-scrollbar{display:none}</style>
 </head>

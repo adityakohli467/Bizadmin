@@ -4,16 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
     <style>
-        body {
-            font-family: 'Inter', sans-serif !important;
-        }
         .shift-time-cell {
             font-size: 12px;
             padding: 8px;
@@ -22,35 +15,11 @@
             display: block;
             margin-bottom: 4px;
         }
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        html, body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
         [data-layout-mode=light] thead th {
     color: #172153;
 }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        "orange-primary": "#ff631a",
-                        "green-primary": "#22b353",
-                        "sky-primary": "#1e88e5",
-                        "shift-green": "#e8f5e9",
-                        "shift-border": "#a5d6a7"
-                    },
-                    fontFamily: {
-                        sans: ["Inter", "sans-serif"]
-                    }
-                }
-            }
-        };
-    </script>
 </head>
 <body class="bg-gray-50 font-sans">
     <div class="flex h-screen overflow-hidden">

@@ -1,38 +1,18 @@
 <html><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.3.5/jquery.timepicker.min.css">
     
 
     <style>
-        ::-webkit-scrollbar { display: none;}
-        body { font-family: 'Inter', sans-serif; }
         .dropdown-open { display: block; }
         .dropdown-closed { display: none; }
     </style>
-    <script>tailwind.config = {
-  "theme": {
-    "extend": {
-      "colors": {
-        "primary": "#1F2937",
-        "accent": "#10B981",
-        "background": "#F9FAFB"
-      },
-      "fontFamily": {
-        "sans": [
-          "Inter",
-          "sans-serif"
-        ]
-      }
-    }
-  }
-};</script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"><style>
+<style>
   .highlighted-section {
     outline: 2px solid #3F20FB;
     background-color: rgba(63, 32, 251, 0.1);

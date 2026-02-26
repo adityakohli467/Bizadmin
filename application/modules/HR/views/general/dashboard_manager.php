@@ -4,15 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
     <style>
-        ::-webkit-scrollbar { display: none;}
-        
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
             .table-responsive {
@@ -30,23 +24,6 @@
         color:#1f2937 !important;
     }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'navy': '#1a2b4a',
-                        'navy-dark': '#0f1b30',
-                        'teal': '#00d4d4',
-                        'teal-dark': '#00b8b8',
-                    },
-                    fontFamily: {
-                        'sans': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body class="bg-[#F4F6F9] font-inter">
 

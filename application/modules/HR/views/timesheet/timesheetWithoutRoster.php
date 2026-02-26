@@ -5,13 +5,9 @@
  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Timesheet </title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>::-webkit-scrollbar { display: none;}
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
+    <style>
     
     [data-layout-mode=light] thead th {
     color: #374151 !important;
@@ -25,34 +21,6 @@ tfoot {
     backdrop-filter: blur(4px);
 }
 </style>
-
-
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        cafe: {
-                            50: '#fef6ee',
-                            100: '#fde9d3',
-                            200: '#fad0a5',
-                            300: '#f7ae6d',
-                            400: '#f38333',
-                            500: '#f06312',
-                            600: '#e14808',
-                            700: '#bb3309',
-                            800: '#95290e',
-                            900: '#79230f',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body class=" font-sans">
 

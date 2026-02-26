@@ -3,30 +3,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php include(APPPATH . '../application/views/general/tailwind_common_assets.php'); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://bizadmin.com.au/login-assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkr6VbGs7uYPJn_AFfvnMZztcQIigx9J0&libraries=places"></script>
-
-    <style>::-webkit-scrollbar { display: none;}</style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'sans-serif']
-                    },
-                    colors: {
-                        'navy': '#1e3a5f',
-                        'navy-dark': '#152a45'
-                    }
-                }
-            }
-        }
-    </script>
 
     <script>
         function initAutocomplete() {

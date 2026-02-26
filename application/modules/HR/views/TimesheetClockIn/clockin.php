@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
     <title>Bizadmn Clockin</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.materialdesignicons.com/5.9.55/css/materialdesignicons.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
     <style>
-        body { font-family: 'Inter', sans-serif !important; }
-        .fa, .fas, .far, .fal, .fab { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; }
-        ::-webkit-scrollbar { display: none; }
-        html, body { -ms-overflow-style: none; scrollbar-width: none; }
         .highlighted-section { outline: 2px solid #3F20FB; background-color: rgba(63, 32, 251, 0.1); }
         .edit-button { position: absolute; z-index: 1000; }
         .pinpad-btn { width: 60px; height: 60px; font-size: 1.2rem; }
@@ -28,28 +21,215 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            /* Header mobile styles */
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header-info {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .header-info > div {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.5rem;
+            }
+            
+            /* Search/Filter section mobile */
+            .filter-section {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .filter-section .search-filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            .filter-section input,
+            .filter-section select {
+                width: 100%;
+            }
+            .filter-section .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            /* Hide table on mobile, show cards */
+            .desktop-table {
+                display: none;
+            }
+            .mobile-cards {
+                display: block !important;
+            }
+            
+            /* Mobile card styles */
+            .employee-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border: 1px solid #e5e7eb;
+            }
+            .employee-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            .employee-card-actions {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+            .employee-card-actions button {
+                padding: 0.625rem 0.5rem;
+                font-size: 0.75rem;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.25rem;
+            }
+            .employee-card-actions button i {
+                margin: 0;
+                font-size: 1rem;
+            }
+            .employee-card-actions button span {
+                font-size: 0.625rem;
+            }
+            
+            /* Shift detail cards on mobile */
+            .shift-card {
+                background: #f8fafc;
+                border-radius: 8px;
+                padding: 0.75rem;
+                margin-top: 0.5rem;
+                border-left: 3px solid #3b82f6;
+            }
+            
+            .employee-card-name {
+                font-weight: 600;
+                font-size: 1rem;
+                color: #1f2937;
+            }
+            .employee-card-position {
+                font-size: 0.75rem;
+                color: #6b7280;
+            }
+            .employee-card-hours {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #374151;
+                background: #f3f4f6;
+                padding: 0.375rem 0.75rem;
+                border-radius: 9999px;
+            }
+            .employee-card-shift {
+                background: #f9fafb;
+                border-radius: 8px;
+                padding: 0.75rem;
+                margin-top: 0.5rem;
+            }
+            .employee-card-shift-info {
+                display: flex;
+                align-items: center;
+                margin-bottom: 0.75rem;
+            }
+            .shift-badge {
+                width: 1.5rem;
+                height: 1.5rem;
+                background: #dbeafe;
+                color: #1d4ed8;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.625rem;
+                font-weight: 600;
+                margin-right: 0.5rem;
+            }
+            .action-btn {
+                padding: 0.625rem 0.5rem;
+                font-size: 0.75rem;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.25rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .action-btn i {
+                font-size: 1rem;
+            }
+            .action-btn span {
+                font-size: 0.625rem;
+            }
+            .action-btn-success {
+                background: #22b353;
+                color: white;
+            }
+            .action-btn-success:hover:not(:disabled) {
+                background: #1a8f42;
+            }
+            .action-btn-info {
+                background: #1e88e5;
+                color: white;
+            }
+            .action-btn-info:hover:not(:disabled) {
+                background: #1976d2;
+            }
+            .action-btn-warning {
+                background: #ff631a;
+                color: white;
+            }
+            .action-btn-warning:hover:not(:disabled) {
+                background: #e55716;
+            }
+            .action-btn-disabled {
+                background: #e5e7eb;
+                color: #9ca3af;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-cards {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="font-sans bg-gray-50">
-    <header id="header" class="bg-white py-2 px-6 border-b border-gray-200">
+    <header id="header" class="bg-white py-2 px-4 md:px-6 border-b border-gray-200">
         <div class="container mx-auto">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Bizadmin</h1>
-                    <p class="text-gray-500 text-sm mt-1">Track employee work hours</p>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-3 header-content">
+                <div class="text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800">Bizadmin</h1>
+                    <p class="text-gray-500 text-xs md:text-sm mt-1">Track employee work hours</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center bg-gray-100 rounded-lg px-3 py-2">
-                        <i class="fa-regular fa-calendar text-orange-primary mr-2"></i>
-                        <span class="text-sm text-gray-700"><?php echo htmlspecialchars(date('l, F j, Y', strtotime($currentDate))); ?></span>
+                <div class="flex flex-wrap items-center justify-center gap-2 md:space-x-4 header-info">
+                    <div class="flex items-center bg-gray-100 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
+                        <i class="fa-regular fa-calendar text-orange-primary mr-1 md:mr-2 text-sm"></i>
+                        <span class="text-xs md:text-sm text-gray-700"><?php echo htmlspecialchars(date('D, M j', strtotime($currentDate))); ?></span>
                     </div>
-                    <div class="flex items-center bg-gray-100 rounded-lg px-3 py-2">
-                        <i class="fa-solid fa-location-dot text-orange-primary mr-2"></i>
-                        <span class="text-sm text-gray-700"><?php echo htmlspecialchars($location_name); ?></span>
+                    <div class="flex items-center bg-gray-100 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
+                        <i class="fa-solid fa-location-dot text-orange-primary mr-1 md:mr-2 text-sm"></i>
+                        <span class="text-xs md:text-sm text-gray-700 truncate max-w-[120px] md:max-w-none"><?php echo htmlspecialchars($location_name); ?></span>
                     </div>
                     <div class="relative">
-                        <div id="user-icon" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer">
-                            <i class="fa-regular fa-user text-gray-600"></i>
+                        <div id="user-icon" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer">
+                            <i class="fa-regular fa-user text-gray-600 text-sm"></i>
                         </div>
                         <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
                             <a class="dropdown-item flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100" href="<?php echo base_url('auth/logout'); ?>">
@@ -102,15 +282,15 @@
             </div>
         </div>
 
-        <section class="mb-6 bg-white rounded-lg shadow-sm p-4">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center space-x-4">
+        <section class="mb-4 md:mb-6 bg-white rounded-lg shadow-sm p-3 md:p-4">
+            <div class="flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center justify-between gap-3 md:gap-4 filter-section">
+                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:space-x-4 search-filters">
                     <div class="relative">
-                        <input id="search-employee" type="text" placeholder="Search employee..." class="pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary text-gray-800">
+                        <input id="search-employee" type="text" placeholder="Search employee..." class="w-full md:w-auto pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary text-gray-800 text-sm">
                         <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <div class="relative">
-                        <select id="prep-filter" class="appearance-none pl-4 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-800">
+                        <select id="prep-filter" class="w-full md:w-auto appearance-none pl-4 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-800 text-sm">
                             <option value="">All Outlets</option>
                             <?php foreach ($prepAreas as $area): ?>
                                 <option value="<?php echo htmlspecialchars($area['id']); ?>"><?php echo htmlspecialchars($area['prep_name']); ?></option>
@@ -119,12 +299,12 @@
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                     </div>
                 </div>
-                <div class="flex space-x-2">
-                    <button class="px-4 py-2 bg-white border rounded-full cursor-pointer text-gray-700 hover:bg-gray-50 flex items-center">
-                        <i class="fa-solid fa-filter mr-2 text-gray-500"></i> Filter
+                <div class="flex space-x-2 action-buttons">
+                    <button class="flex-1 md:flex-none px-3 md:px-4 py-2 bg-white border rounded-full cursor-pointer text-gray-700 hover:bg-gray-50 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-filter mr-1 md:mr-2 text-gray-500"></i> Filter
                     </button>
-                    <button onclick="location.reload()" class="px-4 py-2 bg-orange-primary text-white rounded-full cursor-pointer hover:bg-orange-600 flex items-center">
-                        <i class="fa-solid fa-recycle mr-2"></i> Reload
+                    <button onclick="location.reload()" class="flex-1 md:flex-none px-3 md:px-4 py-2 bg-orange-primary text-white rounded-full cursor-pointer hover:bg-orange-600 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-recycle mr-1 md:mr-2"></i> Reload
                     </button>
                 </div>
             </div>
@@ -133,7 +313,9 @@
         <section id="timesheet-table" class="bg-white rounded-lg shadow-sm overflow-hidden">
             
               <video id="clockVideo" style="display: none;" autoplay></video>
-            <div class="overflow-x-auto">
+            
+            <!-- Desktop Table View -->
+            <div class="overflow-x-auto desktop-table">
                 <?php if(isset($empLists) && !empty($empLists)) {  ?>
                 <table class="w-full">
                     <thead>
@@ -403,7 +585,135 @@
                         <h5><button id="info-button" class="w-6 h-6 bg-red-800 hover:bg-red-800 text-white rounded-full flex items-center justify-center">
                     <i class="text-sm" data-fa-i2svg=""><svg class="svg-inline--fa fa-info" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" data-fa-i2svg=""><path fill="currentColor" d="M48 80a48 48 0 1 1 96 0A48 48 0 1 1 48 80zM0 224c0-17.7 14.3-32 32-32H96c17.7 0 32 14.3 32 32V448h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H64V256H32c-17.7 0-32-14.3-32-32z"></path></svg></i>
                 </button> No employee exist for today's date.Please check roaster for the date <?php echo date('d-m-y'); ?></h5>
-                        <?php }  ?>
+                <?php }  ?>
+            </div>
+            
+            <!-- Mobile Cards View -->
+            <div class="mobile-cards p-3" style="display: none;">
+                <?php if(isset($empLists) && !empty($empLists)) { ?>
+                    <?php foreach ($empLists as $index => $emp): 
+                        $shiftCount = count($emp['shifts'] ?? []);
+                        $hasMultipleShifts = $shiftCount > 1;
+                        
+                        // Calculate total hours across all shifts
+                        $totalSeconds = $emp['total_worked_seconds'] ?? 0;
+                        $totalHours = floor($totalSeconds / 3600);
+                        $totalMinutes = floor(($totalSeconds % 3600) / 60);
+                        
+                        // Check if any shift is active (clocked in but not out)
+                        $hasActiveShift = false;
+                        foreach ($emp['shifts'] as $shift) {
+                            if (!empty($shift['clock_in_time']) && empty($shift['clock_out_time'])) {
+                                $hasActiveShift = true;
+                            }
+                        }
+                    ?>
+                    <div class="employee-card" 
+                         id="mobile-employee-<?php echo htmlspecialchars($emp['employee_id']); ?>"
+                         data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>">
+                        <!-- Employee Header -->
+                        <div class="employee-card-header">
+                            <div class="flex-1">
+                                <p class="employee-card-name"><?php echo htmlspecialchars($emp['name']); ?></p>
+                                <p class="employee-card-position"><?php echo htmlspecialchars($emp['position_name'] ?? 'Not Assigned'); ?></p>
+                            </div>
+                            <div class="employee-card-hours">
+                                <i class="fa-regular fa-clock mr-1"></i>
+                                <?php if ($totalSeconds > 0): ?>
+                                    <?php echo sprintf('%dh %dm', $totalHours, $totalMinutes); ?>
+                                <?php elseif ($hasActiveShift): ?>
+                                    <span class="text-green-600">Active</span>
+                                <?php else: ?>
+                                    0h 0m
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <!-- Shifts -->
+                        <?php foreach ($emp['shifts'] as $shiftIndex => $shift): 
+                            $isThisShiftActive = !empty($shift['clock_in_time']) && empty($shift['clock_out_time']);
+                            $anotherShiftActive = $hasActiveShift && !$isThisShiftActive;
+                        ?>
+                        <div class="employee-card-shift" 
+                             data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>"
+                             data-prep-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>">
+                            <!-- Shift Info -->
+                            <div class="employee-card-shift-info">
+                                <?php if ($hasMultipleShifts): ?>
+                                <span class="shift-badge"><?php echo $shiftIndex + 1; ?></span>
+                                <?php endif; ?>
+                                <div>
+                                    <p class="font-medium text-gray-800"><?php echo htmlspecialchars($shift['prep_name'] ?? 'None'); ?></p>
+                                    <?php if (!empty($shift['roster_start_time']) && !empty($shift['roster_end_time'])): ?>
+                                    <p class="text-xs text-gray-500">
+                                        <i class="fa-regular fa-clock mr-1"></i>
+                                        <?php echo date('h:i A', strtotime($shift['roster_start_time'])); ?> - <?php echo date('h:i A', strtotime($shift['roster_end_time'])); ?>
+                                    </p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="employee-card-actions">
+                                <!-- Clock In -->
+                                <?php if ($shift['clock_in_time']): ?>
+                                    <button class="action-btn action-btn-success action-btn-disabled" disabled>
+                                        <i class="fa-solid fa-play"></i>
+                                        <span><?php echo date('h:i A', strtotime($shift['clock_in_time'])); ?></span>
+                                    </button>
+                                <?php elseif ($anotherShiftActive): ?>
+                                    <button class="action-btn action-btn-disabled" disabled title="Complete current shift first">
+                                        <i class="fa-solid fa-lock"></i>
+                                        <span>Waiting</span>
+                                    </button>
+                                <?php else: ?>
+                                    <button class="action-btn action-btn-success clock-in-btn" data-action="clock_in" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" data-prep-area-id="<?php echo htmlspecialchars($shift['prep_area_id']); ?>">
+                                        <i class="fa-solid fa-play"></i>
+                                        <span>Clock In</span>
+                                    </button>
+                                <?php endif; ?>
+                                
+                                <!-- Break -->
+                                <?php if ($shift['latest_break_start_time'] && !$shift['latest_break_end_time']): ?>
+                                    <button class="action-btn action-btn-info break-btn" data-action="break_end" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                        <i class="fa-solid fa-pause"></i>
+                                        <span>End <?php echo date('h:i', strtotime($shift['latest_break_start_time'])); ?></span>
+                                    </button>
+                                <?php else: ?>
+                                    <button class="action-btn action-btn-info break-btn <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? '' : 'action-btn-disabled'; ?>" data-action="break_start" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>" <?php echo $shift['clock_in_time'] && !$shift['clock_out_time'] ? '' : 'disabled'; ?>>
+                                        <i class="fa-solid fa-pause"></i>
+                                        <span>Break</span>
+                                    </button>
+                                <?php endif; ?>
+                                
+                                <!-- Clock Out -->
+                                <?php if ($shift['clock_out_time']): ?>
+                                    <button class="action-btn action-btn-warning action-btn-disabled" disabled>
+                                        <i class="fa-solid fa-stop"></i>
+                                        <span><?php echo date('h:i A', strtotime($shift['clock_out_time'])); ?></span>
+                                    </button>
+                                <?php elseif ($shift['clock_in_time']): ?>
+                                    <button class="action-btn action-btn-warning clock-out-btn" data-action="clock_out" data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id'] ?: 0); ?>">
+                                        <i class="fa-solid fa-stop"></i>
+                                        <span>Clock Out</span>
+                                    </button>
+                                <?php else: ?>
+                                    <button class="action-btn action-btn-disabled" disabled>
+                                        <i class="fa-solid fa-stop"></i>
+                                        <span>Clock Out</span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endforeach; ?>
+                <?php } else { ?>
+                    <div class="p-4 text-center text-gray-500">
+                        <i class="fa-solid fa-info-circle text-red-500 mr-2"></i>
+                        No employee exist for today's date. Please check roster for the date <?php echo date('d-m-y'); ?>
+                    </div>
+                <?php } ?>
             </div>
         </section>
     </main>
@@ -411,19 +721,6 @@
     <footer>
       
         <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: { 
-                            "orange-primary": "#ff631a", 
-                            "green-primary": "#22b353",
-                            "sky-primary": "#1e88e5"
-                        },
-                        fontFamily: { sans: ["Inter", "sans-serif"] }
-                    }
-                }
-            };
-
             // Global variable to store pending action
             let pendingAction = null;
             let pinVerifiedSuccess = false; // Flag to track if PIN was successfully verified
@@ -748,16 +1045,91 @@ function updateTimer(row, clockIn, clockOut, breakDuration) {
 
 $(document).ready(function() {
    $('#prep-filter').change(function() {
-        var prepId = $(this).val().toString(); // Ensure prepId is a string
-        $('tbody tr').each(function() {
-            var rowPrepId = $(this).data('prep-id') ? $(this).data('prep-id').toString() : '';
-            $(this).toggle(prepId === '' || rowPrepId === prepId);
-        });
+        var prepId = $(this).val().toString();
+        
+        if (prepId === '') {
+            // Show all rows, but keep shift detail rows hidden (collapsed state)
+            $('tbody tr').each(function() {
+                if ($(this).hasClass('shift-detail-row')) {
+                    $(this).addClass('hidden');
+                } else {
+                    $(this).show();
+                }
+            });
+            // Reset all toggle icons
+            $('.shift-toggle-icon').removeClass('rotate-90');
+            
+            // Show all mobile cards and shifts
+            $('.employee-card').show();
+            $('.employee-card-shift').show();
+        } else {
+            // Filter by prep area
+            $('tbody tr').each(function() {
+                var $row = $(this);
+                
+                if ($row.hasClass('shift-detail-row')) {
+                    // This is a shift detail row - check if it matches
+                    var rowPrepId = $row.data('prep-id') ? $row.data('prep-id').toString() : '';
+                    if (rowPrepId === prepId) {
+                        $row.removeClass('hidden').show();
+                    } else {
+                        $row.hide();
+                    }
+                } else {
+                    // This is a parent employee row
+                    var employeeId = $row.data('employee-id');
+                    // Check if any of its child shift rows match the prep area
+                    var hasMatchingShift = false;
+                    $(`.shift-detail-row[data-employee-id="${employeeId}"]`).each(function() {
+                        var shiftPrepId = $(this).data('prep-id') ? $(this).data('prep-id').toString() : '';
+                        if (shiftPrepId === prepId) {
+                            hasMatchingShift = true;
+                            return false; // break loop
+                        }
+                    });
+                    
+                    if (hasMatchingShift) {
+                        $row.show();
+                        // Expand the toggle icon
+                        $(`#toggle-icon-${employeeId}`).addClass('rotate-90');
+                    } else {
+                        $row.hide();
+                    }
+                }
+            });
+            
+            // Filter mobile cards by prep area
+            $('.employee-card').each(function() {
+                var $card = $(this);
+                var hasMatchingShift = false;
+                
+                $card.find('.employee-card-shift').each(function() {
+                    var shiftPrepId = $(this).data('prep-id') ? $(this).data('prep-id').toString() : '';
+                    if (shiftPrepId === prepId) {
+                        hasMatchingShift = true;
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                
+                // Show/hide the card based on whether it has matching shifts
+                $card.toggle(hasMatchingShift);
+            });
+        }
     });
     $('#search-employee').on('input', function() {
         var search = $(this).val().toLowerCase();
+        
+        // Filter desktop table rows
         $('tbody tr').each(function() {
             var name = $(this).find('td:first p:first').text().toLowerCase();
+            $(this).toggle(name.includes(search));
+        });
+        
+        // Filter mobile cards
+        $('.employee-card').each(function() {
+            var name = $(this).find('.employee-card-name').text().toLowerCase();
             $(this).toggle(name.includes(search));
         });
     });

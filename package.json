@@ -1,0 +1,13 @@
+{
+  "name": "bizadmin",
+  "version": "1.0.0",
+  "description": "Bizadmin Application",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./src/css/tailwind.css -o ./theme-assets/css/tailwind.min.css --minify",
+    "watch:css": "npx tailwindcss -i ./src/css/tailwind.css -o ./theme-assets/css/tailwind.min.css --watch",
+    "build": "npm run build:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

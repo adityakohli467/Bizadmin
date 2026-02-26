@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,20 +23,6 @@
                 color: #172153 !important;
         }
     </style>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
-                    colors: {
-                        'navy': '#283057',
-                        'navy-light': '#3d4a6f',
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- jQuery (required for the original AJAX & calculations) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -4,22 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timesheets</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <style>::-webkit-scrollbar { display: none;}</style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'navy': '#1F3A61',
-                        'magenta': '#B01271'
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
 </head>
 <body class="bg-gray-100">
 
@@ -33,7 +19,7 @@
         </div>
         
         <div id="toolbar-section" class="flex items-center justify-end space-x-4 mb-6">
-            <a href="/HR/addTimesheetWithoutRoster" class="bg-magenta hover:bg-[#8f0f5c] px-4 py-2 rounded-lg text-white font-medium text-sm transition">
+            <a href="/HR/addTimesheetWithoutRoster" class="bg-magenta hover:bg-[#8f0f5c] px-3 py-1.5 rounded-md text-white font-medium text-xs transition">
                 <i class="fa-solid fa-plus"></i>
                 <span class="font-medium">Add Timesheet</span>
             </a>
@@ -41,6 +27,7 @@
             <div class="relative">
                 <input 
                     type="text" 
+                    id="search-timesheet"
                     placeholder="Search:" 
                     class="border border-gray-300 rounded-md px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -88,38 +75,37 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-2">
                                 <?php if(isset($generalConfigData['timesheetWORoster_toggle']) && $generalConfigData['timesheetWORoster_toggle'] == 1)  { ?>
-                                <a href="/HR/viewTimesheetWithoutRoster/<?php echo  $t['id']; ?>" class="px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-green-500 hover:bg-green-600">
+                                <a href="/HR/viewTimesheetWithoutRoster/<?php echo  $t['id']; ?>" class="px-3 py-1.5 rounded-md text-white font-medium text-xs transition bg-green-500 hover:bg-green-600">
                                     <i class="fa-solid fa-eye"></i>
                                     <span>View</span>
                                 </a>
                                 
-                                  <a href="/HR/addTimesheetWithoutRoster/<?php echo  $t['id']; ?>" class="px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-red-500 hover:bg-red-600">
+                                  <a href="/HR/addTimesheetWithoutRoster/<?php echo  $t['id']; ?>" class="px-3 py-1.5 rounded-md text-white font-medium text-xs transition bg-red-500 hover:bg-red-600">
                                     <i class="fa-solid fa-pencil"></i>
                                     <span>Edit</span>
                                 </a>
                                 
-                    <button class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-medium text-sm transition shadow-sm" onclick="showTimesheetRecreateModal(<?php echo  $t['id']; ?>)">
-                        <i class="fa-solid fa-copy mr-2"></i>
+                    <button class="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md font-medium text-xs transition shadow-sm" onclick="showTimesheetRecreateModal(<?php echo  $t['id']; ?>)">
+                        <i class="fa-solid fa-copy mr-1"></i>
                         Recreate
                      </button>
                     
                                 <?php }  ?>
 
-                                <a href="/HR/viewWeeklyTimesheet/<?php echo  $date_from; ?>/<?php echo  $date_to; ?>" class=" px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-blue-500 hover:bg-blue-600">
+                                <a href="/HR/viewWeeklyTimesheet/<?php echo  $date_from; ?>/<?php echo  $date_to; ?>" class="px-3 py-1.5 rounded-md text-white font-medium text-xs transition bg-blue-500 hover:bg-blue-600">
                                     <span>Manage Timesheets</span>
                                 </a>
                                 
                        
 
-                            <!-- Add this button in the Action column -->
-<a href="/HR/Timesheet/payrollCalculation/<?php echo $t['id']; ?>" 
-   class="px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-purple-500 hover:bg-purple-600">
+                            <a href="/HR/Timesheet/payrollCalculation/<?php echo $t['id']; ?>" 
+   class="px-3 py-1.5 rounded-md text-white font-medium text-xs transition bg-purple-500 hover:bg-purple-600">
     <i class="fa-solid fa-calculator"></i>
     <span>Payroll</span>
 </a>  
 
 <a href="/HR/Timesheet/downloadWeeklyReport/<?php echo $date_from; ?>/<?php echo $date_to; ?>" 
-   class="px-4 py-2 rounded-lg text-white font-medium text-sm transition bg-indigo-500 hover:bg-indigo-600">
+   class="px-3 py-1.5 rounded-md text-white font-medium text-xs transition bg-indigo-500 hover:bg-indigo-600">
     <i class="fa-solid fa-download"></i>
     <span>Download Report</span>
 </a>
@@ -182,6 +168,15 @@ function showTimesheetRecreateModal(roster_id) {
             $(".recreate_timesheet_id").val(roster_id);
             $("#recreateTimesheetModal").modal("show");
         }
+
+// Search functionality
+$('#search-timesheet').on('input', function() {
+    var searchText = $(this).val().toLowerCase();
+    $('#table-section tbody tr').each(function() {
+        var rowText = $(this).text().toLowerCase();
+        $(this).toggle(rowText.includes(searchText));
+    });
+});
         
         
  $(document).ready(function() {

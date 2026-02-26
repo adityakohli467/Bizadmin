@@ -3,35 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ["Inter", "sans-serif"]
-                    },
-                    colors: {
-                        primary: {
-                            50: "#f0f9ff",
-                            100: "#e0f2fe",
-                            500: "#0ea5e9",
-                            600: "#0284c7",
-                            700: "#0369a1"
-                        },
-                        success: "#10B981",
-                        warning: "#F59E0B"
-                    }
-                }
-            }
-        };
-    </script>
+    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $this->load->view('general/tailwind_common_assets'); ?>
    
  
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { display: none; }
         .highlighted-section {
             outline: 2px solid #3F20FB;
             background-color: rgba(63, 32, 251, 0.1);
@@ -39,10 +15,6 @@
         .edit-button {
             position: absolute;
             z-index: 1000;
-        }
-        html, body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
         
         /* Mobile Sidebar Styles */
@@ -905,7 +877,7 @@
     <div id="commentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-96 shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-medium text-gray-900">Manager Comment</h3>
+                <h3 class="text-lg font-medium text-black">Manager Comment</h3>
                 <button onclick="closeCommentModal()" class="text-gray-400 hover:text-gray-600">
                     <i class="fa-solid fa-times text-xl"></i>
                 </button>
