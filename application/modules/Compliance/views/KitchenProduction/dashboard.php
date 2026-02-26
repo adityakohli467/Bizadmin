@@ -36,7 +36,7 @@
 </div>
     <div class="card">
      <div class="card-header align-items-center d-flex">
-     <h4 class="card-title mb-0 flex-grow-1 text-faded">Waste Management Dashboard</h4>
+     <h4 class="card-title mb-0 flex-grow-1 text-faded"><i class="fa-solid fa-utensils"></i> Kitchen Production Dashboard</h4>
                                     <div class="flex-shrink-0">
                                      <select class="form-select siteDropdown">
                                              <option> Select Site</option>
@@ -61,7 +61,7 @@
                                             <thead class="table-light">
                                                 <tr class="text-muted">
                                                     <th scope="col">Product Name</th>
-                                                    <th scope="col">Enter Value</th>
+                                                    <th scope="col">Quantity</th>
                                                     <th scope="col">Par Level</th>
                                                     <th scope="col">Entered By</th>
                                                 </tr>
@@ -71,8 +71,8 @@
                                                     <?php foreach ($prep_detail as $prep_area) { ?>
                                                         <?php if ($prep_area['site_id'] == $site['id']) { ?>
                                                             <tbody class="prep_<?php echo $prep_area['id'] ?> tbodySite <?php echo 'siteId_' . $site['id'] ?>">
-                                                                <th colspan="4" class="text-black w-100" style="background-color: #dff0fa;">
-                                                                    <b><?php echo $prep_area['prep_name']; ?> (Site: <?php echo $site['site_name']; ?>)</b>
+                                                                <th colspan="4" class="text-black w-100" style="background-color: #fff3cd;">
+                                                                    <b><i class="fa-solid fa-kitchen-set"></i> <?php echo $prep_area['prep_name']; ?> (Site: <?php echo $site['site_name']; ?>)</b>
                                                                 </th>
                                                                 <?php if (isset($products) && !empty($products)) { ?>
                                                                     <?php foreach ($products as $product) { ?>
@@ -82,8 +82,9 @@
                                                                                 <td>
                                                                                     <input type="text" class="form-control auto-save" 
                                                                                            data-product-id="<?= $product['id']; ?>" 
-                                                                                           data-field="wasteM_value"
-                                                                                           value="<?= isset($todaysEnteredData[$product['id']]) ? $todaysEnteredData[$product['id']]['wasteM_value'] : ''; ?>">
+                                                                                           data-field="quantity"
+                                                                                           data-prep-id="<?= $prep_area['id']; ?>"
+                                                                                           value="<?= isset($todaysEnteredData[$product['id']]) ? $todaysEnteredData[$product['id']]['quantity'] : ''; ?>">
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php echo isset($product['par_level']) ? $product['par_level'] : 'N/A'; ?>
@@ -92,6 +93,7 @@
                                                                                     <input type="text" class="form-control auto-save" 
                                                                                            data-product-id="<?= $product['id']; ?>" 
                                                                                            data-field="entered_by"
+                                                                                           data-prep-id="<?= $prep_area['id']; ?>"
                                                                                            value="<?= isset($todaysEnteredData[$product['id']]['entered_by']) ? $todaysEnteredData[$product['id']]['entered_by'] : ''; ?>">
                                                                                 </td>
                                                                             </tr>
@@ -109,7 +111,7 @@
                                             <?php } else { ?>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No sites or prep areas found.</td>
+                                                        <td colspan="4" class="text-center">No sites or prep areas found. <a href="<?php echo base_url('Compliance/KitchenProduction/Site'); ?>">Create a Site</a> first.</td>
                                                     </tr>
                                                 </tbody>
                                             <?php } ?>
@@ -126,16 +128,14 @@
 </div>
         <script>
 
-
-
 $(document).on('blur change', '.auto-save', function() {
     const productId = $(this).data('product-id');
     const field = $(this).data('field');
     const value = $(this).val();
-    let prep = $(".siteDropdown").val();
+    let prep = $(this).data('prep-id') || $(".siteDropdown").val();
 
     $.ajax({
-        url: "<?= base_url('Compliance/Waste/Home/saveDashboardData') ?>",
+        url: "<?= base_url('Compliance/KitchenProduction/Home/saveDashboardData') ?>",
         method: "POST",
         data: {
             product_id: productId,
@@ -145,64 +145,49 @@ $(document).on('blur change', '.auto-save', function() {
         },
         success: function(response) {
             console.log("Saved:", response);
+            $(".tempSuccessRecorded").removeClass('d-none');
+            setTimeout(function() {
+                $(".tempSuccessRecorded").addClass('d-none');
+            }, 2000);
         },
         error: function(err) {
             console.error("Error saving data", err);
         }
     });
 });
-</script>
- 
-                            
-                            
-                                            <script>
 
-
-
-$(".siteDropdown").on('change',function(){
+$(".siteDropdown").on('change', function(){
     let siteId = $(this).val();
-    localStorage.setItem('selectedSiteDashBoard',siteId);
-$(".tbodySite").each(function(index, element) {
-    if (!$(element).hasClass("d-none")) {
-        console.log($(element).val());
-        $(element).addClass("d-none");
-    }
+    localStorage.setItem('selectedSiteKitchenProd', siteId);
+    $(".tbodySite").each(function(index, element) {
+        if (!$(element).hasClass("d-none")) {
+            $(element).addClass("d-none");
+        }
+    });
+    $(".siteId_" + siteId).removeClass("d-none");
 });
-console.log(".siteId"+siteId)
-$(".siteId_"+siteId).removeClass("d-none");
-})
 
 $(document).ready(function(){
-    
-    let siteId = localStorage.getItem('selectedSiteDashBoard');
-    console.log("siteId",siteId)
-    if(siteId =='' || siteId == undefined){
-      siteId = $(".siteDropdown").val();   
+    let siteId = localStorage.getItem('selectedSiteKitchenProd');
+    if(siteId == '' || siteId == undefined || siteId == null){
+        siteId = $(".siteDropdown option:eq(1)").val();
     }
-    $(".siteDropdown").val(siteId);
-    
-    $(".tbodySite").each(function(index, element) {
-    if (!$(element).hasClass("d-none")) {
-        console.log($(element).val());
-        $(element).addClass("d-none");
+    if(siteId) {
+        $(".siteDropdown").val(siteId);
+        $(".tbodySite").each(function(index, element) {
+            if (!$(element).hasClass("d-none")) {
+                $(element).addClass("d-none");
+            }
+        });
+        $(".siteId_" + siteId).removeClass("d-none");
     }
 });
-    
-  $(".siteId_"+siteId).removeClass("d-none");  
-  
-    
-})
 
-  function handleSaveClick(obj) {
-     $(obj).html('Saving...');
-    
+function handleSaveClick(obj) {
+    $(obj).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
     setTimeout(() => {
-      $(obj).html('Save');
+        $(obj).html('<i class="fas fa-save"></i> Save');
     }, 1000);
-  }
-
-
-
-
+}
 
 </script>

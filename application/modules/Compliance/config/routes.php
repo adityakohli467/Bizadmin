@@ -79,6 +79,10 @@ $route['Compliance/Waste/historyData']= 'Waste/Home/historyData';
 // Sanitation system routes
 $route['Compliance/Sanitation/history']= 'Sanitation/Home/history';
 $route['Compliance/Sanitation/historyData']= 'Sanitation/Home/historyData';
+
+// Kitchen Production system routes
+$route['Compliance/KitchenProduction/history']= 'KitchenProduction/Home/history';
+$route['Compliance/KitchenProduction/historyData']= 'KitchenProduction/Home/historyData';
   
 
 // $route['Temp/prep/index'] = 'Temp/prep/index';

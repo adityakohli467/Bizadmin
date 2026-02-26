@@ -27,6 +27,12 @@
     <i class="fa-solid fa-truck"></i> Incoming Goods
   </a>
 
+  <a class="btn btn-warning d-flex align-items-center gap-1" 
+     href="<?php echo base_url('/Compliance/KitchenProduction/Home'); ?>" 
+     data-bs-toggle="tooltip" title="Kitchen Production">
+    <i class="fa-solid fa-utensils"></i> Kitchen Production
+  </a>
+
 </div>
     <div class="card">
      <div class="card-header align-items-center d-flex">
