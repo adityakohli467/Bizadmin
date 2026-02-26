@@ -355,6 +355,7 @@
                             <tr id="employee-<?php echo htmlspecialchars($emp['employee_id']); ?>" 
                                 class="border-b border-gray-200 <?php echo $hasMultipleShifts ? 'bg-gray-50 cursor-pointer hover:bg-gray-100' : 'hover:bg-gray-50'; ?>" 
                                 data-employee-id="<?php echo htmlspecialchars($emp['employee_id']); ?>"
+                                <?php if (!$hasMultipleShifts && isset($emp['shifts'][0])): ?>data-prep-id="<?php echo htmlspecialchars($emp['shifts'][0]['prep_area_id']); ?>"<?php endif; ?>
                                 <?php if ($hasMultipleShifts): ?>onclick="toggleShifts(<?php echo htmlspecialchars($emp['employee_id']); ?>)"<?php endif; ?>>
                                 <td class="py-4 px-4">
                                     <div class="flex items-center">
@@ -724,29 +725,40 @@
             // Global variable to store pending action
             let pendingAction = null;
             let pinVerifiedSuccess = false; // Flag to track if PIN was successfully verified
+            let currentPrepFilter = ''; // Track current prep filter value
             
             // Toggle shift expansion for employees with multiple shifts
             function toggleShifts(employeeId) {
                 const shiftRows = document.querySelectorAll(`.shift-detail-row[data-employee-id="${employeeId}"]`);
                 const toggleIcon = document.getElementById(`toggle-icon-${employeeId}`);
                 
-                let isExpanded = false;
-                shiftRows.forEach(row => {
-                    if (row.classList.contains('hidden')) {
-                        row.classList.remove('hidden');
-                        isExpanded = true;
-                    } else {
-                        row.classList.add('hidden');
-                    }
-                });
+                // Check if currently expanded
+                let isCurrentlyExpanded = toggleIcon && toggleIcon.classList.contains('rotate-90');
                 
-                // Rotate chevron icon
-                if (toggleIcon) {
-                    if (isExpanded) {
-                        toggleIcon.classList.add('rotate-90');
-                    } else {
-                        toggleIcon.classList.remove('rotate-90');
-                    }
+                if (isCurrentlyExpanded) {
+                    // Collapse - hide all shift rows for this employee
+                    shiftRows.forEach(row => {
+                        row.classList.add('hidden');
+                        row.style.display = '';
+                    });
+                    if (toggleIcon) toggleIcon.classList.remove('rotate-90');
+                } else {
+                    // Expand - show shift rows (respect filter if active)
+                    shiftRows.forEach(row => {
+                        if (currentPrepFilter !== '') {
+                            // If filter is active, only show matching shifts
+                            var rowPrepId = $(row).data('prep-id') ? $(row).data('prep-id').toString() : '';
+                            if (rowPrepId === currentPrepFilter) {
+                                row.classList.remove('hidden');
+                                row.style.display = '';
+                            }
+                        } else {
+                            // No filter - show all shifts
+                            row.classList.remove('hidden');
+                            row.style.display = '';
+                        }
+                    });
+                    if (toggleIcon) toggleIcon.classList.add('rotate-90');
                 }
             }
           
@@ -1046,12 +1058,13 @@ function updateTimer(row, clockIn, clockOut, breakDuration) {
 $(document).ready(function() {
    $('#prep-filter').change(function() {
         var prepId = $(this).val().toString();
+        currentPrepFilter = prepId; // Store filter value globally
         
         if (prepId === '') {
             // Show all rows, but keep shift detail rows hidden (collapsed state)
             $('tbody tr').each(function() {
                 if ($(this).hasClass('shift-detail-row')) {
-                    $(this).addClass('hidden');
+                    $(this).addClass('hidden').css('display', '');
                 } else {
                     $(this).show();
                 }
@@ -1068,32 +1081,39 @@ $(document).ready(function() {
                 var $row = $(this);
                 
                 if ($row.hasClass('shift-detail-row')) {
-                    // This is a shift detail row - check if it matches
-                    var rowPrepId = $row.data('prep-id') ? $row.data('prep-id').toString() : '';
-                    if (rowPrepId === prepId) {
-                        $row.removeClass('hidden').show();
-                    } else {
-                        $row.hide();
-                    }
+                    // This is a shift detail row - hide all initially (collapse state)
+                    $row.addClass('hidden').css('display', '');
                 } else {
                     // This is a parent employee row
                     var employeeId = $row.data('employee-id');
-                    // Check if any of its child shift rows match the prep area
-                    var hasMatchingShift = false;
-                    $(`.shift-detail-row[data-employee-id="${employeeId}"]`).each(function() {
-                        var shiftPrepId = $(this).data('prep-id') ? $(this).data('prep-id').toString() : '';
-                        if (shiftPrepId === prepId) {
-                            hasMatchingShift = true;
-                            return false; // break loop
-                        }
-                    });
+                    var shiftDetailRows = $(`.shift-detail-row[data-employee-id="${employeeId}"]`);
                     
-                    if (hasMatchingShift) {
-                        $row.show();
-                        // Expand the toggle icon
-                        $(`#toggle-icon-${employeeId}`).addClass('rotate-90');
+                    if (shiftDetailRows.length > 0) {
+                        // Multi-shift employee - check if any of its child shift rows match
+                        var hasMatchingShift = false;
+                        shiftDetailRows.each(function() {
+                            var shiftPrepId = $(this).data('prep-id') ? $(this).data('prep-id').toString() : '';
+                            if (shiftPrepId === prepId) {
+                                hasMatchingShift = true;
+                                return false; // break loop
+                            }
+                        });
+                        
+                        if (hasMatchingShift) {
+                            $row.show();
+                            // Reset toggle icon to collapsed state (user can click to expand)
+                            $(`#toggle-icon-${employeeId}`).removeClass('rotate-90');
+                        } else {
+                            $row.hide();
+                        }
                     } else {
-                        $row.hide();
+                        // Single-shift employee - check the data-prep-id on the row itself
+                        var rowPrepId = $row.data('prep-id') ? $row.data('prep-id').toString() : '';
+                        if (rowPrepId === prepId) {
+                            $row.show();
+                        } else {
+                            $row.hide();
+                        }
                     }
                 }
             });
