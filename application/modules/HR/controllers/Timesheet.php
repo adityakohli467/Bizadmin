@@ -383,11 +383,12 @@ public function exportTimesheetTX($start_date, $end_date)
         
         // Track processed employees to avoid duplicates
         $processedEmployees = [];
-        
+        $count = 0;
         // Process each employee for all dates (grouped by employee)
         foreach ($employees as $employee) {
             $empId = $employee['emp_id'];
-            
+            if($count < 1){  // remove this line later
+                
             // Skip if this employee was already processed (avoid duplicates from position join)
             if (isset($processedEmployees[$empId])) {
                 continue;
@@ -443,7 +444,7 @@ public function exportTimesheetTX($start_date, $end_date)
                         $netSeconds = max(0, $workedSeconds - $breakSeconds);
                         $decimalHours = round($netSeconds / 3600, 2);
                         
-                        $formattedDate = date('Y-m-d', strtotime($dateStr));
+                        $formattedDate = date('m/d/y', strtotime($dateStr));
                         
                         // Determine correct service item and payroll item based on day type
                         // Check if it's a public holiday first
@@ -451,19 +452,19 @@ public function exportTimesheetTX($start_date, $end_date)
                         $dayOfWeek = date('N', strtotime($dateStr)); // 1=Mon, 7=Sun
                         
                         if ($isPublicHoliday) {
-                            $serviceItem = 'PubHol-Hours';
+                            $serviceItem = 'Pub Hol';
                             $payrollItem = 'Pub Hol';
                         } elseif ($dayOfWeek == 6) {
                             // Saturday
-                            $serviceItem = 'Sat-Hours';
+                            $serviceItem = 'Sat Rate';
                             $payrollItem = 'Sat Rate';
                         } elseif ($dayOfWeek == 7) {
                             // Sunday
-                            $serviceItem = 'Sun-Hours';
+                            $serviceItem = 'Sun Rate';
                             $payrollItem = 'Sun Rate';
                         } else {
                             // Monday to Friday
-                            $serviceItem = 'MF-Hours';
+                            $serviceItem = 'M-F Rate';
                             $payrollItem = 'M-F Rate';
                         }
                         
@@ -476,6 +477,9 @@ public function exportTimesheetTX($start_date, $end_date)
                         ];
                     }
                 }
+            }
+            
+            $count++;
             }
         }
         
@@ -493,7 +497,7 @@ $output = fopen('php://output', 'w');
 $tab = "\t";
 
 // IIF HEADER (VERY IMPORTANT)
-fwrite($output, "!TIMEACT\tDATE\tEMP\tITEM\tPAYROLLITEM\tDURATION\n");
+fwrite($output, "!TIMEACT\tDATE\tEMP\tITEM\tPITEM\tDURATION\n");
 
 // DATA ROWS
 foreach ($output_rows as $row) {
