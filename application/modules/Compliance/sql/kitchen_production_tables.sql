@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS `Compliance_KitchenProductionPrepArea` (
 CREATE TABLE IF NOT EXISTS `Compliance_KitchenProductionproducts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_name` varchar(255) NOT NULL,
-  `par_level` decimal(10,2) DEFAULT 0,
   `prep_id` int DEFAULT NULL,
   `site_id` int DEFAULT 0,
   `status` tinyint(1) DEFAULT 1,

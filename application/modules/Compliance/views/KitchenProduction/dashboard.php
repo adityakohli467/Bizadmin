@@ -62,7 +62,6 @@
                                                 <tr class="text-muted">
                                                     <th scope="col">Product Name</th>
                                                     <th scope="col">Quantity</th>
-                                                    <th scope="col">Par Level</th>
                                                     <th scope="col">Entered By</th>
                                                 </tr>
                                             </thead>
@@ -87,9 +86,6 @@
                                                                                            value="<?= isset($todaysEnteredData[$product['id']]) ? $todaysEnteredData[$product['id']]['quantity'] : ''; ?>">
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo isset($product['par_level']) ? $product['par_level'] : 'N/A'; ?>
-                                                                                </td>
-                                                                                <td>
                                                                                     <input type="text" class="form-control auto-save" 
                                                                                            data-product-id="<?= $product['id']; ?>" 
                                                                                            data-field="entered_by"
@@ -101,7 +97,7 @@
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
-                                                                        <td colspan="4" class="text-center">No products found for this prep area.</td>
+                                                                        <td colspan="3" class="text-center">No products found for this prep area.</td>
                                                                     </tr>
                                                                 <?php } ?>
                                                             </tbody>
@@ -111,7 +107,7 @@
                                             <?php } else { ?>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No sites or prep areas found. <a href="<?php echo base_url('Compliance/KitchenProduction/Site'); ?>">Create a Site</a> first.</td>
+                                                        <td colspan="3" class="text-center">No sites or prep areas found. <a href="<?php echo base_url('Compliance/KitchenProduction/Site'); ?>">Create a Site</a> first.</td>
                                                     </tr>
                                                 </tbody>
                                             <?php } ?>

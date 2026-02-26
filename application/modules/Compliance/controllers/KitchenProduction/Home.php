@@ -258,7 +258,6 @@ class Home extends MY_Controller {
   
         $data = [
             'product_name' => $this->input->post('product_name') ?? null,
-            'par_level' => $this->input->post('par_level') ?? null,
             'prep_id' => $this->input->post('prep_id') ?? null,
             'location_id' => $this->selected_location_id,
             'status' => 1

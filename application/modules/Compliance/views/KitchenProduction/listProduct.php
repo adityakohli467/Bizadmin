@@ -32,7 +32,6 @@
                                         </div>
                                     </th>
                                     <th class="sort" data-sort="product_name">Product Name</th>
-                                    <th class="sort" data-sort="par_level">PAR Level</th>
                                     <th class="sort" data-sort="site_name">Site</th>
                                     <th class="sort" data-sort="prep_name">Prep Area</th>
                                     <th class="no-sort">Action</th>
@@ -59,7 +58,6 @@
                                                 </div>
                                             </th>
                                             <td class="descr text-wrap handle"><?php echo htmlspecialchars($product['product_name']); ?></td>
-                                            <td class="descr text-wrap handle"><?php echo htmlspecialchars($product['par_level']); ?></td>
                                             <td class="descr text-wrap handle"><?php echo isset($selectedSite['site_name']) ? htmlspecialchars($selectedSite['site_name']) : ''; ?></td>
                                             <td class="descr text-wrap handle"><?php echo isset($selectedPrep['prep_name']) ? htmlspecialchars($selectedPrep['prep_name']) : ''; ?></td>
                                             <td>
@@ -83,7 +81,7 @@
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="6" class="text-center">No products found. <a href="#" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openProductModal()">Add your first product</a>.</td>
+                                        <td colspan="5" class="text-center">No products found. <a href="#" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openProductModal()">Add your first product</a>.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -131,11 +129,6 @@
                         <label for="product_name" class="form-label">Product Name <span class="text-danger">*</span></label>
                         <input type="text" name="product_name" class="form-control" id="product_name" placeholder="e.g., Ham Salad" required>
                         <div class="invalid-feedback">Please enter a product name.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="par_level" class="form-label">PAR Level</label>
-                        <input type="number" name="par_level" class="form-control" id="par_level" min="0" step="0.01" placeholder="Enter PAR level">
-                        <small class="text-muted">Target production quantity</small>
                     </div>
                     <div class="mb-3">
                         <label for="prep_id" class="form-label">Prep Area <span class="text-danger">*</span></label>
@@ -209,7 +202,6 @@ function editProduct(id) {
         const data = JSON.parse(res)[0];
         $('#product_id').val(data.id);
         $('#product_name').val(data.product_name);
-        $('#par_level').val(data.par_level);
         $('#prep_id').val(data.prep_id);
         $('#productModalLabel').html('<i class="fa-solid fa-utensils"></i> Edit Product');
         $('#productModal').modal('show');
