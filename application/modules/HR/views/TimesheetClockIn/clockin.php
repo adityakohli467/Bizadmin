@@ -276,7 +276,13 @@
                                     <div class="flex items-center timer" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
                                         <?php
                                         if ($shift['clock_in_time'] && $shift['clock_out_time']) {
-                                            $diff = strtotime($shift['clock_out_time']) - strtotime($shift['clock_in_time']) - (($shift['actual_break_duration'] ?? 0) * 60);
+                                            $clockInTs = strtotime($shift['clock_in_time']);
+                                            $clockOutTs = strtotime($shift['clock_out_time']);
+                                            // Handle overnight shift (clock_out appears earlier than clock_in)
+                                            if ($clockOutTs <= $clockInTs) {
+                                                $clockOutTs += 86400; // Add 24 hours
+                                            }
+                                            $diff = $clockOutTs - $clockInTs - (($shift['actual_break_duration'] ?? 0) * 60);
                                             $hours = floor($diff / 3600);
                                             $minutes = floor(($diff % 3600) / 60);
                                             echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>' . sprintf('%d Hours %d Min', max(0, $hours), max(0, $minutes));
@@ -369,7 +375,13 @@
                                     <div class="flex items-center timer text-sm" data-timesheet-id="<?php echo htmlspecialchars($shift['timesheet_id']); ?>">
                                         <?php
                                         if ($shift['clock_in_time'] && $shift['clock_out_time']) {
-                                            $diff = strtotime($shift['clock_out_time']) - strtotime($shift['clock_in_time']) - (($shift['actual_break_duration'] ?? 0) * 60);
+                                            $clockInTs = strtotime($shift['clock_in_time']);
+                                            $clockOutTs = strtotime($shift['clock_out_time']);
+                                            // Handle overnight shift (clock_out appears earlier than clock_in)
+                                            if ($clockOutTs <= $clockInTs) {
+                                                $clockOutTs += 86400; // Add 24 hours
+                                            }
+                                            $diff = $clockOutTs - $clockInTs - (($shift['actual_break_duration'] ?? 0) * 60);
                                             $hours = floor($diff / 3600);
                                             $minutes = floor(($diff % 3600) / 60);
                                             echo '<i class="fa-regular fa-clock text-gray-500 mr-2"></i>' . sprintf('%dh %dm', max(0, $hours), max(0, $minutes));

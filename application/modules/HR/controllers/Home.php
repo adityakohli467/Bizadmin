@@ -489,9 +489,15 @@ public function index($system_id = '')
                 'approval_status' => $entry['approval_status'] ?? 'pending'
             ];
             
-            // Calculate total worked seconds for this employee
+            // Calculate total worked seconds for this employee (handles overnight shifts)
             if (!empty($entry['clock_in_time']) && !empty($entry['clock_out_time'])) {
-                $diff = strtotime($entry['clock_out_time']) - strtotime($entry['clock_in_time']) - (($entry['actual_break_duration'] ?? 0) * 60);
+                $clockInTs = strtotime($entry['clock_in_time']);
+                $clockOutTs = strtotime($entry['clock_out_time']);
+                // Handle overnight shift (clock_out appears earlier than clock_in)
+                if ($clockOutTs <= $clockInTs) {
+                    $clockOutTs += 86400; // Add 24 hours
+                }
+                $diff = $clockOutTs - $clockInTs - (($entry['actual_break_duration'] ?? 0) * 60);
                 $groupedByEmployee[$empId]['total_worked_seconds'] += max(0, $diff);
             }
         }

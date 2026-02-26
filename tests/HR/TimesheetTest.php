@@ -225,19 +225,73 @@ class TimesheetTest extends TestCase
      * @group timesheet
      * @group timesheet-update
      * 
-     * Test Case T008: Fail - Update clock-out before clock-in
-     * Expected: Error - Invalid time range
+     * Test Case T008: Overnight shift - Clock-out after midnight is valid
+     * Expected: Overnight shifts are recognized and valid
      */
-    public function test_T008_update_clock_out_before_clock_in_should_fail()
+    public function test_T008_overnight_shift_clock_out_after_midnight_is_valid()
+    {
+        // Overnight shift: 10 PM to 2 AM next day
+        $updateData = [
+            'clock_in' => '22:00:00',
+            'clock_out' => '02:00:00' // Appears before clock-in but is next day
+        ];
+        
+        // For overnight shifts, clock_out time appearing before clock_in indicates next day
+        $isOvernightShift = strtotime($updateData['clock_out']) <= strtotime($updateData['clock_in']);
+        $isNotSameTime = $updateData['clock_out'] !== $updateData['clock_in'];
+        
+        // Overnight shifts where clock_out != clock_in are valid
+        $this->assertTrue($isOvernightShift && $isNotSameTime, 'Overnight shift should be recognized as valid');
+    }
+    
+    /**
+     * @test
+     * @group timesheet
+     * @group timesheet-update
+     * 
+     * Test Case T008b: Fail - Same clock-in and clock-out time (0 hour shift)
+     * Expected: Error - Invalid as no hours worked
+     */
+    public function test_T008b_same_clock_in_and_out_time_should_fail()
     {
         $updateData = [
             'clock_in' => '17:00:00',
-            'clock_out' => '09:00:00' // Before clock-in
+            'clock_out' => '17:00:00' // Same time - 0 hours
         ];
         
-        $isValid = strtotime($updateData['clock_out']) > strtotime($updateData['clock_in']);
+        $isValid = $updateData['clock_out'] !== $updateData['clock_in'];
         
-        $this->assertFalse($isValid, 'Clock-out before clock-in should be invalid');
+        $this->assertFalse($isValid, 'Same clock-in and clock-out time should be invalid');
+    }
+    
+    /**
+     * @test
+     * @group timesheet
+     * @group timesheet-update
+     * 
+     * Test Case T008c: Overnight shift hours calculation
+     * Expected: Hours calculated correctly for overnight shift
+     */
+    public function test_T008c_overnight_shift_hours_calculation()
+    {
+        // Overnight shift: 10 PM to 2 AM = 4 hours
+        $clockIn = '22:00:00';
+        $clockOut = '02:00:00';
+        $rosterDate = '2026-02-25';
+        
+        // Calculate using the same logic as the helper function
+        $clockInTs = strtotime($rosterDate . ' ' . $clockIn);
+        $clockOutTs = strtotime($rosterDate . ' ' . $clockOut);
+        
+        // Handle overnight - add 24 hours if clock_out appears before clock_in
+        if ($clockOutTs <= $clockInTs) {
+            $clockOutTs += 86400;
+        }
+        
+        $workedSeconds = $clockOutTs - $clockInTs;
+        $workedHours = $workedSeconds / 3600;
+        
+        $this->assertEquals(4, $workedHours, 'Overnight shift (10PM-2AM) should be 4 hours');
     }
     
     /**

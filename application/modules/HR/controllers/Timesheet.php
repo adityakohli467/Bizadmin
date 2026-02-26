@@ -239,15 +239,15 @@ public function exportTimesheetExcel($start_date, $end_date)
 
     foreach ($timesheets as $ts) {
 
-        $clockIn  = strtotime($ts['clock_in_time']);
-        $clockOut = strtotime($ts['clock_out_time']);
+        $clockIn  = $ts['clock_in_time'];
+        $clockOut = $ts['clock_out_time'];
 
-        if (!$clockIn || !$clockOut) {
+        if (empty($clockIn) || empty($clockOut)) {
             continue; // skip invalid entries
         }
 
-        // Total worked seconds
-        $workedSeconds = $clockOut - $clockIn;
+        // Use helper function to calculate worked seconds (handles overnight shifts)
+        $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $ts['roster_date']);
         $totalHoursWorked = $workedSeconds / 3600;
 
         // Break in minutes → seconds
@@ -282,8 +282,8 @@ public function exportTimesheetExcel($start_date, $end_date)
 
         $sheet->setCellValue('A' . $row, $ts['employee_name']);
         $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($ts['roster_date'])));
-        $sheet->setCellValue('C' . $row, date('h:i A', $clockIn));
-        $sheet->setCellValue('D' . $row, date('h:i A', $clockOut));
+        $sheet->setCellValue('C' . $row, date('h:i A', strtotime($clockIn)));
+        $sheet->setCellValue('D' . $row, date('h:i A', strtotime($clockOut)));
         $sheet->setCellValue('E' . $row, $breakHours);
         $sheet->setCellValue('F' . $row, $decimalHours);
 
@@ -402,12 +402,12 @@ public function exportTimesheetTX($start_date, $end_date)
                 if (isset($timesheetsByEmpDate[$empId][$dateStr])) {
                     $ts = $timesheetsByEmpDate[$empId][$dateStr];
                     
-                    $clockIn = strtotime($ts['clock_in_time']);
-                    $clockOut = strtotime($ts['clock_out_time']);
+                    $clockIn = $ts['clock_in_time'];
+                    $clockOut = $ts['clock_out_time'];
                     
-                    if ($clockIn && $clockOut) {
-                        // Calculate worked seconds
-                        $workedSeconds = $clockOut - $clockIn;
+                    if (!empty($clockIn) && !empty($clockOut)) {
+                        // Use helper function to calculate worked seconds (handles overnight shifts)
+                        $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
                         $totalHoursWorked = $workedSeconds / 3600;
                         
                         // Get break duration - check if it's TIME format (HH:MM:SS) or numeric minutes
@@ -558,12 +558,12 @@ exit;
             if (isset($timesheetsByEmpDate[$empId][$dateStr])) {
                 $ts = $timesheetsByEmpDate[$empId][$dateStr];
                 
-                // Calculate worked hours
-                $clockIn = strtotime($ts['clock_in_time']);
-                $clockOut = strtotime($ts['clock_out_time']);
+                // Calculate worked hours using helper function (handles overnight shifts)
+                $clockIn = $ts['clock_in_time'];
+                $clockOut = $ts['clock_out_time'];
                 
-                if ($clockIn && $clockOut) {
-                    $workedSeconds = $clockOut - $clockIn;
+                if (!empty($clockIn) && !empty($clockOut)) {
+                    $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
                     $totalHoursWorked = $workedSeconds / 3600;
                     
                     // Get break duration - check if it's TIME format (HH:MM:SS) or numeric minutes
@@ -600,14 +600,22 @@ exit;
                     $decimalHours = $netSeconds / 3600;
                     
                     // Check for early start (before 7 AM)
-                    $clockInHour = (int)date('H', $clockIn);
+                    $clockInHour = (int)date('H', strtotime($clockIn));
                     $earlyStartHours = 0;
                     $regularHours = $decimalHours;
                     
+                    // Calculate clock in/out timestamps for early start calculations
+                    $clockInTimestamp = strtotime($dateStr . ' ' . $clockIn);
+                    $clockOutTimestamp = strtotime($dateStr . ' ' . $clockOut);
+                    // Handle overnight - if clockOut is before clockIn, add a day
+                    if ($clockOutTimestamp <= $clockInTimestamp) {
+                        $clockOutTimestamp += 86400;
+                    }
+                    
                     if ($clockInHour < 7 && !$isWeekend) {
-                        $sevenAM = strtotime(date('Y-m-d 07:00:00', $clockIn));
-                        if ($clockOut > $sevenAM) {
-                            $earlyStartSeconds = $sevenAM - $clockIn;
+                        $sevenAM = strtotime(date('Y-m-d 07:00:00', $clockInTimestamp));
+                        if ($clockOutTimestamp > $sevenAM) {
+                            $earlyStartSeconds = $sevenAM - $clockInTimestamp;
                             $earlyStartHours = $earlyStartSeconds / 3600;
                             $regularHours = ($netSeconds - $earlyStartSeconds) / 3600;
                         } else {
@@ -724,11 +732,11 @@ public function downloadWeeklyReport($start_date, $end_date)
         $date = $ts['roster_date'];
         $dayOfWeek = date('N', strtotime($date)); // 1 = Monday, 7 = Sunday
         
-        // Calculate hours worked
-        $clockIn = strtotime($ts['clock_in_time']);
-        $clockOut = strtotime($ts['clock_out_time']);
+        // Calculate hours worked using helper function (handles overnight shifts)
+        $clockIn = $ts['clock_in_time'];
+        $clockOut = $ts['clock_out_time'];
         
-        if (!$clockIn || !$clockOut) {
+        if (empty($clockIn) || empty($clockOut)) {
             // Store entry even if no clock times (for roster display)
             if (!isset($employeeData[$empId]['daily'][$date])) {
                 $employeeData[$empId]['daily'][$date] = [
@@ -743,7 +751,7 @@ public function downloadWeeklyReport($start_date, $end_date)
             continue;
         }
         
-        $workedSeconds = $clockOut - $clockIn;
+        $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $date);
         $totalHoursWorked = $workedSeconds / 3600;
         
         // Handle break deduction
@@ -789,8 +797,8 @@ public function downloadWeeklyReport($start_date, $end_date)
         
         // Store daily data
         $employeeData[$empId]['daily'][$date] = [
-            'clock_in' => date('H:i', $clockIn),
-            'clock_out' => date('H:i', $clockOut),
+            'clock_in' => date('H:i', strtotime($clockIn)),
+            'clock_out' => date('H:i', strtotime($clockOut)),
             'break_minutes' => $breakMinutes,
             'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
             'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
@@ -1476,12 +1484,14 @@ if ($latitude && $longitude) {
 
 $responseData['clock_out_time'] = date('h:i A', strtotime($clockOutTime));
 
-// Fetch the full timesheet row (for clock_in_time)
-$timesheetFull = $this->common_model->fetchRecordsDynamically('HR_timesheet_details', ['clock_in_time'], ['timesheet_id' => $timesheetId, 'is_deleted' => 0]);
+// Fetch the full timesheet row (for clock_in_time and roster_date)
+$timesheetFull = $this->common_model->fetchRecordsDynamically('HR_timesheet_details', ['clock_in_time', 'roster_date'], ['timesheet_id' => $timesheetId, 'is_deleted' => 0]);
 $clockInTime = $timesheetFull[0]['clock_in_time'] ?? null;
+$rosterDate = $timesheetFull[0]['roster_date'] ?? date('Y-m-d');
 
 if ($clockInTime) {
-    $workedSeconds = strtotime($clockOutTime) - strtotime($clockInTime);
+    // Use helper function to calculate worked seconds (handles overnight shifts)
+    $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockInTime, $clockOutTime, $rosterDate);
     $workedHours = $workedSeconds / 3600;
 
     // Get total break duration for this timesheet

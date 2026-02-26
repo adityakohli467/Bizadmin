@@ -171,7 +171,11 @@
                                             && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
                                             $clock_in = strtotime($ts['clock_in_time']);
                                             $clock_out = strtotime($ts['clock_out_time']);
-                                            if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                            // Handle overnight shift (clock_out appears earlier than clock_in)
+                                            if ($clock_out <= $clock_in) {
+                                                $clock_out += 86400; // Add 24 hours
+                                            }
+                                            if ($clock_in && $clock_out) {
                                                 $total_hours += ($clock_out - $clock_in);
                                             }
                                         } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
@@ -202,7 +206,11 @@
                                                 && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
                                                 $clock_in = strtotime($ts['clock_in_time']);
                                                 $clock_out = strtotime($ts['clock_out_time']);
-                                                if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                                // Handle overnight shift (clock_out appears earlier than clock_in)
+                                                if ($clock_out <= $clock_in) {
+                                                    $clock_out += 86400; // Add 24 hours
+                                                }
+                                                if ($clock_in && $clock_out) {
                                                     $day_seconds = $clock_out - $clock_in;
                                                 }
                                             } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
@@ -367,7 +375,11 @@
                                         && !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
                                         $clock_in = strtotime($ts['clock_in_time']);
                                         $clock_out = strtotime($ts['clock_out_time']);
-                                        if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                        // Handle overnight shift (clock_out appears earlier than clock_in)
+                                        if ($clock_out <= $clock_in) {
+                                            $clock_out += 86400; // Add 24 hours
+                                        }
+                                        if ($clock_in !== false && $clock_out !== false) {
                                             $day_seconds = $clock_out - $clock_in;
                                         }
                                     } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
@@ -486,7 +498,11 @@
                                             // Calculate from actual clock times
                                             $clock_in = strtotime($ts['clock_in_time']);
                                             $clock_out = strtotime($ts['clock_out_time']);
-                                            if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                            // Handle overnight shift (clock_out appears earlier than clock_in)
+                                            if ($clock_out <= $clock_in) {
+                                                $clock_out += 86400; // Add 24 hours
+                                            }
+                                            if ($clock_in !== false && $clock_out !== false) {
                                                 $total_hours += ($clock_out - $clock_in);
                                             }
                                         } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
@@ -522,7 +538,11 @@
                                                     !empty($ts['clock_in_time']) && !empty($ts['clock_out_time'])) {
                                                     $clock_in = strtotime($ts['clock_in_time']);
                                                     $clock_out = strtotime($ts['clock_out_time']);
-                                                    if ($clock_in !== false && $clock_out !== false && $clock_out > $clock_in) {
+                                                    // Handle overnight shift (clock_out appears earlier than clock_in)
+                                                    if ($clock_out <= $clock_in) {
+                                                        $clock_out += 86400; // Add 24 hours
+                                                    }
+                                                    if ($clock_in !== false && $clock_out !== false) {
                                                         $day_seconds = $clock_out - $clock_in;
                                                     }
                                                 } elseif (isset($ts['total_hours']) && !empty($ts['total_hours'])) {
@@ -665,7 +685,11 @@
                                             && !empty($timesheet['clock_in_time']) && !empty($timesheet['clock_out_time'])) {
                                             $clock_in = strtotime($timesheet['clock_in_time']);
                                             $clock_out = strtotime($timesheet['clock_out_time']);
-                                            if ($clock_in && $clock_out && $clock_out > $clock_in) {
+                                            // Handle overnight shift (clock_out appears earlier than clock_in)
+                                            if ($clock_out <= $clock_in) {
+                                                $clock_out += 86400; // Add 24 hours
+                                            }
+                                            if ($clock_in && $clock_out) {
                                                 // Calculate difference in seconds, then round to nearest minute to avoid 1 min discrepancy
                                                 $diff_seconds = $clock_out - $clock_in;
                                                 $total_hours_for_each_day = $diff_seconds;

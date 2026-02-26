@@ -333,9 +333,19 @@
         </td>
 
         <td class="text-center py-3 px-4 text-sm font-semibold text-gray-800">
-            <?= $row->clock_in_time && $row->clock_out_time 
-                ? round((strtotime($row->clock_out_time) - strtotime($row->clock_in_time)) / 3600, 2) . "h"
-                : "-" ?>
+            <?php 
+            if ($row->clock_in_time && $row->clock_out_time) {
+                $clockInTs = strtotime($row->clock_in_time);
+                $clockOutTs = strtotime($row->clock_out_time);
+                // Handle overnight shift (clock_out appears earlier than clock_in)
+                if ($clockOutTs <= $clockInTs) {
+                    $clockOutTs += 86400; // Add 24 hours
+                }
+                echo round(($clockOutTs - $clockInTs) / 3600, 2) . "h";
+            } else {
+                echo "-";
+            }
+            ?>
         </td>
 
       <?php 

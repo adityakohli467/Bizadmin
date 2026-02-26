@@ -8,6 +8,71 @@ class Timesheet_model extends CI_Model{
 		$this->load->model('common_model');
 	}
 	
+	/**
+	 * Calculate worked seconds between clock in and clock out times
+	 * Handles overnight shifts (when clock_out is after midnight)
+	 * 
+	 * @param string $clockIn Clock in time (can be TIME or DATETIME format)
+	 * @param string $clockOut Clock out time (can be TIME or DATETIME format)
+	 * @param string $rosterDate Optional roster date for combining with TIME values
+	 * @return int Worked seconds (always positive for valid shifts)
+	 */
+	public function calculateWorkedSeconds($clockIn, $clockOut, $rosterDate = null) {
+		if (empty($clockIn) || empty($clockOut)) {
+			return 0;
+		}
+		
+		// Check if clock_in_time contains a date (DATETIME format)
+		$clockInHasDate = (strpos($clockIn, '-') !== false && strlen($clockIn) > 10);
+		$clockOutHasDate = (strpos($clockOut, '-') !== false && strlen($clockOut) > 10);
+		
+		if ($clockInHasDate && $clockOutHasDate) {
+			// Both are DATETIME format - simple calculation
+			$clockInTimestamp = strtotime($clockIn);
+			$clockOutTimestamp = strtotime($clockOut);
+		} else {
+			// TIME format - need to handle overnight shifts
+			// If no roster date provided, use today
+			$baseDate = $rosterDate ? $rosterDate : date('Y-m-d');
+			
+			// Combine date with time
+			$clockInTimestamp = strtotime($baseDate . ' ' . $clockIn);
+			$clockOutTimestamp = strtotime($baseDate . ' ' . $clockOut);
+			
+			// Check for overnight shift (clock_out appears earlier than clock_in)
+			if ($clockOutTimestamp <= $clockInTimestamp) {
+				// Add 24 hours (86400 seconds) to clock_out to account for next day
+				$clockOutTimestamp += 86400;
+			}
+		}
+		
+		$workedSeconds = $clockOutTimestamp - $clockInTimestamp;
+		
+		// Ensure we don't return negative values
+		return max(0, $workedSeconds);
+	}
+	
+	/**
+	 * Calculate worked hours (decimal) between clock in and clock out times
+	 * Handles overnight shifts automatically
+	 * 
+	 * @param string $clockIn Clock in time
+	 * @param string $clockOut Clock out time
+	 * @param string $rosterDate Optional roster date
+	 * @param int $breakMinutes Break duration in minutes to subtract
+	 * @return float Worked hours in decimal format
+	 */
+	public function calculateWorkedHours($clockIn, $clockOut, $rosterDate = null, $breakMinutes = 0) {
+		$workedSeconds = $this->calculateWorkedSeconds($clockIn, $clockOut, $rosterDate);
+		
+		// Subtract break time
+		$breakSeconds = $breakMinutes * 60;
+		$netSeconds = max(0, $workedSeconds - $breakSeconds);
+		
+		// Convert to decimal hours
+		return round($netSeconds / 3600, 2);
+	}
+	
 	public function searchEmployees($query, $location_id) {
         $this->tenantDb->select("emp_id, first_name, last_name, email, position_id");
         $this->tenantDb->from("HR_employee");
