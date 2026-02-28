@@ -56,7 +56,7 @@
 
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button"   class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
-                        <a href="/auth/checklist"><i class="bx bxs-home fs-22 text-white"></i></a>
+                        <a href="/Shifts/<?php echo $this->session->userdata('system_id'); ?>"><i class="bx bxs-home fs-22 text-white"></i></a>
                     </button>
                 </div>
 
