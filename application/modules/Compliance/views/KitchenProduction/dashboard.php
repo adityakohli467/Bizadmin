@@ -141,10 +141,6 @@ $(document).on('blur change', '.auto-save', function() {
         },
         success: function(response) {
             console.log("Saved:", response);
-            $(".tempSuccessRecorded").removeClass('d-none');
-            setTimeout(function() {
-                $(".tempSuccessRecorded").addClass('d-none');
-            }, 2000);
         },
         error: function(err) {
             console.error("Error saving data", err);
@@ -183,6 +179,10 @@ function handleSaveClick(obj) {
     $(obj).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
     setTimeout(() => {
         $(obj).html('<i class="fas fa-save"></i> Save');
+        $(".tempSuccessRecorded").removeClass('d-none');
+        setTimeout(function() {
+            $(".tempSuccessRecorded").addClass('d-none');
+        }, 2000);
     }, 1000);
 }
 
