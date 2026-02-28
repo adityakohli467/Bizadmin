@@ -102,12 +102,12 @@ class Home extends MY_Controller {
         $this->load->view('general/footer');
     }
     
-    public function historyData($encodedDateRange = '', $prep_id = '') 
+    public function historyData($encodedDateRange = '', $site_id = '') 
     {
         // Handle input
-        if ($encodedDateRange == '' && $prep_id == '') {
+        if ($encodedDateRange == '' && $site_id == '') {
             $dateRange = $this->input->post('date_range');
-            $prep_id = $this->input->post('site_id');
+            $site_id = $this->input->post('site_id');
         } else {
             $dateRange = urldecode($encodedDateRange);
         }
@@ -132,17 +132,25 @@ class Home extends MY_Controller {
             $condition = array('status' => 1, 'is_deleted' => 0, 'location_id' => $this->selected_location_id);
             $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_KitchenProductionproducts', '', $condition);
 
-            // Fetch history data
-            $condition = array(
-                'date_entered >=' => $fromDate,
-                'date_entered <=' => $toDate,
-                'location_id' => $this->selected_location_id
-            );
-            if ($prep_id != '' && $prep_id != 'Select Site') {
-                $condition['prep_id'] = $prep_id;
+            // Fetch history data — build query manually to support WHERE IN for prep_ids
+            $this->tenantDb->where('date_entered >=', $fromDate);
+            $this->tenantDb->where('date_entered <=', $toDate);
+            $this->tenantDb->where('location_id', $this->selected_location_id);
+
+            // If a site is selected, get all prep area IDs for that site and filter by them
+            if ($site_id != '' && $site_id != 'Select Site') {
+                $prepAreas = $this->common_model->fetchRecordsDynamically(
+                    'Compliance_KitchenProductionPrepArea', 
+                    ['id'], 
+                    ['site_id' => $site_id, 'location_id' => $this->selected_location_id, 'is_deleted' => 0]
+                );
+                if (!empty($prepAreas)) {
+                    $prepIds = array_column($prepAreas, 'id');
+                    $this->tenantDb->where_in('prep_id', $prepIds);
+                }
             }
-            
-            $history_data = $this->common_model->fetchRecordsDynamically('Compliance_KitchenProduction_history', '', $condition);
+
+            $history_data = $this->tenantDb->get('Compliance_KitchenProduction_history')->result_array();
 
             // Restructure history data by date and product_id
             $weeklyData = array();
