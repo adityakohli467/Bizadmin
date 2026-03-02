@@ -7,6 +7,9 @@
                     <a href="<?php echo base_url('Compliance/ThermometerCalibration/Home/history'); ?>" class="btn btn-primary btn-sm">
                         <i class="ri-arrow-go-back-line"></i> Back
                     </a>
+                    <a class="btn btn-primary btn-sm" onclick="location.reload();">
+    <i class="ri-save-line"></i> Save
+</a>
                 </div>
 
                 <div class="card-body">

@@ -12,12 +12,12 @@
     <div class="col-3">                                         
    <a href="<?php echo base_url('Supplier/internalorder/productsSample'); ?>" class="btn btn-warning add-btn"><i id="create-btn" class="ri-file-download-line align-bottom me-1"></i> Download Sample </a>
    </div><div class="col-4"> 
-   <form action="<?= base_url('Supplier/internalorder/importProduct'); ?>" method="post" enctype="multipart/form-data" class="d-flex gap-3">
+   <form id="importProductForm" action="<?= base_url('Supplier/internalorder/importProduct'); ?>" method="post" enctype="multipart/form-data" class="d-flex gap-3">
             <div class="col-sm">
             <input type="file" name="file" id="file" class="form-control" required>
          </div> 
          <div class="col-sm">
-          <button type="submit" class="btn btn-success"><i class="ri-file-excel-fill me-1 align-bottom"></i>Import</button>
+          <button type="submit" class="btn btn-success" id="importBtn"><i class="ri-file-excel-fill me-1 align-bottom"></i>Import</button>
             </div>       
               </form>
           </div><div class="col-3">                                       
@@ -547,6 +547,53 @@ function exportSelectedProducts() {
     form.submit();
     form.remove();
 }
+
+// AJAX Import handler to prevent page freeze
+$('#importProductForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    var fileInput = $('#file')[0];
+    if (!fileInput.files || fileInput.files.length === 0) {
+        Swal.fire({ title: 'No file selected', text: 'Please select an Excel file to import.', icon: 'warning', confirmButtonClass: 'btn btn-primary w-xs mt-2', buttonsStyling: false });
+        return;
+    }
+    
+    var formData = new FormData(this);
+    var $btn = $('#importBtn');
+    var originalHtml = $btn.html();
+    
+    // Disable button and show loading
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Importing...');
+    
+    $.ajax({
+        url: '<?= base_url("Supplier/internalorder/importProduct") ?>',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function(response) {
+            $btn.prop('disabled', false).html(originalHtml);
+            if (response.status === 'success') {
+                Swal.fire({
+                    title: 'Import Successful',
+                    text: response.message,
+                    icon: 'success',
+                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                    buttonsStyling: false
+                }).then(function() {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({ title: 'Import Error', text: response.message || 'An error occurred during import.', icon: 'error', confirmButtonClass: 'btn btn-primary w-xs mt-2', buttonsStyling: false });
+            }
+        },
+        error: function(xhr) {
+            $btn.prop('disabled', false).html(originalHtml);
+            Swal.fire({ title: 'Import Failed', text: 'Server error occurred. Please try again.', icon: 'error', confirmButtonClass: 'btn btn-primary w-xs mt-2', buttonsStyling: false });
+        }
+    });
+});
         </script>                                        
                                 
                                 

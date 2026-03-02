@@ -465,10 +465,18 @@ $writer->save('php://output');
     }
 
     public function importProduct() {
-        // Load necessary libraries and models
         
+    $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+    
     $orzName = $this->tenantIdentifier;    
-    $config['upload_path'] = './uploaded_files/'.$orzName.'/Supplier/ProductImport/';
+    $uploadPath = './uploaded_files/'.$orzName.'/Supplier/ProductImport/';
+    
+    // Create upload directory if it doesn't exist
+    if (!is_dir($uploadPath)) {
+        mkdir($uploadPath, 0777, true);
+    }
+    
+    $config['upload_path'] = $uploadPath;
     $config['allowed_types'] = 'xlsx|xls';
     $config['encrypt_name'] = TRUE;
     $config['max_size']      = 90240;
@@ -476,46 +484,104 @@ $writer->save('php://output');
     $this->load->library('upload', $config);
     $this->upload->initialize($config);
 
-        // Check if the file is successfully uploaded
         if ($this->upload->do_upload('file')) {
-            // Get the uploaded file data
             $fileData = $this->upload->data();
             $filePath = $fileData['full_path'];
 
-            // Load the spreadsheet reader
             $spreadsheet = IOFactory::load($filePath);
             $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-              
-            // Process and save the data to the database
+            
+            // Step 1: Group rows by product name to avoid duplicates
+            // When exported, a product with multiple sub-locations creates multiple rows
+            // We need to merge them back into a single product with multiple sub-locations
+            $groupedProducts = array();
             $count = 1;
             foreach ($sheetData as $row) {
-              if($count > 1 ){
-          $sublocation_id = (preg_match('/\[(.*?)\]/', $row['D'], $matches) ? $matches[1] : '');  
-          $uom_id = (preg_match('/\[(.*?)\]/', $row['G'], $matches) ? $matches[1] : '');
-            $price = str_replace(['$', ' '], '', $row['C']);
-                $data = array(
-                    'productName' => $row['A'],
-                    'category_id' => $row['B'],
-                    'price' => $price,
-                    'uom' => $uom_id,
-                    'requireAttach' => $row['E'],
-                    'requireTemp' => $row['F'],
-                );
-                $data['subLocId'] = array($sublocation_id);
-                $data['par_level'] = array('');
-
-          if ($data['productName'] == '') {
-            break; 
-            }  
-               $result = $this->internalorder_model->addProduct($data);   
-              }
-               
-               $count++;
+                if ($count > 1) {
+                    $productName = trim($row['A']);
+                    if ($productName == '') {
+                        break; // Stop at first empty name
+                    }
+                    
+                    $sublocation_id = (preg_match('/\[(.*?)\]/', $row['D'], $matches) ? $matches[1] : '');
+                    $uom_id = (preg_match('/\[(.*?)\]/', $row['G'], $matches) ? $matches[1] : '');
+                    $price = str_replace(['$', ' '], '', $row['C']);
+                    
+                    $key = strtolower($productName); // Group by lowercase name to avoid case-sensitive duplicates
+                    
+                    if (!isset($groupedProducts[$key])) {
+                        $groupedProducts[$key] = array(
+                            'productName' => $productName,
+                            'category_id' => $row['B'],
+                            'price' => $price,
+                            'uom' => $uom_id,
+                            'requireAttach' => $row['E'],
+                            'requireTemp' => $row['F'],
+                            'subLocId' => array(),
+                            'par_level' => array(),
+                        );
+                    }
+                    
+                    // Only add non-empty sublocation IDs (avoid empty sublocation records)
+                    if (!empty($sublocation_id)) {
+                        // Avoid duplicate sublocation for the same product
+                        if (!in_array($sublocation_id, $groupedProducts[$key]['subLocId'])) {
+                            $groupedProducts[$key]['subLocId'][] = $sublocation_id;
+                            $groupedProducts[$key]['par_level'][] = '';
+                        }
+                    }
+                }
+                $count++;
+            }
+            
+            // Step 2: Process each unique product — check for existing before inserting
+            $imported = 0;
+            $skipped = 0;
+            foreach ($groupedProducts as $data) {
+                // Check if a product with the same name already exists (not deleted)
+                $this->tenantDb->select('id');
+                $this->tenantDb->from('SUPPLIERS_internalOrderProducts');
+                $this->tenantDb->where('name', $data['productName']);
+                $this->tenantDb->where('location_id', $this->location_id);
+                $this->tenantDb->where('is_deleted', 0);
+                $existingProduct = $this->tenantDb->get()->row_array();
+                
+                if (!empty($existingProduct)) {
+                    // Product already exists — skip to avoid duplicates
+                    $skipped++;
+                    continue;
+                }
+                
+                // Ensure subLocId and par_level arrays have at least one entry for addProduct
+                if (empty($data['subLocId'])) {
+                    $data['subLocId'] = array('');
+                    $data['par_level'] = array('');
+                }
+                
+                $this->internalorder_model->addProduct($data);
+                $imported++;
+            }
+            
+            // Clean up uploaded file after processing
+            if (file_exists($filePath)) {
+                @unlink($filePath);
             }
 
-         return redirect(base_url('/Supplier/internalorder/products'));
+            if ($isAjax) {
+                echo json_encode(array(
+                    'status' => 'success', 
+                    'imported' => $imported, 
+                    'skipped' => $skipped,
+                    'message' => $imported . ' products imported' . ($skipped > 0 ? ', ' . $skipped . ' duplicates skipped' : '')
+                ));
+                return;
+            }
+            return redirect(base_url('/Supplier/internalorder/products'));
         } else {
-            // Display the upload error
+            if ($isAjax) {
+                echo json_encode(array('status' => 'error', 'message' => strip_tags($this->upload->display_errors())));
+                return;
+            }
             echo $this->upload->display_errors();
         }
     }

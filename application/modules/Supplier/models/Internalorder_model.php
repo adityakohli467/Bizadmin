@@ -85,28 +85,27 @@ class Internalorder_model extends CI_Model{
         $id = $item['id'];
        
     if (!isset($result[$id])) {
+    // First time seeing this product — initialize it
     $result[$id] = $item;
     $result[$id]['par_level'] = array();
     $result[$id]['sublocation_id'] = array();
-    $subLocArray = array();
-    $sameProducts = array_filter($array, function($element) use ($id) {
-        return $element['id'] === $id;
-    });
-    if(isset($sameProducts) && !empty($sameProducts)){  
-    foreach($sameProducts as $sameProduct){
-    $subLocId = isset($sameProduct['subLoc_id']) ? $sameProduct['subLoc_id'] : null;
-    if(!empty($subLocId)){
-    array_push($subLocArray, $subLocId);      
-    $result[$id]['par_level'][$subLocId] = isset($sameProduct['par_level']) ? $sameProduct['par_level'] : '';
+    $result[$id]['subLoc_id'] = array();
     }
-    $result[$id]['subLoc_id'] = $subLocArray;
-    }    
-    }
-    // Store sublocation_id as JSON-encoded associative array for view compatibility
-    $result[$id]['sublocation_id'] = !empty($result[$id]['par_level']) ? json_encode($result[$id]['par_level']) : null;
+    
+    // Accumulate sublocation data from each row (O(n) instead of O(n²))
+    $subLocId = isset($item['subLoc_id']) ? $item['subLoc_id'] : null;
+    if(!empty($subLocId) && !in_array($subLocId, $result[$id]['subLoc_id'])){
+        $result[$id]['subLoc_id'][] = $subLocId;
+        $result[$id]['par_level'][$subLocId] = isset($item['par_level']) ? $item['par_level'] : '';
     }
    
     }
+    
+    // Finalize sublocation_id as JSON for view compatibility
+    foreach ($result as $id => &$product) {
+        $product['sublocation_id'] = !empty($product['par_level']) ? json_encode($product['par_level']) : null;
+    }
+    
     $result = array_values($result);
     return $result;
 }
@@ -165,7 +164,9 @@ class Internalorder_model extends CI_Model{
          
          $subParLevel = [];
          foreach($data['subLocId'] as $index => $subLocId){
-           $subParLevel[$subLocId] =  $data['par_level'][$index];
+           if(!empty($subLocId)) { // Skip empty sublocation IDs
+             $subParLevel[$subLocId] =  $data['par_level'][$index];
+           }
          }
       $insertData = array(
         'name' => $data['productName'],
@@ -184,11 +185,17 @@ class Internalorder_model extends CI_Model{
     $productId = $this->tenantDb->insert_id();
      $subData = [];
     foreach($data['subLocId'] as $indexS => $subLocId){
-     $subData[$indexS]['product_id'] =  $productId;
-     $subData[$indexS]['sublocation_id'] =  $subLocId;
-     $subData[$indexS]['par_level'] =  $data['par_level'][$indexS];
+     if(!empty($subLocId)) { // Skip empty sublocation IDs
+       $subData[] = array(
+         'product_id' => $productId,
+         'sublocation_id' => $subLocId,
+         'par_level' => $data['par_level'][$indexS]
+       );
      }
-    $this->tenantDb->insert_batch('SUPPLIERS_internalOrderProductsToSubLocation', $subData);
+    }
+    if(!empty($subData)) {
+      $this->tenantDb->insert_batch('SUPPLIERS_internalOrderProductsToSubLocation', $subData);
+    }
     return true;
 
   }
