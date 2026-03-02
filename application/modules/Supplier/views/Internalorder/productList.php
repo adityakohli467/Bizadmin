@@ -56,19 +56,38 @@
                                                         <td class="product_UOM_name"><?php echo ($key !== false) ? $uomLists[$key]['product_UOM_name'] : ""; ?></td>
                                                         <td class="category_name"><?php echo (isset($product['category_name']) ? $product['category_name'] : ''); ?></td> 
                                                         <td class="price"><?php echo (isset($product['price']) ? '$'.number_format($product['price'],2) : ''); ?></td> 
-                                                          <?php $sublocIDSWithParLevel = json_decode($product['sublocation_id'],true);  ?>
-                                                          <?php $idToNameMapping = array_column($locationList, 'name', 'id'); ?>
-                                                          <?php
-                                                          $sublocIDS = array_keys($sublocIDSWithParLevel);
-                                                          $parLevels = implode(', ', array_values($sublocIDSWithParLevel));
-                                                         
-                                                          $namesForResultingArray = array_map(function ($id) use ($idToNameMapping) {
-                                                            return isset($idToNameMapping[$id]) ? $idToNameMapping[$id] : 'Unknown';
-                                                             }, $sublocIDS);
-                                                          
+                                                          <?php 
+                                                          $sublocIDSWithParLevel = null;
+                                                          if (!empty($product['sublocation_id'])) {
+                                                              if (is_array($product['sublocation_id'])) {
+                                                                  $sublocIDSWithParLevel = $product['sublocation_id'];
+                                                              } else {
+                                                                  $sublocIDSWithParLevel = json_decode($product['sublocation_id'], true);
+                                                              }
+                                                          }
+                                                          $idToNameMapping = !empty($locationList) ? array_column($locationList, 'name', 'id') : [];
+                                                          $sublocIDS = [];
+                                                          $parLevels = '';
+                                                          $namesForResultingArray = [];
+                                                          if (!empty($sublocIDSWithParLevel) && is_array($sublocIDSWithParLevel)) {
+                                                              $sublocIDS = array_keys($sublocIDSWithParLevel);
+                                                              $parLevels = implode(', ', array_values($sublocIDSWithParLevel));
+                                                              $namesForResultingArray = array_map(function ($id) use ($idToNameMapping) {
+                                                                  return isset($idToNameMapping[$id]) ? $idToNameMapping[$id] : 'Unknown';
+                                                              }, $sublocIDS);
+                                                          }
+                                                          // Also build par_level from model data if available
+                                                          if (empty($sublocIDSWithParLevel) && !empty($product['par_level']) && is_array($product['par_level'])) {
+                                                              $sublocIDSWithParLevel = $product['par_level'];
+                                                              $sublocIDS = !empty($product['subLoc_id']) && is_array($product['subLoc_id']) ? $product['subLoc_id'] : array_keys($sublocIDSWithParLevel);
+                                                              $parLevels = implode(', ', array_values($sublocIDSWithParLevel));
+                                                              $namesForResultingArray = array_map(function ($id) use ($idToNameMapping) {
+                                                                  return isset($idToNameMapping[$id]) ? $idToNameMapping[$id] : 'Unknown';
+                                                              }, $sublocIDS);
+                                                          }
                                                           ?>
-                                                           <td class="name"><?php echo (isset($sublocIDS) && !empty($sublocIDS) ? implode(', ', $namesForResultingArray) : ''); ?></td>
-                                                            <td class="name"><?php echo (isset($parLevels) ? $parLevels : ''); ?></td>
+                                                           <td class="name"><?php echo (!empty($namesForResultingArray) ? implode(', ', $namesForResultingArray) : ''); ?></td>
+                                                            <td class="name"><?php echo (!empty($parLevels) ? $parLevels : ''); ?></td>
                                                          <td><div class="form-check form-switch form-switch-custom form-switch-success">
                                                             <input class="form-check-input toggle-demo" type="checkbox" role="switch" id="<?php echo  $product['id']; ?>" <?php if(isset($product['status']) && $product['status']  == '1'){ echo 'checked'; }?>>
                                                             </div>
@@ -78,7 +97,7 @@
                                                               
                                                                 <li class="list-inline-item edit" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                                                     data-bs-placement="top" title="Edit">
-<a  class="text-success" href="#" onclick="showEditModal('<?php echo $product['name']; ?>',<?php echo $product['id']; ?>,<?php echo (isset($product['par_level']) ? $product['par_level'] :'0'); ?>,<?php echo $product['category_id']; ?>,<?php echo $product['price']; ?>)"  class="text-primary d-inline-block edit-item-btn">
+<a  class="text-success" href="#" onclick="showEditModal('<?php echo htmlspecialchars($product['name'] ?? '', ENT_QUOTES); ?>',<?php echo $product['id']; ?>,<?php echo (isset($product['par_level']) && !is_array($product['par_level']) ? $product['par_level'] : '0'); ?>,<?php echo (isset($product['category_id']) ? $product['category_id'] : '0'); ?>,<?php echo (isset($product['price']) ? $product['price'] : '0'); ?>)"  class="text-primary d-inline-block edit-item-btn">
                                                                         <i class="ri-pencil-fill fs-16"></i>
                                                                     </a>
                                                                 </li>

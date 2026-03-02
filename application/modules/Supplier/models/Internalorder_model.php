@@ -87,17 +87,23 @@ class Internalorder_model extends CI_Model{
     if (!isset($result[$id])) {
     $result[$id] = $item;
     $result[$id]['par_level'] = array();
+    $result[$id]['sublocation_id'] = array();
     $subLocArray = array();
     $sameProducts = array_filter($array, function($element) use ($id) {
         return $element['id'] === $id;
     });
     if(isset($sameProducts) && !empty($sameProducts)){  
     foreach($sameProducts as $sameProduct){
-    array_push($subLocArray,$sameProduct['subLoc_id']);      
-    $result[$id]['par_level'][$sameProduct['subLoc_id']] =  $sameProduct['par_level']; 
+    $subLocId = isset($sameProduct['subLoc_id']) ? $sameProduct['subLoc_id'] : null;
+    if(!empty($subLocId)){
+    array_push($subLocArray, $subLocId);      
+    $result[$id]['par_level'][$subLocId] = isset($sameProduct['par_level']) ? $sameProduct['par_level'] : '';
+    }
     $result[$id]['subLoc_id'] = $subLocArray;
     }    
     }
+    // Store sublocation_id as JSON-encoded associative array for view compatibility
+    $result[$id]['sublocation_id'] = !empty($result[$id]['par_level']) ? json_encode($result[$id]['par_level']) : null;
     }
    
     }
