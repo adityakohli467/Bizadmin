@@ -23,6 +23,9 @@
           </div><div class="col-3">                                       
  <a href="#" class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#flipModal"><i id="create-btn" class="ri-add-line align-bottom me-1"></i> Add
                                                Product </a>
+                                               </div>
+                                               <div class="col-2">
+ <a href="#" class="btn btn-info add-btn" onclick="exportSelectedProducts()"><i class="ri-file-excel-2-line align-bottom me-1"></i> Export </a>
                                                </div> 
                                           </div>
                                     </div>
@@ -33,7 +36,7 @@
                                 <table class="table table-nowrap align-middle" id="productDataTable">
                                                 <thead class="text-muted table-light">
                                                     <tr class="">
-                                                      
+                                                         <th><input type="checkbox" class="form-check-input" id="selectAllProducts"></th>
                                                          <th class="sort" data-sort="Name">Product Name</th>
                                                          <th class="sort" data-sort="UOM">UOM</th>
                                                          <th class="sort" data-sort="Name">Category Name</th>
@@ -49,7 +52,7 @@
                                                         <?php foreach($productList as $product){  ?>
                                                       
                                                     <tr id="row_<?php echo  $product['id']; ?>">
-                                                        
+                                                        <td><input type="checkbox" class="form-check-input product-checkbox" value="<?php echo $product['id']; ?>"></td>
                                                       
                                                         <td class="name"><?php echo (isset($product['name']) ? $product['name'] : ''); ?></td>
                                                         <?php $key = array_search($product['uom'], array_column($uomLists, 'product_UOM_id'));  ?>
@@ -495,12 +498,55 @@
  $(document).ready(function() {
         $('#productDataTable').DataTable({
             "columnDefs": [
-                { "orderable": true, "targets": [2] } // Assuming Column 3 (index 2) is the third column you want to sort by
+                { "orderable": false, "targets": [0] },
+                { "orderable": true, "targets": [3] }
             ],
             "pageLength": 1000,
-            "order": [[2, 'desc']] // Sort by Column 3 (index 2) in ascending order
+            "order": [[3, 'desc']]
         });
     });
+
+// Select All checkbox
+$('#selectAllProducts').on('change', function() {
+    $('.product-checkbox').prop('checked', $(this).prop('checked'));
+});
+// Uncheck "Select All" if any individual checkbox is unchecked
+$(document).on('change', '.product-checkbox', function() {
+    if (!$(this).prop('checked')) {
+        $('#selectAllProducts').prop('checked', false);
+    }
+    if ($('.product-checkbox:checked').length === $('.product-checkbox').length) {
+        $('#selectAllProducts').prop('checked', true);
+    }
+});
+
+function exportSelectedProducts() {
+    let selectedIds = [];
+    $('.product-checkbox:checked').each(function() {
+        selectedIds.push($(this).val());
+    });
+    if (selectedIds.length === 0) {
+        Swal.fire({
+            title: "No products selected",
+            text: "Please select at least one product to export.",
+            icon: "warning",
+            confirmButtonClass: "btn btn-primary w-xs mt-2",
+            buttonsStyling: false
+        });
+        return;
+    }
+    // Submit via a hidden form to trigger file download
+    let form = $('<form>', {
+        action: '<?= base_url("Supplier/internalorder/exportProducts") ?>',
+        method: 'POST'
+    });
+    selectedIds.forEach(function(id) {
+        form.append($('<input>', { type: 'hidden', name: 'product_ids[]', value: id }));
+    });
+    $('body').append(form);
+    form.submit();
+    form.remove();
+}
         </script>                                        
                                 
                                 

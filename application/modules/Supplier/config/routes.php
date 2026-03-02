@@ -151,6 +151,7 @@ $route['Supplier/internalorder/productUpdateSortOrder'] = 'Internalorder/product
 $route['Supplier/internalorder/fetchProductData'] = 'Internalorder/product/fetchProductData';
 
 $route['Supplier/internalorder/importProduct'] =       'Internalorder/product/importProduct';
+$route['Supplier/internalorder/exportProducts'] =      'Internalorder/product/exportProducts';
 $route['Supplier/internalorder/productCount'] =        'Internalorder/product/productCount';
 $route['Supplier/internalorder/productCount/(:any)'] = 'Internalorder/product/productCount/$1';
 $route['Supplier/internalorder/addProductCount'] =      'Internalorder/product/addProductCount';
