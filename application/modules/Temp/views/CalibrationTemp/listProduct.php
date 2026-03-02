@@ -119,19 +119,12 @@
                     </div>
                     <div class="mb-3">
                         <label>Area</label>
-                        <?php if(!empty($prep_detail)) { ?>
                         <select name="prep_id" class="form-control" id="prep_id" required>
                             <option value="">Select Area</option>
                             <?php foreach($prep_detail as $prep): ?>
                                 <option value="<?= $prep['id'] ?>"><?= $prep['prep_name'] ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php } else { ?>
-                        <select name="prep_id" class="form-control" id="prep_id" disabled>
-                            <option value="">No areas available</option>
-                        </select>
-                        <small class="text-danger">Please <a href="<?= base_url('Temp/calibrationTemp/prep') ?>">add a prep area</a> first.</small>
-                        <?php } ?>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -197,32 +190,32 @@ function editProduct(id) {
         $('#productModal').modal('show');
     });
 }
-
+</script>
+<script>
 $('#productForm').on('submit', function(e) {
     e.preventDefault();
+
     const $button = $('#submitButton');
     $button.prop('disabled', true);
     $('#button-loader').removeClass('d-none');
+    $button.find('span.visually-hidden').text('Loading...');
+    $button.find('span:contains("Submit")').addClass('d-none');
 
     $.ajax({
-        url: "<?= base_url('Temp/CalibrationTemp/Calibrationhome/addOrUpdateProduct') ?>",
+        url: "<?= base_url('/Temp/CalibrationTemp/Calibrationhome/addOrUpdateProduct') ?>",
         type: "POST",
         data: $(this).serialize(),
-        dataType: "json",
-        success: function(res) {
-            if (res.status == 'success') {
+        success: function(response) {
+            let res = JSON.parse(response);
+            if(res.status == 'success') {
                 location.reload();
-            } else {
-                alert(res.message || 'Failed to save equipment');
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', xhr.responseText);
-            alert('Something went wrong. Please try again.');
         },
         complete: function () {
             $button.prop('disabled', false);
             $('#button-loader').addClass('d-none');
+            $button.find('span.visually-hidden').text('');
+            $button.find('span:contains("Submit")').removeClass('d-none');
         }
     });
 });
