@@ -130,6 +130,25 @@ $route['index'] = 'Home/index';
   $route['Temp/calibrationTemp/prep'] = 'CalibrationTemp/Prepcalib';
   $route['Temp/calibrationTemp/listProduct'] = 'CalibrationTemp/Calibrationhome/listProduct';
 
+  $route['Temp/CalibrationTemp/Calibrationhome/addOrUpdateProduct'] = 'CalibrationTemp/Calibrationhome/addOrUpdateProduct';
+  $route['Temp/CalibrationTemp/Calibrationhome/deleteProduct'] = 'CalibrationTemp/Calibrationhome/deleteProduct';
+  $route['Temp/CalibrationTemp/Calibrationhome/getProductById/(:num)'] = 'CalibrationTemp/Calibrationhome/getProductById/$1';
+  $route['Temp/CalibrationTemp/Calibrationhome/saveRecord'] = 'CalibrationTemp/Calibrationhome/saveRecord';
+  $route['Temp/CalibrationTemp/Calibrationhome/updateRecord'] = 'CalibrationTemp/Calibrationhome/updateRecord';
+  $route['Temp/CalibrationTemp/Calibrationhome/save_signature'] = 'CalibrationTemp/Calibrationhome/save_signature';
+
+  // Sitecalib AJAX routes
+  $route['Temp/CalibrationTemp/Sitecalib/delete'] = 'CalibrationTemp/Sitecalib/delete';
+  $route['Temp/CalibrationTemp/Sitecalib/change_status'] = 'CalibrationTemp/Sitecalib/change_status';
+  $route['Temp/CalibrationTemp/Sitecalib/add'] = 'CalibrationTemp/Sitecalib/add';
+  $route['Temp/CalibrationTemp/Sitecalib/edit/(:num)'] = 'CalibrationTemp/Sitecalib/edit/$1';
+
+  // Prepcalib AJAX routes
+  $route['Temp/CalibrationTemp/Prepcalib/delete'] = 'CalibrationTemp/Prepcalib/delete';
+  $route['Temp/CalibrationTemp/Prepcalib/add'] = 'CalibrationTemp/Prepcalib/add';
+  $route['Temp/CalibrationTemp/Prepcalib/updatePrep'] = 'CalibrationTemp/Prepcalib/updatePrep';
+  $route['Temp/CalibrationTemp/Prepcalib/change_status'] = 'CalibrationTemp/Prepcalib/change_status';
+  $route['Temp/CalibrationTemp/Prepcalib/updateSortOrder'] = 'CalibrationTemp/Prepcalib/updateSortOrder';
 
   $route['Temp/home/calibrationTempHistory'] = 'CalibrationTemp/Calibrationhome/tempCHistory';
   $route['Temp/home/calibrationhistoryData'] = 'CalibrationTemp/Calibrationhome/historyCalibrationData';

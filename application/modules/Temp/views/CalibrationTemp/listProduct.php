@@ -119,12 +119,19 @@
                     </div>
                     <div class="mb-3">
                         <label>Area</label>
+                        <?php if(!empty($prep_detail)) { ?>
                         <select name="prep_id" class="form-control" id="prep_id" required>
                             <option value="">Select Area</option>
-                            <?php if(!empty($prep_detail)) { foreach($prep_detail as $prep): ?>
+                            <?php foreach($prep_detail as $prep): ?>
                                 <option value="<?= $prep['id'] ?>"><?= $prep['prep_name'] ?></option>
-                            <?php endforeach; } ?>
+                            <?php endforeach; ?>
                         </select>
+                        <?php } else { ?>
+                        <select name="prep_id" class="form-control" id="prep_id" disabled>
+                            <option value="">No areas available</option>
+                        </select>
+                        <small class="text-danger">Please <a href="<?= base_url('Temp/calibrationTemp/prep') ?>">add a prep area</a> first.</small>
+                        <?php } ?>
                     </div>
                 </div>
                 <div class="modal-footer">
