@@ -44,6 +44,10 @@
                     <a class="btn btn-blue d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/FryerTemp/Fryerhome'); ?>" data-bs-toggle="tooltip" title="Record Fryer Temperature">
                         <i class="fas fa-fire"></i> Fryer Temp
                     </a>
+
+                <a class="btn btn-info d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/CalibrationTemp/Calibrationhome'); ?>" data-bs-toggle="tooltip" title="Thermometer Calibration Record">
+                    <i class="fas fa-tools"></i> Calibration
+                </a>
                 
                  <button id="managerSignatureBtn" class="btn btn-primary d-flex align-items-center gap-1" data-bs-toggle="tooltip" title="Add Manager Signature">
                   <i class="fas fa-signature"></i> Manager Signature
