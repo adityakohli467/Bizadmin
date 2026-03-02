@@ -126,6 +126,7 @@ $route['index'] = 'Home/index';
   
   // Calibration Temp routes
   
+  $route['Temp/CalibrationTemp/Calibrationhome'] = 'CalibrationTemp/Calibrationhome';
   $route['Temp/calibrationTemp/site'] = 'CalibrationTemp/Sitecalib';
   $route['Temp/calibrationTemp/prep'] = 'CalibrationTemp/Prepcalib';
   $route['Temp/calibrationTemp/listProduct'] = 'CalibrationTemp/Calibrationhome/listProduct';

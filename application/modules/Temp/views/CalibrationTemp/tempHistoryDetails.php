@@ -20,7 +20,7 @@
                     <h4 class="card-title mb-0 flex-grow-1 text-faded">
                         Thermometer Calibration History
                     </h4>
-                    <a href="/Temp/home/calibrationTempHistory" class="btn bg-orange waves-effect btn-label waves-light">
+                    <a href="<?= base_url('Temp/home/calibrationTempHistory') ?>" class="btn bg-orange waves-effect btn-label waves-light">
                         <i class="ri-reply-fill label-icon align-middle fs-16 me-2"></i><span>Back</span>
                     </a>
                 </div>
