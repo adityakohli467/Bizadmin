@@ -121,9 +121,9 @@
                         <label>Area</label>
                         <select name="prep_id" class="form-control" id="prep_id" required>
                             <option value="">Select Area</option>
-                            <?php foreach($prep_detail as $prep): ?>
+                            <?php if(!empty($prep_detail)) { foreach($prep_detail as $prep): ?>
                                 <option value="<?= $prep['id'] ?>"><?= $prep['prep_name'] ?></option>
-                            <?php endforeach; ?>
+                            <?php endforeach; } ?>
                         </select>
                     </div>
                 </div>
@@ -201,11 +201,17 @@ $('#productForm').on('submit', function(e) {
         url: "<?= base_url('Temp/CalibrationTemp/Calibrationhome/addOrUpdateProduct') ?>",
         type: "POST",
         data: $(this).serialize(),
-        success: function(response) {
-            let res = JSON.parse(response);
+        dataType: "json",
+        success: function(res) {
             if (res.status == 'success') {
                 location.reload();
+            } else {
+                alert(res.message || 'Failed to save equipment');
             }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+            alert('Something went wrong. Please try again.');
         },
         complete: function () {
             $button.prop('disabled', false);
