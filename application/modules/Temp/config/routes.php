@@ -124,5 +124,12 @@ $route['index'] = 'Home/index';
   $route['Temp/Fryerhome/saveTempDashboardData']= 'FryerTemp/Fryerhome/saveTempDashboardData';
   $route['Temp/Fryerhome/updateExceededTemp']= 'FryerTemp/Fryerhome/updateExceededTemp';
   
+  // Calibration Temp routes
+  
+  $route['Temp/calibrationTemp/site'] = 'CalibrationTemp/Sitecalib';
+  $route['Temp/calibrationTemp/prep'] = 'CalibrationTemp/Prepcalib';
+  $route['Temp/home/calibrationTempHistory'] = 'CalibrationTemp/Calibrationhome/tempCHistory';
+  $route['Temp/home/calibrationhistoryData'] = 'CalibrationTemp/Calibrationhome/historyCalibrationData';
+  $route['Temp/home/calibrationhistoryData/(:any)/(:any)'] = 'CalibrationTemp/Calibrationhome/historyCalibrationData/$1/$2';
 
 ?>
