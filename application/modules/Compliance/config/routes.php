@@ -83,8 +83,47 @@ $route['Compliance/Sanitation/historyData']= 'Sanitation/Home/historyData';
 // Kitchen Production system routes
 $route['Compliance/KitchenProduction/history']= 'KitchenProduction/Home/history';
 $route['Compliance/KitchenProduction/historyData']= 'KitchenProduction/Home/historyData';
-  
+$route['Compliance/KitchenProduction/Home/saveDashboardData']= 'KitchenProduction/Home/saveDashboardData';
+$route['Compliance/KitchenProduction/Home/updateHistory']= 'KitchenProduction/Home/updateHistory';
+$route['Compliance/KitchenProduction/Home/addOrUpdateProduct']= 'KitchenProduction/Home/addOrUpdateProduct';
+$route['Compliance/KitchenProduction/Home/getProductById/(:num)']= 'KitchenProduction/Home/getProductById/$1';
+$route['Compliance/KitchenProduction/Home/delete']= 'KitchenProduction/Home/delete';
+$route['Compliance/KitchenProduction/Home/updateSortOrder']= 'KitchenProduction/Home/updateSortOrder';
+$route['Compliance/KitchenProduction/Site/delete']= 'KitchenProduction/Site/delete';
+$route['Compliance/KitchenProduction/Site/change_status']= 'KitchenProduction/Site/change_status';
+$route['Compliance/KitchenProduction/Prep/delete']= 'KitchenProduction/Prep/delete';
+$route['Compliance/KitchenProduction/Prep/change_status']= 'KitchenProduction/Prep/change_status';
+$route['Compliance/KitchenProduction/Prep/updateSortOrder']= 'KitchenProduction/Prep/updateSortOrder';
 
-// $route['Temp/prep/index'] = 'Temp/prep/index';
+// Thermometer Calibration system routes
+$route['Compliance/ThermometerCalibration/Home']= 'ThermometerCalibration/Home';
+$route['Compliance/ThermometerCalibration/Home/index']= 'ThermometerCalibration/Home/index';
+$route['Compliance/ThermometerCalibration/Home/saveDashboardData']= 'ThermometerCalibration/Home/saveDashboardData';
+$route['Compliance/ThermometerCalibration/Home/history']= 'ThermometerCalibration/Home/history';
+$route['Compliance/ThermometerCalibration/historyData']= 'ThermometerCalibration/Home/historyData';
+$route['Compliance/ThermometerCalibration/Home/historyData']= 'ThermometerCalibration/Home/historyData';
+$route['Compliance/ThermometerCalibration/Home/historyData/(:any)/(:any)']= 'ThermometerCalibration/Home/historyData/$1/$2';
+$route['Compliance/ThermometerCalibration/Home/updateHistory']= 'ThermometerCalibration/Home/updateHistory';
+$route['Compliance/ThermometerCalibration/Home/listProduct']= 'ThermometerCalibration/Home/listProduct';
+$route['Compliance/ThermometerCalibration/Home/addOrUpdateProduct']= 'ThermometerCalibration/Home/addOrUpdateProduct';
+$route['Compliance/ThermometerCalibration/Home/getProductById/(:num)']= 'ThermometerCalibration/Home/getProductById/$1';
+$route['Compliance/ThermometerCalibration/Home/delete']= 'ThermometerCalibration/Home/delete';
+$route['Compliance/ThermometerCalibration/Home/updateSortOrder']= 'ThermometerCalibration/Home/updateSortOrder';
+
+// Thermometer Calibration Site routes
+$route['Compliance/ThermometerCalibration/Site']= 'ThermometerCalibration/Site';
+$route['Compliance/ThermometerCalibration/Site/add']= 'ThermometerCalibration/Site/add';
+$route['Compliance/ThermometerCalibration/Site/edit/(:num)']= 'ThermometerCalibration/Site/edit/$1';
+$route['Compliance/ThermometerCalibration/Site/delete']= 'ThermometerCalibration/Site/delete';
+$route['Compliance/ThermometerCalibration/Site/change_status']= 'ThermometerCalibration/Site/change_status';
+
+// Thermometer Calibration Prep routes
+$route['Compliance/ThermometerCalibration/Prep']= 'ThermometerCalibration/Prep';
+$route['Compliance/ThermometerCalibration/Prep/add']= 'ThermometerCalibration/Prep/add';
+$route['Compliance/ThermometerCalibration/Prep/edit']= 'ThermometerCalibration/Prep/edit';
+$route['Compliance/ThermometerCalibration/Prep/edit/(:num)']= 'ThermometerCalibration/Prep/edit/$1';
+$route['Compliance/ThermometerCalibration/Prep/delete']= 'ThermometerCalibration/Prep/delete';
+$route['Compliance/ThermometerCalibration/Prep/change_status']= 'ThermometerCalibration/Prep/change_status';
+$route['Compliance/ThermometerCalibration/Prep/updateSortOrder']= 'ThermometerCalibration/Prep/updateSortOrder';
 
 ?>

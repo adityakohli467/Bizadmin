@@ -33,6 +33,12 @@
     <i class="fa-solid fa-utensils"></i> Kitchen Production
   </a>
 
+  <a class="btn btn-info d-flex align-items-center gap-1" 
+     href="<?php echo base_url('/Compliance/ThermometerCalibration/Home'); ?>" 
+     data-bs-toggle="tooltip" title="Thermometer Calibration">
+    <i class="fa-solid fa-thermometer-half"></i> Thermometer Calibration
+  </a>
+
 </div>
     <div class="card">
      <div class="card-header align-items-center d-flex">

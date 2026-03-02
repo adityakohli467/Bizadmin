@@ -42,7 +42,7 @@
 </div>
     <div class="card">
      <div class="card-header align-items-center d-flex">
-     <h4 class="card-title mb-0 flex-grow-1 text-faded"><i class="fa-solid fa-utensils"></i> Kitchen Production Dashboard</h4>
+     <h4 class="card-title mb-0 flex-grow-1 text-faded"><i class="fa-solid fa-thermometer-half"></i> Thermometer Calibration Dashboard</h4>
                                     <div class="flex-shrink-0">
                                      <select class="form-select siteDropdown">
                                              <option> Select Site</option>
@@ -66,9 +66,9 @@
                                         <table class="table table-borderless table-hover table-nowrap align-middle mb-0">
                                             <thead class="table-light">
                                                 <tr class="text-muted">
-                                                    <th scope="col">Product Name</th>
-                                                    <th scope="col">Quantity</th>
-                                                    <th scope="col">Entered By</th>
+                                                    <th scope="col">Equipment Name</th>
+                                                    <th scope="col">Thermometer Serial Number</th>
+                                                    <th scope="col">Check Date</th>
                                                 </tr>
                                             </thead>
                                             <?php if (isset($site_detail) && !empty($site_detail)) { ?>
@@ -76,34 +76,35 @@
                                                     <?php foreach ($prep_detail as $prep_area) { ?>
                                                         <?php if ($prep_area['site_id'] == $site['id']) { ?>
                                                             <tbody class="prep_<?php echo $prep_area['id'] ?> tbodySite <?php echo 'siteId_' . $site['id'] ?>">
-                                                                <th colspan="4" class="text-black w-100" style="background-color: #fff3cd;">
-                                                                    <b><i class="fa-solid fa-kitchen-set"></i> <?php echo $prep_area['prep_name']; ?> (Site: <?php echo $site['site_name']; ?>)</b>
+                                                                <th colspan="3" class="text-black w-100" style="background-color: #d1ecf1;">
+                                                                    <b><i class="fa-solid fa-thermometer-half"></i> <?php echo $prep_area['prep_name']; ?> (Site: <?php echo $site['site_name']; ?>)</b>
                                                                 </th>
                                                                 <?php if (isset($products) && !empty($products)) { ?>
                                                                     <?php foreach ($products as $product) { ?>
-                                                                        <?php if ($product['prep_id'] == $prep_area['id'] && ($product['site_id'] == $site['id'] || $product['site_id'] == 0)) { ?>
+                                                                        <?php if ($product['prep_id'] == $prep_area['id']) { ?>
                                                                             <tr>
-                                                                                <td><?php echo $product['product_name']; ?></td>
+                                                                                <td><?php echo htmlspecialchars($product['product_name']); ?></td>
                                                                                 <td>
                                                                                     <input type="text" class="form-control auto-save" 
                                                                                            data-product-id="<?= $product['id']; ?>" 
-                                                                                           data-field="quantity"
+                                                                                           data-field="serial_number"
                                                                                            data-prep-id="<?= $prep_area['id']; ?>"
-                                                                                           value="<?= isset($todaysEnteredData[$product['id']]) ? $todaysEnteredData[$product['id']]['quantity'] : ''; ?>">
+                                                                                           value="<?= isset($todaysEnteredData[$product['id']]) ? htmlspecialchars($todaysEnteredData[$product['id']]['serial_number']) : ''; ?>"
+                                                                                           placeholder="e.g. 26335330151">
                                                                                 </td>
                                                                                 <td>
-                                                                                    <input type="text" class="form-control auto-save" 
+                                                                                    <input type="date" class="form-control auto-save" 
                                                                                            data-product-id="<?= $product['id']; ?>" 
-                                                                                           data-field="entered_by"
+                                                                                           data-field="check_date"
                                                                                            data-prep-id="<?= $prep_area['id']; ?>"
-                                                                                           value="<?= isset($todaysEnteredData[$product['id']]['entered_by']) ? $todaysEnteredData[$product['id']]['entered_by'] : ''; ?>">
+                                                                                           value="<?= isset($todaysEnteredData[$product['id']]['check_date']) ? htmlspecialchars($todaysEnteredData[$product['id']]['check_date']) : ''; ?>">
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } ?>
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
-                                                                        <td colspan="3" class="text-center">No products found for this prep area.</td>
+                                                                        <td colspan="3" class="text-center">No equipment found for this prep area.</td>
                                                                     </tr>
                                                                 <?php } ?>
                                                             </tbody>
@@ -113,7 +114,7 @@
                                             <?php } else { ?>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="3" class="text-center">No sites or prep areas found. <a href="<?php echo base_url('Compliance/KitchenProduction/Site'); ?>">Create a Site</a> first.</td>
+                                                        <td colspan="3" class="text-center">No sites or prep areas found. <a href="<?php echo base_url('Compliance/ThermometerCalibration/Site'); ?>">Create a Site</a> first.</td>
                                                     </tr>
                                                 </tbody>
                                             <?php } ?>
@@ -137,7 +138,7 @@ $(document).on('blur change', '.auto-save', function() {
     let prep = $(this).data('prep-id') || $(".siteDropdown").val();
 
     $.ajax({
-        url: "<?= base_url('Compliance/KitchenProduction/Home/saveDashboardData') ?>",
+        url: "<?= base_url('Compliance/ThermometerCalibration/Home/saveDashboardData') ?>",
         method: "POST",
         data: {
             product_id: productId,
@@ -156,7 +157,7 @@ $(document).on('blur change', '.auto-save', function() {
 
 $(".siteDropdown").on('change', function(){
     let siteId = $(this).val();
-    localStorage.setItem('selectedSiteKitchenProd', siteId);
+    localStorage.setItem('selectedSiteThermCalib', siteId);
     $(".tbodySite").each(function(index, element) {
         if (!$(element).hasClass("d-none")) {
             $(element).addClass("d-none");
@@ -166,7 +167,7 @@ $(".siteDropdown").on('change', function(){
 });
 
 $(document).ready(function(){
-    let siteId = localStorage.getItem('selectedSiteKitchenProd');
+    let siteId = localStorage.getItem('selectedSiteThermCalib');
     if(siteId == '' || siteId == undefined || siteId == null){
         siteId = $(".siteDropdown option:eq(1)").val();
     }
