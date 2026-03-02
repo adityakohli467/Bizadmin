@@ -167,6 +167,18 @@ class Calibrationhome extends MY_Controller {
         $where_conditions = array('is_deleted' => 0, 'location_id' => $this->selected_location_id);
         $data['site_detail'] = $this->common_model->fetchRecordsDynamically('TEMP_calibrationSites', '', $where_conditions);
         $data['prep_detail'] = $this->prep_model->fetchAllPrepArea();
+
+        $foodTempConfigurationData = $this->config_model->getConfiguration('', 'foodTemp');
+        $chillingTempConfigurationData = $this->config_model->getConfiguration('', 'chillingTemp');
+        if (isset($foodTempConfigurationData[0]['data']) && !empty($foodTempConfigurationData[0]['data'])) {
+            $foodTempConfigurationData = unserialize($foodTempConfigurationData[0]['data']);
+            $data['showFoodTemp'] = isset($foodTempConfigurationData['showFoodTemp']) ? $foodTempConfigurationData['showFoodTemp'] : '';
+        }
+        if (isset($chillingTempConfigurationData[0]['data']) && !empty($chillingTempConfigurationData[0]['data'])) {
+            $chillingTempConfigurationData = unserialize($chillingTempConfigurationData[0]['data']);
+            $data['showChillingTemp'] = isset($chillingTempConfigurationData['showChillingTemp']) ? $chillingTempConfigurationData['showChillingTemp'] : '';
+        }
+
         $this->load->view('general/header');
         $this->load->view('CalibrationTemp/listProduct', $data);
         $this->load->view('general/footer');

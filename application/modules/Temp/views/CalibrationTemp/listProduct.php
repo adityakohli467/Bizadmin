@@ -1,4 +1,37 @@
 <div class="container-fluid" style="margin-top: 130px !important;">
+    
+    <nav class="navbar navbar-light bg-light mb-3 p-2">
+        <div class="container-fluid">
+            <div class="d-flex flex-wrap gap-2 w-100">
+                <a class="btn btn-secondary d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/' . ($this->session->userdata('system_id') ?? '')); ?>" data-bs-toggle="tooltip" title="Record Equipment Temperature">
+                    <i class="fas fa-thermometer-half"></i> Record Temp/Calib
+                </a>
+                <?php if (!empty($showFoodTemp) && $showFoodTemp) { ?>
+                    <a class="btn btn-success d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/FoodTemp/Foodtemphome'); ?>" data-bs-toggle="tooltip" title="Record Food Temperature">
+                        <i class="fas fa-thermometer-half"></i> Food Temp
+                    </a>
+                <?php } ?>
+                <?php if (!empty($showChillingTemp) && $showChillingTemp) { ?>
+                    <a class="btn btn-danger d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/ChillingTemp/Chillinghome'); ?>" data-bs-toggle="tooltip" title="Record Chilling Temperature">
+                        <i class="fas fa-snowflake"></i> Chilling Temp 
+                    </a>
+                <?php } ?>
+                <a class="btn btn-warning d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/SliceTemp/Slicinghome'); ?>" data-bs-toggle="tooltip" title="Record Slicing Temperature">
+                    <i class="fas fa-snowflake"></i> Slicing Temp
+                </a>
+                <a class="btn btn-blue d-flex align-items-center gap-1" href="<?php echo base_url('/Temp/FryerTemp/Fryerhome'); ?>" data-bs-toggle="tooltip" title="Record Fryer Temperature">
+                    <i class="fas fa-fire"></i> Fryer Temp
+                </a>
+                <a class="btn btn-info d-flex align-items-center gap-1 active" href="<?php echo base_url('/Temp/CalibrationTemp/Calibrationhome'); ?>" data-bs-toggle="tooltip" title="Thermometer Calibration Record">
+                    <i class="fas fa-tools"></i> Calibration
+                </a>
+                <a class="btn btn-primary d-flex align-items-center gap-1" data-bs-toggle="tooltip" href="<?php echo base_url('/Temp/calibrationTemp/listProduct'); ?>">
+                    Add Equipment
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card py-3" id="orderList">

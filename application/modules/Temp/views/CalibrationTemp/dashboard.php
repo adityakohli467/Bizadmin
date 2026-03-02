@@ -58,7 +58,7 @@
                     <?php } ?>
                 </select>
 
-                <a class="btn btn-primary d-flex align-items-center gap-1" data-bs-toggle="tooltip" href="/Temp/CalibrationTemp/Calibrationhome/listProduct">
+                <a class="btn btn-primary d-flex align-items-center gap-1" data-bs-toggle="tooltip" href="<?php echo base_url('/Temp/calibrationTemp/listProduct'); ?>">
                     Add Equipment
                 </a>
             </div>
