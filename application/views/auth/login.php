@@ -149,7 +149,7 @@ $(document).ready(function() {
             function(error) {
                 console.log('Geolocation not available:', error.message);
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
         );
     }
 

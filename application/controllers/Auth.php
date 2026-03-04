@@ -152,9 +152,6 @@ class Auth extends MY_Controller
 			    $login_identity = $is_pin_login ? ('PIN:' . $user->username) : $this->input->post('identity');
 			    $this->_log_login_attempt($login_identity, 'success', $login_latitude, $login_longitude, $login_address);
 			    
-			    // Send login notification email with location
-			    $this->_send_login_notification_email($user, $login_latitude, $login_longitude, $login_address);
-			    
 			    $this->session->set_userdata('username',$user->username);
 			    
 			    $this->session->set_userdata('User_location_ids',unserialize($user->location_ids));
@@ -183,17 +180,20 @@ class Auth extends MY_Controller
          redirect('auth/login', 'refresh');
        }
 				
-			    if($this->ion_auth->get_users_groups()->row()->id == 4){
-			    redirect('auth/dashboardEmployee', 'refresh');    
-			    }else if($this->ion_auth->get_users_groups()->row()->id == 5){
+			    // Determine redirect URL based on user role
+			    $role_id = $this->ion_auth->get_users_groups()->row()->id;
+			    if($role_id == 4){
+			        $redirect_url = site_url('auth/dashboardEmployee');
+			    }else if($role_id == 5){
 			        // for timesheet role clockin clockout portal
-			    $this->session->set_userdata('location_id',unserialize($user->location_ids)[0]);
-			    redirect('auth/clockInPage', 'refresh');  
+			        $this->session->set_userdata('location_id',unserialize($user->location_ids)[0]);
+			        $redirect_url = site_url('auth/clockInPage');
 			    }else{
-			   redirect('auth/dashboard', 'refresh');     
+			        $redirect_url = site_url('auth/dashboard');
 			    }
-				// redirect('/', 'refresh');
-				 
+			    
+			    // Non-blocking: redirect browser first, then send email server-side
+			    $this->_redirect_and_notify($redirect_url, $user, $login_latitude, $login_longitude, $login_address);
 			}
 			else
 			{   $tenantIdentifier = $this->session->userdata('tenantIdentifier');
@@ -1373,6 +1373,37 @@ if (!$this->ion_auth->logged_in())
 		];
 
 		$this->tenantDb->insert('login_attempts', $data);
+	}
+
+	/**
+	 * Non-blocking redirect: sends HTTP redirect to client immediately,
+	 * then sends login notification email after the response is flushed.
+	 * This prevents the slow SMTP email from blocking the login process.
+	 */
+	private function _redirect_and_notify($redirect_url, $user, $latitude, $longitude, $address)
+	{
+		// Allow script to continue running after client disconnects
+		ignore_user_abort(true);
+		set_time_limit(120);
+
+		// Write and close session so data is saved before we flush response
+		session_write_close();
+
+		// Clear any existing output buffers
+		while (ob_get_level() > 0) {
+			ob_end_clean();
+		}
+
+		// Send redirect response to browser immediately
+		header('HTTP/1.1 302 Found');
+		header('Location: ' . $redirect_url);
+		header('Connection: close');
+		header('Content-Length: 0');
+		flush();
+
+		// Browser has been redirected — now send email without blocking user
+		$this->_send_login_notification_email($user, $latitude, $longitude, $address);
+		exit();
 	}
 
 	/**
