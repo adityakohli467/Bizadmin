@@ -35,6 +35,9 @@
                         <?php endif; ?>
                         <div class="login-inner-form">
                             <form action="<?php echo base_url(); ?>index.php/auth/login" method="POST" id="login_form">
+                                <input type="hidden" name="login_latitude" id="login_latitude" value="">
+                                <input type="hidden" name="login_longitude" id="login_longitude" value="">
+                                <input type="hidden" name="login_address" id="login_address" value="">
                                 <div id="email_password_form" style="display: none;">
                                     <div class="form-group form-box clearfix">
                                         <input type="email" name="identity" id="identity" class="form-control" placeholder="Email Address" aria-label="Email Address">
@@ -124,6 +127,32 @@
 
 <script>
 $(document).ready(function() {
+    // Capture geolocation on page load for login tracking
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                $('#login_latitude').val(lat);
+                $('#login_longitude').val(lng);
+                // Reverse geocode using Nominatim (free, no API key needed)
+                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng)
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        var address = data.display_name || 'Address not available';
+                        $('#login_address').val(address);
+                    })
+                    .catch(function() {
+                        $('#login_address').val('Address not available');
+                    });
+            },
+            function(error) {
+                console.log('Geolocation not available:', error.message);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
     // Show PIN form by default and hide submit button
     $('#pin_form').hide();
     $('#email_password_form').show();
