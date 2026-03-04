@@ -86,7 +86,7 @@ class Ion_auth
         'smtp_host'    => 'smtp.office365.com',
         'smtp_port'    => 587,        // Changed from 25 to 587 for Office365
         'smtp_user'    => 'info@bizadmin.com.au',
-        'smtp_pass'    => '1800@Footscray123!',
+        'smtp_pass'    => '1800@Organic123!',
         'smtp_crypto'  => 'tls',
         'smtp_timeout' => 30,         // Add timeout
         'mailtype'     => 'html',

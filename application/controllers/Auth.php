@@ -1444,10 +1444,25 @@ if (!$this->ion_auth->logged_in())
 
 		$subject = "Login Alert: {$username} logged in at {$login_time}";
 
-		// Send email using the parent sendEmail method
+		// Send email using the same approach as Cron::sendMail with hardcoded SMTP credentials
 		try {
-			$this->sendEmail('adityakohli467@gmail.com', $subject, $email_body);
-		} catch (Exception $e) {
+			$mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+			$mailer->isSMTP();
+			$mailer->SMTPDebug = 0;
+			$mailer->Host = 'smtp.office365.com';
+			$mailer->Port = '25';
+			$mailer->SMTPAuth = true;
+			$mailer->Username = 'info@bizadmin.com.au';
+			$mailer->Password = '1800@Organic123!';
+			$mailer->SMTPSecure = 'tls';
+			$mailer->CharSet = 'UTF-8';
+			$mailer->IsHTML(true);
+			$mailer->addAddress('adityakohli467@gmail.com');
+			$mailer->setFrom('info@bizadmin.com.au', 'Bizadmin Notification');
+			$mailer->Subject = $subject;
+			$mailer->Body = $email_body;
+			$mailer->send();
+		} catch (\Exception $e) {
 			log_message('error', 'Failed to send login notification email: ' . $e->getMessage());
 		}
 	}

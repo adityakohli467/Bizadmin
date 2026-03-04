@@ -135,7 +135,7 @@ class Cron extends MX_Controller {
         $this->phpmailer->Port = '25';
         $this->phpmailer->SMTPAuth = true;
         $this->phpmailer->Username = 'info@bizadmin.com.au';
-        $this->phpmailer->Password = '1800@Footscray123!';
+        $this->phpmailer->Password = '1800@Organic123!';
         $this->phpmailer->SMTPSecure = 'tls';
         $this->phpmailer->CharSet = 'UTF-8';
         $this->phpmailer->IsHTML(true);
