@@ -105,11 +105,6 @@ class Auth extends MY_Controller
 			// check for "remember me"
 			$isloginSuccessfull =  false;
 			
-			// Capture geolocation data from login form
-			$login_latitude = $this->input->post('login_latitude');
-			$login_longitude = $this->input->post('login_longitude');
-			$login_address = $this->input->post('login_address');
-		
 			$remember = (bool)$this->input->post('remember');
            if( $this->session->userdata('tenantIdentifier') != ''){
            
@@ -150,7 +145,7 @@ class Auth extends MY_Controller
 			{
 			    // Log successful login attempt to login_attempts table
 			    $login_identity = $is_pin_login ? ('PIN:' . $user->username) : $this->input->post('identity');
-			    $this->_log_login_attempt($login_identity, 'success', $login_latitude, $login_longitude, $login_address);
+			    $this->_log_login_attempt($login_identity, 'success');
 			    
 			    $this->session->set_userdata('username',$user->username);
 			    
@@ -192,14 +187,13 @@ class Auth extends MY_Controller
 			        $redirect_url = site_url('auth/dashboard');
 			    }
 			    
-			    // Non-blocking: redirect browser first, then send email server-side
-			    $this->_redirect_and_notify($redirect_url, $user, $login_latitude, $login_longitude, $login_address);
+			    redirect($redirect_url, 'refresh');
 			}
 			else
 			{   $tenantIdentifier = $this->session->userdata('tenantIdentifier');
 			    // Log failed login attempt
 			    $failed_identity = $is_pin_login ? 'PIN_LOGIN' : $this->input->post('identity');
-			    $this->_log_login_attempt($failed_identity, 'failed', $login_latitude, $login_longitude, $login_address);
+			    $this->_log_login_attempt($failed_identity, 'failed');
 			    
 		     	$this->session->set_flashdata('message', 'Invalid Credentials.');
 			 //	$this->session->set_flashdata('message', $this->ion_auth->errors());
@@ -1356,15 +1350,11 @@ if (!$this->ion_auth->logged_in())
 
 	/**
 	 * Log login attempt to the login_attempts table
-	 * Logs both successful and failed login attempts with geolocation data
 	 *
 	 * @param string $identity The login identity (email or PIN username)
 	 * @param string $status 'success' or 'failed'
-	 * @param string|null $latitude
-	 * @param string|null $longitude
-	 * @param string|null $address
 	 */
-	private function _log_login_attempt($identity, $status = 'failed', $latitude = null, $longitude = null, $address = null)
+	private function _log_login_attempt($identity, $status = 'failed')
 	{
 		$data = [
 			'ip_address' => $this->input->ip_address(),
@@ -1373,129 +1363,6 @@ if (!$this->ion_auth->logged_in())
 		];
 
 		$this->tenantDb->insert('login_attempts', $data);
-	}
-
-	/**
-	 * Non-blocking redirect: sends HTTP redirect to client immediately,
-	 * then sends login notification email after the response is flushed.
-	 * This prevents the slow SMTP email from blocking the login process.
-	 */
-	private function _redirect_and_notify($redirect_url, $user, $latitude, $longitude, $address)
-	{
-		// Allow script to continue running after client disconnects
-		ignore_user_abort(true);
-		set_time_limit(120);
-
-		// Write and close session so data is saved before we flush response
-		session_write_close();
-
-		// Clear any existing output buffers
-		while (ob_get_level() > 0) {
-			ob_end_clean();
-		}
-
-		// Send redirect response to browser immediately
-		header('HTTP/1.1 302 Found');
-		header('Location: ' . $redirect_url);
-		header('Connection: close');
-		header('Content-Length: 0');
-		flush();
-
-		// Browser has been redirected — now send email without blocking user
-		$this->_send_login_notification_email($user, $latitude, $longitude, $address);
-		exit();
-	}
-
-	/**
-	 * Send login notification email with geolocation details
-	 *
-	 * @param object $user The logged-in user object
-	 * @param string|null $latitude
-	 * @param string|null $longitude
-	 * @param string|null $address
-	 */
-	private function _send_login_notification_email($user, $latitude = null, $longitude = null, $address = null)
-	{
-		$login_time = date('d M Y h:i:s A');
-		$ip_address = $this->input->ip_address();
-		$username = isset($user->username) ? $user->username : 'Unknown';
-		$email = isset($user->email) ? $user->email : 'Unknown';
-
-		// Build location info
-		$location_info = 'Location not available (user denied geolocation permission)';
-		$map_link = '';
-
-		if (!empty($latitude) && !empty($longitude)) {
-			$location_info = "Latitude: {$latitude}, Longitude: {$longitude}";
-			if (!empty($address)) {
-				$location_info .= "<br>Address: {$address}";
-			}
-			// Google Maps link using coordinates (no API key needed for static map link)
-			$map_link = "https://www.google.com/maps?q={$latitude},{$longitude}";
-		}
-
-		// Build email body
-		$email_body = "
-		<html>
-		<body style='font-family: Arial, sans-serif; color: #333;'>
-			<h2 style='color: #2c3e50;'>Login Alert - Bizadmin</h2>
-			<p>A login was detected on your system. Here are the details:</p>
-			<table style='border-collapse: collapse; width: 100%; max-width: 500px;'>
-				<tr style='border-bottom: 1px solid #ddd;'>
-					<td style='padding: 10px; font-weight: bold;'>User</td>
-					<td style='padding: 10px;'>{$username} ({$email})</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #ddd;'>
-					<td style='padding: 10px; font-weight: bold;'>Login Time</td>
-					<td style='padding: 10px;'>{$login_time}</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #ddd;'>
-					<td style='padding: 10px; font-weight: bold;'>IP Address</td>
-					<td style='padding: 10px;'>{$ip_address}</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #ddd;'>
-					<td style='padding: 10px; font-weight: bold;'>Location</td>
-					<td style='padding: 10px;'>{$location_info}</td>
-				</tr>";
-
-		if (!empty($map_link)) {
-			$email_body .= "
-				<tr style='border-bottom: 1px solid #ddd;'>
-					<td style='padding: 10px; font-weight: bold;'>Map</td>
-					<td style='padding: 10px;'><a href='{$map_link}' target='_blank'>View on Google Maps</a></td>
-				</tr>";
-		}
-
-		$email_body .= "
-			</table>
-			<br>
-			<p style='font-size: 12px; color: #999;'>This is an automated notification from Bizadmin.</p>
-		</body>
-		</html>";
-
-		$subject = "Login Alert: {$username} logged in at {$login_time}";
-
-		// Send email using the same approach as Cron::sendMail with hardcoded SMTP credentials
-		try {
-			$mailer = new PHPMailer\PHPMailer\PHPMailer(true);
-			$mailer->isSMTP();
-			$mailer->SMTPDebug = 0;
-			$mailer->Host = 'smtp.office365.com';
-			$mailer->Port = '25';
-			$mailer->SMTPAuth = true;
-			$mailer->Username = 'info@bizadmin.com.au';
-			$mailer->Password = '1800@Organic123!';
-			$mailer->SMTPSecure = 'tls';
-			$mailer->CharSet = 'UTF-8';
-			$mailer->IsHTML(true);
-			$mailer->addAddress('adityakohli467@gmail.com');
-			$mailer->setFrom('info@bizadmin.com.au', 'Bizadmin Notification');
-			$mailer->Subject = $subject;
-			$mailer->Body = $email_body;
-			$mailer->send();
-		} catch (\Exception $e) {
-			log_message('error', 'Failed to send login notification email: ' . $e->getMessage());
-		}
 	}
 
 }
