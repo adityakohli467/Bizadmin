@@ -45,6 +45,10 @@
                                         <i class="flaticon-password"></i>
                                     </div>
                                     <div class="checkbox form-group clearfix">
+                                        <div class="form-check float-start">
+                                            <input type="checkbox" name="remember" id="remember" value="1" class="form-check-input">
+                                            <label class="form-check-label" for="remember">Remember Me</label>
+                                        </div>
                                         <a href="/auth/forgot_password" class="link-light float-end forgot-password">Forgot password?</a>
                                     </div>
                                 </div>
