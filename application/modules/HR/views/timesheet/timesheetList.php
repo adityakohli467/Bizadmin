@@ -23,6 +23,11 @@
                 <i class="fa-solid fa-plus"></i>
                 <span class="font-medium">Add Timesheet</span>
             </a>
+
+            <button type="button" id="downloadTxtBtn" class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md text-white font-medium text-xs transition">
+                <i class="fa-solid fa-download mr-1"></i>
+                <span class="font-medium">Download TXT</span>
+            </button>
             
             <div class="relative">
                 <input 
@@ -38,7 +43,9 @@
     <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
         <thead>
             <tr class="bg-navy text-white">
-               
+                <th class="px-4 py-4 text-center text-sm font-semibold" style="width: 50px;">
+                    <input type="checkbox" id="selectAllTimesheets" class="w-4 h-4 cursor-pointer" title="Select All">
+                </th>
                 <th class="px-6 py-4 text-left text-sm font-semibold">
                     <div class="flex items-center space-x-2">
                         <span>Timesheet Week</span>
@@ -67,7 +74,9 @@
                     ?>
 
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
-                        
+                        <td class="px-4 py-4 text-center">
+                            <input type="checkbox" class="timesheet-checkbox w-4 h-4 cursor-pointer" data-date-from="<?= htmlspecialchars($date_from) ?>" data-date-to="<?= htmlspecialchars($date_to) ?>">
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
                             <?= $fromFormatted . ' – ' . $toFormatted ?>
                         </td>
@@ -118,7 +127,7 @@
             <?php else: ?>
 
                 <tr>
-                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
                         No timesheets found.
                     </td>
                 </tr>
@@ -132,6 +141,9 @@
         
     </div>
 </main>
+<!-- Hidden form for bulk TXT export -->
+<form id="bulkExportForm" method="POST" action="<?php echo base_url('HR/Timesheet/exportTimesheetTXBulk'); ?>" style="display:none;"></form>
+
 <div class="modal fade" id="recreateTimesheetModal" tabindex="-1" aria-labelledby="recreateRoster" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -176,6 +188,45 @@ $('#search-timesheet').on('input', function() {
         var rowText = $(this).text().toLowerCase();
         $(this).toggle(rowText.includes(searchText));
     });
+});
+
+// Select All checkbox
+$('#selectAllTimesheets').on('change', function() {
+    var isChecked = $(this).is(':checked');
+    $('.timesheet-checkbox').each(function() {
+        // Only toggle visible rows
+        if ($(this).closest('tr').is(':visible')) {
+            $(this).prop('checked', isChecked);
+        }
+    });
+});
+
+// Update Select All state when individual checkboxes change
+$(document).on('change', '.timesheet-checkbox', function() {
+    var totalVisible = $('.timesheet-checkbox:visible').length;
+    var checkedVisible = $('.timesheet-checkbox:visible:checked').length;
+    $('#selectAllTimesheets').prop('checked', totalVisible > 0 && totalVisible === checkedVisible);
+});
+
+// Download TXT for selected timesheets
+$('#downloadTxtBtn').on('click', function() {
+    var checked = $('.timesheet-checkbox:checked');
+    if (checked.length === 0) {
+        alert('Please select at least one timesheet week to download.');
+        return;
+    }
+
+    var form = $('#bulkExportForm');
+    form.empty();
+
+    checked.each(function() {
+        var dateFrom = $(this).data('date-from');
+        var dateTo = $(this).data('date-to');
+        form.append('<input type="hidden" name="date_from[]" value="' + dateFrom + '">');
+        form.append('<input type="hidden" name="date_to[]" value="' + dateTo + '">');
+    });
+
+    form.submit();
 });
         
         

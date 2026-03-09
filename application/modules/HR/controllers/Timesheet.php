@@ -694,6 +694,30 @@ exit;
 }
 
 /**
+ * Export timesheet TX for multiple selected weeks (bulk download).
+ * Accepts POST data with arrays of date_from[] and date_to[].
+ * Finds the overall min start and max end date, then delegates
+ * to the existing exportTimesheetTX() method.
+ */
+public function exportTimesheetTXBulk()
+{
+    $dateFromArr = $this->input->post('date_from');
+    $dateToArr   = $this->input->post('date_to');
+
+    if (empty($dateFromArr) || empty($dateToArr) || count($dateFromArr) !== count($dateToArr)) {
+        show_error('No timesheets selected for export');
+        return;
+    }
+
+    // Find the overall start and end dates from all selected ranges
+    $overallStart = min($dateFromArr);
+    $overallEnd   = max($dateToArr);
+
+    // Reuse existing export method with the combined date range
+    $this->exportTimesheetTX($overallStart, $overallEnd);
+}
+
+/**
  * Download Weekly Timesheet Report
  * Shows employee hours breakdown: weekday/weekend hours with costs
  * and daily clock-in/out vs roster times
