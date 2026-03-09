@@ -389,11 +389,11 @@ public function exportTimesheetTX($start_date, $end_date)
         
         // Track processed employees to avoid duplicates
         $processedEmployees = [];
-        $count = 0;
+        
         // Process each employee for all dates (grouped by employee)
         foreach ($employees as $employee) {
             $empId = $employee['emp_id'];
-            if($count < 1){  // remove this line later
+          
                 
             // Skip if this employee was already processed (avoid duplicates from position join)
             if (isset($processedEmployees[$empId])) {
@@ -485,8 +485,7 @@ public function exportTimesheetTX($start_date, $end_date)
                 }
             }
             
-            $count++;
-            }
+           
         }
         
         // Generate IIF file with Reckon format
