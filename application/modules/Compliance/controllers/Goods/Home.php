@@ -239,6 +239,10 @@ class Home extends MY_Controller
         $data['site_id']         = $prep_id;
         $data['weeklyHistoryData'] = $weeklyHistoryData;
 
+        // Only admin and manager can edit history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+
         $this->load->view('general/header');
         $this->load->view('Goods/historyDetails', $data);
         $this->load->view('general/footer');
@@ -251,6 +255,13 @@ class Home extends MY_Controller
      */
     public function updateHistory()
     {
+        // Only admin and manager can update history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+            echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+            return;
+        }
+
         $post = $this->input->post();
 
         $supplier_id  = $post['supplier_id']  ?? null;

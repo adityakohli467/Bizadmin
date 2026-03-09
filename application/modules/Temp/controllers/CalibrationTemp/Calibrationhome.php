@@ -73,6 +73,13 @@ class Calibrationhome extends MY_Controller {
     }
 
     public function updateRecord() {
+        // Only admin and manager can update history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+            echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+            return;
+        }
+
         $product_id = $this->input->post('product_id');
         $rowId = $this->input->post('rowId');
         $field = $this->input->post('field');
@@ -125,6 +132,11 @@ class Calibrationhome extends MY_Controller {
             $data['uniqueDates'] = $uniqueDates;
             
             $data['weeklyTempData'] = $this->calibrationtemp_model->fetchCalibrationHistoryData($fromDate, $toDate, $site_id);
+            
+            // Only admin and manager can edit history
+            $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+            $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+            
             $this->load->view('general/header');
             $this->load->view('CalibrationTemp/tempHistoryDetails', $data);
             $this->load->view('general/footer');

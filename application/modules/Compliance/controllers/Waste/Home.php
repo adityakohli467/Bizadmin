@@ -183,6 +183,10 @@ class Home extends MY_Controller {
             //  echo "==========";
             // echo "<pre>"; print_r($weeklyWasteData); exit;
 
+            // Only admin and manager can edit history
+            $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+            $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+
             $this->load->view('general/header');
             $this->load->view('WasteManagement/historyDetails', $data);
             $this->load->view('general/footer');
@@ -194,6 +198,13 @@ class Home extends MY_Controller {
    // In application/modules/Compliance/controllers/Waste/Home.php
 // In application/modules/Compliance/controllers/Waste/Home.php
 public function updateWasteHistory() {
+    // Only admin and manager can update history
+    $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+    if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+        echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+        return;
+    }
+
     // Validate input
     $product_id = $this->input->post('product_id', TRUE);
     $date_entered = $this->input->post('date_entered', TRUE);

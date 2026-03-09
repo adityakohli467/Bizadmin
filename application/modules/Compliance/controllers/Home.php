@@ -104,6 +104,10 @@ error_reporting(E_ALL);
        $data['weeklyHistoryData'] = $this->generalcomp_model->fetchHistoryData($fromDate,$toDate,$site_id);
     //   echo "<pre>"; print_r($data['weeklyHistoryData']); exit;
     
+        // Only admin and manager can edit history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+
         $this->load->view('general/header');
       	$this->load->view('dashboard/tempHistoryDetails',$data);
       	$this->load->view('general/footer');

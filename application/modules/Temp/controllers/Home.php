@@ -159,6 +159,10 @@ error_reporting(E_ALL);
        $data['weeklyTempData'] = $this->temp_model->fetchTempViewHistoryData($fromDate,$toDate,$site_id);
     //   echo "<pre>"; print_r($data['weeklyTempData']); exit;
     
+        // Only admin and manager can edit history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+    
         $this->load->view('general/header');
       	$this->load->view('dashboard/tempHistoryDetails',$data);
       	$this->load->view('general/footer');
@@ -258,6 +262,13 @@ error_reporting(E_ALL);
     
     function tempHistoryUpdate(){
    
+     // Only admin and manager can update history
+     $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+     if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+         echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+         return;
+     }
+
      // Disable CodeIgniter's output class
      $this->output->set_header('Content-Type: application/json');
      $this->output->set_status_header(200);

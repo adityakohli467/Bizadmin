@@ -164,6 +164,11 @@ class Foodtemphome extends MY_Controller {
       $data['uniqueDates'] = $uniqueDates;
       $data['weeklyTempData'] = $this->foodtemp_model->fetchTempViewHistoryData($fromDate,$toDate,$site_id);
     //   echo "<pre>"; print_r($data['weeklyTempData']); exit;
+    
+        // Only admin and manager can edit history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+    
         $this->load->view('general/header');
       	$this->load->view('FoodTemp/tempHistoryDetails',$data);
       	$this->load->view('general/footer');
@@ -242,6 +247,13 @@ class Foodtemphome extends MY_Controller {
     }
     
     function tempHistoryUpdatePastrecords(){
+         // Only admin and manager can update history
+         $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+         if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+             echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+             return;
+         }
+
          $json_data = file_get_contents('php://input');
       $tempData = array();
     if (!empty($json_data)) {

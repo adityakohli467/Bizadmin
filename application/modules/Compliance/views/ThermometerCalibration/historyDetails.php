@@ -147,3 +147,26 @@ $(document).on('blur change', '.history-input', function() {
     });
 });
 </script>
+
+<?php if (isset($can_edit_history) && !$can_edit_history): ?>
+<style>
+    .history-readonly input:not([type="hidden"]),
+    .history-readonly select,
+    .history-readonly textarea {
+        background-color: #e9ecef !important;
+        pointer-events: none !important;
+    }
+</style>
+<script>
+$(document).ready(function() {
+    $('.card-body').addClass('history-readonly');
+    $('.card-body input:not([type="hidden"]), .card-body select, .card-body textarea').prop('disabled', true);
+    $('button, .btn').each(function() {
+        var text = $(this).text().toLowerCase().trim();
+        if (text.includes('update') || text.includes('save') || text.includes('add new') || text.includes('complete')) {
+            $(this).hide();
+        }
+    });
+});
+</script>
+<?php endif; ?>

@@ -167,6 +167,11 @@ class Chillinghome extends MY_Controller {
       $data['uniqueDates'] = $uniqueDates;
       $data['weeklyTempData'] = $this->chillingtemp_model->fetchTempViewHistoryData($fromDate,$toDate,$site_id);
     //   echo "<pre>"; print_r($data['weeklyTempData']); exit;
+    
+        // Only admin and manager can edit history
+        $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+        $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+    
         $this->load->view('general/header');
       	$this->load->view('ChillingTemp/tempHistoryDetails',$data);
       	$this->load->view('general/footer');
@@ -181,6 +186,13 @@ class Chillinghome extends MY_Controller {
     
    public function tempHistoryUpdateAlldata()
   {
+    // Only admin and manager can update history
+    $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+    if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+        echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+        return;
+    }
+
     $id = $this->input->post('id');
     $data = [
         'foodName' => $this->input->post('foodName'),

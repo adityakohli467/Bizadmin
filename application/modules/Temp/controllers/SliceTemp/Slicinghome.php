@@ -117,7 +117,12 @@ error_reporting(E_ALL);
 
     public function updateRecord()
      {
-     
+     // Only admin and manager can update history
+     $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+     if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+         echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+         return;
+     }
 
     $product_id = $this->input->post('product_id');
     $rowId = $this->input->post('rowId');
@@ -188,6 +193,11 @@ error_reporting(E_ALL);
             
             $data['weeklyTempData'] = $this->slicingtemp_model->fetchTempViewHistoryData($fromDate, $toDate, $site_id);
             // echo "<pre>"; print_r($data['weeklyTempData']); exit;
+            
+            // Only admin and manager can edit history
+            $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+            $data['can_edit_history'] = $this->ion_auth->is_admin() || strtolower($roleName) === 'manager';
+            
             $this->load->view('general/header');
             $this->load->view('SliceTemp/tempHistoryDetails', $data);
             $this->load->view('general/footer');
@@ -197,6 +207,13 @@ error_reporting(E_ALL);
     }
 
     public function tempHistoryUpdateAlldata() {
+    // Only admin and manager can update history
+    $roleName = get_logged_in_user_role($this->ion_auth, 'name');
+    if (!$this->ion_auth->is_admin() && strtolower($roleName) !== 'manager') {
+        echo json_encode(['status' => 'error', 'message' => 'You do not have permission to edit history data']);
+        return;
+    }
+
     $id = $this->input->post('id');
     if (!$id) {
         echo json_encode(['status' => 'error', 'message' => 'ID is required']);
