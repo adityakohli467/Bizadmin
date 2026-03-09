@@ -336,8 +336,10 @@ public function exportTimesheetTX($start_date, $end_date)
         $allDates[] = $date->format('Y-m-d');
     }
     
+    // Check if tier-based payroll is enabled
+    $tierBasedEnabled = isset($superConfigData['enable_tier_payroll']) && $superConfigData['enable_tier_payroll'] == '1';
+    
     // Fetch all employees who have timesheets in this range (both approved and non-approved)
-    // Only export Tier 1 employees
     $this->tenantDb->distinct()
         ->select('e.emp_id, e.first_name, e.last_name, e.employee_type, pos.position_name')
         ->from('HR_timesheet_details td')
@@ -346,13 +348,14 @@ public function exportTimesheetTX($start_date, $end_date)
         ->where('td.roster_date >=', $start_date)
         ->where('td.roster_date <=', $end_date)
         ->where('td.location_id', $this->location_id)
-        ->where('td.is_deleted', 0)
-        ->group_start()
-            ->where('e.tier', '1')
-            ->or_where('e.tier IS NULL')
-            ->or_where('e.tier', '')
-        ->group_end()
-        ->order_by('e.first_name', 'ASC')
+        ->where('td.is_deleted', 0);
+    
+    // Only export Tier 1 employees when tier-based payroll is enabled
+    if ($tierBasedEnabled) {
+        $this->tenantDb->where('e.tier', '1');
+    }
+    
+    $this->tenantDb->order_by('e.first_name', 'ASC')
         ->order_by('e.last_name', 'ASC');
     
     $employees = $this->tenantDb->get()->result_array();
