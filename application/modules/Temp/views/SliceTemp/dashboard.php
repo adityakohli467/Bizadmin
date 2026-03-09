@@ -220,6 +220,7 @@
                    value="<?php echo $matchedData['entered_by'] ?? ''; ?>" 
                    class="auto-save form-control enteredBy" 
                    data-prepid="<?php echo $prep_area->id ?>" 
+                   data-field="entered_by"
                    data-product-id="<?php echo $productId; ?>">
         </td>
         <td>
