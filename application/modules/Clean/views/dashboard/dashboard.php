@@ -210,7 +210,7 @@ formData = JSON.stringify(data);
        
            $.ajax({
             type: 'POST',
-            url: 'home/saveDashboardData',
+            url: '/Clean/home/saveDashboardData',
             data: formData,
             success: function (response) {
               $(".successRecorded").removeClass("d-none");
