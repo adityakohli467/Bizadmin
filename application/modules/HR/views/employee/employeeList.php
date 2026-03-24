@@ -95,7 +95,11 @@
                     <td><a class="first_name" href="/HR/Employee/edit/<?php echo $empList['emp_id']; ?>"><?php echo $empList['name']; ?></a></td>
                     <!-- removing this line wont send onboarding mail so do not remove this or modify send onboaridng mail code in JS at bottom of this page -->
                     <td><a class="email" href="/HR/Employee/edit/<?php echo $empList['emp_id']; ?>"><?php echo $empList['email']; ?></a></td>
-                    <td><?= date('d-m-Y', strtotime(!empty($empList['effective_start_date']) ? $empList['effective_start_date'] : $empList['created_at'])) ?></td>
+                    <td><?php
+                      $rawDate = !empty($empList['effective_start_date']) ? $empList['effective_start_date'] : (!empty($empList['created_at']) ? $empList['created_at'] : '');
+                      $ts = $rawDate ? strtotime($rawDate) : false;
+                      echo ($ts && $ts > 0) ? date('d-m-Y', $ts) : '-';
+                    ?></td>
                     <td><?php echo $empList['phone']; ?></td>
                     <td>
                       <?php 

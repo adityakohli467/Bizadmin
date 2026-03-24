@@ -1583,11 +1583,12 @@ if ($clockInTime) {
                 echo json_encode(['status' => 'error', 'message' => 'A break is already in progress']);
                 exit;
             }
-            // Create new break record
+            // Create new break record with rounded time
+            $roundedBreakStart = $this->roundClockTime(date('Y-m-d H:i:s'));
             $breakData = [
                 'timesheet_id' => $timesheetId,
                 'employee_id' => $employeeId,
-                'break_start_time' => date('Y-m-d H:i:s'),
+                'break_start_time' => $roundedBreakStart,
                 'break_end_time' => null,
                 'break_duration' => 0,
                 'is_deleted' => 0,
@@ -1596,7 +1597,7 @@ if ($clockInTime) {
             ];
             try {
                 $breakId = $this->common_model->commonRecordCreate('HR_timesheet_breaks', $breakData);
-                $responseData['break_start_time'] = date('h:i A');
+                $responseData['break_start_time'] = date('h:i A', strtotime($roundedBreakStart));
             } catch (Exception $e) {
                 $this->tenantDb->trans_rollback();
                 echo json_encode(['status' => 'error', 'message' => 'Failed to start break: ' . $e->getMessage()]);
@@ -1608,8 +1609,8 @@ if ($clockInTime) {
                 echo json_encode(['status' => 'error', 'message' => 'No active break found']);
                 exit;
             }
-            $breakEndTime = date('Y-m-d H:i:s');
-            $breakDuration = (strtotime($breakEndTime) - strtotime($latestBreak['break_start_time'])) / 60;
+            $breakEndTime = $this->roundClockTime(date('Y-m-d H:i:s'));
+            $breakDuration = max(0, (strtotime($breakEndTime) - strtotime($latestBreak['break_start_time'])) / 60);
             $breakUpdateData = [
                 'break_end_time' => $breakEndTime,
                 'break_duration' => $breakDuration,
@@ -1621,7 +1622,7 @@ if ($clockInTime) {
                 $totalBreakDuration = $this->timesheet_model->getBreakDurationForTimesheet($timesheetId, $employeeId);
                 $this->common_model->commonRecordUpdate('HR_timesheet_details', 'timesheet_id', $timesheetId, ['actual_break_duration' => $totalBreakDuration]);
                 $responseData['break_duration'] = $totalBreakDuration;
-                $responseData['break_end_time'] = date('h:i A');
+                $responseData['break_end_time'] = date('h:i A', strtotime($breakEndTime));
             } catch (Exception $e) {
                 $this->tenantDb->trans_rollback();
                 echo json_encode(['status' => 'error', 'message' => 'Failed to end break: ' . $e->getMessage()]);
