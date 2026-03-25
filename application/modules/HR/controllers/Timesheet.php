@@ -420,18 +420,9 @@ public function exportTimesheetTX($start_date, $end_date)
                         $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
                         $totalHoursWorked = $workedSeconds / 3600;
                         
-                        // Get break duration - check if it's TIME format (HH:MM:SS) or numeric minutes
-                        $breakMinutes = 0;
-                        if (!empty($ts['total_break_duration'])) {
-                            if (strpos($ts['total_break_duration'], ':') !== false) {
-                                // TIME format HH:MM:SS
-                                $breakParts = explode(':', $ts['total_break_duration']);
-                                $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
-                            } else {
-                                // Numeric minutes
-                                $breakMinutes = (int)$ts['total_break_duration'];
-                            }
-                        }
+                        // Get break duration using rounded break start/end times
+                        // This ensures rounding even for older records that predate real-time rounding
+                        $breakMinutes = $this->getRoundedBreakMinutes($ts['timesheet_id'], $ts['employee_id']);
                         
                         // Check for manual break override first
                         $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
@@ -1686,6 +1677,30 @@ if ($clockInTime) {
         
         // Return rounded datetime
         return $date . ' ' . sprintf('%02d:%02d:00', $hours, $roundedMinutes);
+    }
+
+    /**
+     * Calculate total break minutes using rounded break start/end times.
+     * Fetches individual break records, rounds each to nearest quarter hour,
+     * then computes and sums durations from rounded times.
+     */
+    private function getRoundedBreakMinutes($timesheetId, $employeeId) {
+        $breaks = $this->tenantDb->select('break_start_time, break_end_time')
+            ->from('HR_timesheet_breaks')
+            ->where(['timesheet_id' => $timesheetId, 'employee_id' => $employeeId, 'is_deleted' => 0])
+            ->get()->result_array();
+
+        $totalMinutes = 0;
+        foreach ($breaks as $break) {
+            if (!empty($break['break_start_time']) && !empty($break['break_end_time'])) {
+                $roundedStart = $this->roundClockTime($break['break_start_time']);
+                $roundedEnd = $this->roundClockTime($break['break_end_time']);
+                $duration = max(0, (strtotime($roundedEnd) - strtotime($roundedStart)) / 60);
+                $totalMinutes += $duration;
+            }
+        }
+
+        return (int) $totalMinutes;
     }
 
     // public function autoApproveTimesheet($rosterId) {
