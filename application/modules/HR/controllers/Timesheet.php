@@ -416,6 +416,10 @@ public function exportTimesheetTX($start_date, $end_date)
                     $clockOut = $ts['clock_out_time'];
                     
                     if (!empty($clockIn) && !empty($clockOut)) {
+                        // Round clock in/out to nearest quarter hour for consistent export
+                        $clockIn = $this->roundClockTime($clockIn);
+                        $clockOut = $this->roundClockTime($clockOut);
+                        
                         // Use helper function to calculate worked seconds (handles overnight shifts)
                         $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
                         $totalHoursWorked = $workedSeconds / 3600;
