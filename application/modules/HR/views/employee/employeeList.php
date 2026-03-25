@@ -92,7 +92,7 @@
                         <label class="form-check-label"><i class="bx bx-chevron-down"></i></label>
                       </div>
                     </th>
-                    <td><a class="first_name" href="/HR/Employee/edit/<?php echo $empList['emp_id']; ?>"><?php echo $empList['name']; ?></a></td>
+                    <td><a class="first_name" href="/HR/Employee/edit/<?php echo $empList['emp_id']; ?>"><?php echo $empList['name']; ?></a><?php if (!empty($empList['tier'])) { ?> <span class="badge bg-info-subtle text-info">(Tier <?php echo htmlspecialchars($empList['tier']); ?>)</span><?php } ?></td>
                     <!-- removing this line wont send onboarding mail so do not remove this or modify send onboaridng mail code in JS at bottom of this page -->
                     <td><a class="email" href="/HR/Employee/edit/<?php echo $empList['emp_id']; ?>"><?php echo $empList['email']; ?></a></td>
                     <td><?php
