@@ -96,9 +96,9 @@
                         <aside id="employee-sidebar-timesheet" class="w-72 bg-white border-r border-gray-200 overflow-y-auto">
                             <div class="p-4">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-lg font-semibold text-gray-800">Team Members</h2>
+                                    <h2 class="text-lg font-semibold text-black">Team Members</h2>
                                     <!-- Close button for mobile -->
-                                    <button class="md:hidden text-gray-600 hover:text-gray-800" id="close-sidebar-timesheet">
+                                    <button class="md:hidden text-black hover:text-gray-800" id="close-sidebar-timesheet">
                                         <i class="fa-solid fa-times text-xl"></i>
                                     </button>
                                 </div>
