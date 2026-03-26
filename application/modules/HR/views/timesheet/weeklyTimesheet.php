@@ -648,7 +648,7 @@
                                                         </div>
 
                                                         <!-- Original (Unrounded) Times Panel -->
-                                                        <?php 
+                                                        <?php if (!empty($is_admin)): 
                                                         $hasOriginalTimes = (!empty($timesheet['original_clock_in_time']) || !empty($timesheet['original_clock_out_time']) || !empty($timesheet['original_break_times']));
                                                         ?>
                                                         <div id="original-times-<?php echo htmlspecialchars($timesheet['timesheet_id']); ?>" 
@@ -711,6 +711,7 @@
                                                             </div>
                                                             <?php endif; ?>
                                                         </div>
+                                                        <?php endif; ?>
 
                                                         <!--calculate employee hrs for each day FIRST to determine auto-break-->
                                                         
@@ -920,6 +921,7 @@
                                                     <?php endif; ?>
                                                     <?php endif; ?>
                                                     
+                                                    <?php if (!empty($is_admin)): ?>
                                                     <button class="text-indigo-600 hover:text-indigo-800 px-2 py-1 text-xs border border-indigo-300 rounded hover:bg-indigo-50 showOriginalTimesheetBtn" 
                                                             data-timesheet-id="<?php echo isset($timesheet['timesheet_id']) ? htmlspecialchars($timesheet['timesheet_id']) : ''; ?>"
                                                             data-timesheet='<?php echo htmlspecialchars(json_encode($timesheet), ENT_QUOTES, 'UTF-8'); ?>' 
@@ -927,6 +929,7 @@
                                                         <i class="fa-solid fa-clock-rotate-left mr-1"></i>
                                                         <span class="hidden sm:inline">Original Times</span>
                                                     </button>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>

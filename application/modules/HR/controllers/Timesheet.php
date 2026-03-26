@@ -133,6 +133,7 @@ class Timesheet extends MY_Controller {
     $data['prepAreaLists'] = $this->common_model->fetchRecordsDynamically('HR_prepArea', '', $conditions);
     $user = $this->ion_auth->user()->row();
     $data['can_approve_timesheet'] = $this->ion_auth->is_admin() || !empty($user->allow_timesheetapproval);
+    $data['is_admin'] = $this->ion_auth->is_admin();
 
     
     $data['timesheets'] = $this->timesheet_model->get_timesheets_by_date_range($start_date, $end_date, $this->location_id);
