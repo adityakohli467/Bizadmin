@@ -254,53 +254,82 @@ public function exportTimesheetExcel($start_date, $end_date)
     /* ================= DATA ================= */
     $row = 2;
 
+    // Group timesheets by employee and date to aggregate multiple shifts per day
+    $groupedTimesheets = [];
     foreach ($timesheets as $ts) {
+        $key = $ts['employee_id'] . '_' . $ts['roster_date'];
+        $groupedTimesheets[$key][] = $ts;
+    }
 
-        $clockIn  = $this->roundTime($ts['clock_in_time']);
-        $clockOut = $this->roundTime($ts['clock_out_time']);
+    foreach ($groupedTimesheets as $entries) {
+        $firstEntry = $entries[0];
+        $totalWorkedSeconds = 0;
+        $totalBreakMinutes = 0;
+        $earliestClockIn = null;
+        $latestClockOut = null;
+        $hasManualOverride = false;
+        $manualBreakTotal = 0;
+        $hasValidShift = false;
 
-        if (empty($clockIn) || empty($clockOut)) {
-            continue; // skip invalid entries
-        }
+        foreach ($entries as $ts) {
+            $clockIn  = $this->roundTime($ts['clock_in_time']);
+            $clockOut = $this->roundTime($ts['clock_out_time']);
 
-        // Use helper function to calculate worked seconds (handles overnight shifts)
-        $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $ts['roster_date']);
-        $totalHoursWorked = $workedSeconds / 3600;
+            if (empty($clockIn) || empty($clockOut)) {
+                continue;
+            }
+            $hasValidShift = true;
 
-        // Break in minutes → seconds
-        $breakMinutes = (int) ($ts['total_break_duration'] ?? 0);
-        
-        // Check for manual break override first
-        $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
-        $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
-        
-        if ($manualOverride && $manualBreakMinutes !== null) {
-            // Use manual break override
-            $breakMinutes = $manualBreakMinutes;
-        } elseif ($breakMinutes == 0) {
-            // Apply automatic break logic if no break recorded and no manual override
-            if ($totalHoursWorked > 10) {
-                $breakMinutes = 60; // 60 mins for 10+ hours
-            } elseif ($totalHoursWorked > 5) {
-                $breakMinutes = 30; // 30 mins for 5-10 hours
+            if ($earliestClockIn === null || strtotime($clockIn) < strtotime($earliestClockIn)) {
+                $earliestClockIn = $clockIn;
+            }
+            if ($latestClockOut === null || strtotime($clockOut) > strtotime($latestClockOut)) {
+                $latestClockOut = $clockOut;
+            }
+
+            $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $ts['roster_date']);
+            $totalWorkedSeconds += $workedSeconds;
+
+            $breakMins = (int) ($ts['total_break_duration'] ?? 0);
+            $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+            $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
+
+            if ($manualOverride && $manualBreakMinutes !== null) {
+                $hasManualOverride = true;
+                $manualBreakTotal += $manualBreakMinutes;
+            } else {
+                $totalBreakMinutes += $breakMins;
             }
         }
-        
-        $breakHours   = round($breakMinutes / 60, 2);
 
-        $workedSeconds -= ($breakMinutes * 60);
-
-        if ($workedSeconds < 0) {
-            $workedSeconds = 0;
+        if (!$hasValidShift) {
+            continue;
         }
 
-        // Convert to decimal hours (IMPORTANT FIX)
-        $decimalHours = round($workedSeconds / 3600, 2);
+        $totalHoursWorked = $totalWorkedSeconds / 3600;
 
-        $sheet->setCellValue('A' . $row, $ts['employee_name']);
-        $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($ts['roster_date'])));
-        $sheet->setCellValue('C' . $row, date('h:i A', strtotime($clockIn)));
-        $sheet->setCellValue('D' . $row, date('h:i A', strtotime($clockOut)));
+        if ($hasManualOverride) {
+            $breakMinutes = $manualBreakTotal + $totalBreakMinutes;
+        } else {
+            $breakMinutes = $totalBreakMinutes;
+            if ($breakMinutes == 0) {
+                if ($totalHoursWorked > 10) {
+                    $breakMinutes = 60;
+                } elseif ($totalHoursWorked > 5) {
+                    $breakMinutes = 30;
+                }
+            }
+        }
+
+        $breakHours = round($breakMinutes / 60, 2);
+        $netSeconds = $totalWorkedSeconds - ($breakMinutes * 60);
+        if ($netSeconds < 0) $netSeconds = 0;
+        $decimalHours = round($netSeconds / 3600, 2);
+
+        $sheet->setCellValue('A' . $row, $firstEntry['employee_name']);
+        $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($firstEntry['roster_date'])));
+        $sheet->setCellValue('C' . $row, date('h:i A', strtotime($earliestClockIn)));
+        $sheet->setCellValue('D' . $row, date('h:i A', strtotime($latestClockOut)));
         $sheet->setCellValue('E' . $row, $breakHours);
         $sheet->setCellValue('F' . $row, $decimalHours);
 
@@ -395,13 +424,13 @@ public function exportTimesheetTX($start_date, $end_date)
             $publicHolidays = array_map('trim', $holidayDates);
         }
         
-        // Organize timesheets by employee and date
+        // Organize timesheets by employee and date (multiple shifts per date)
         $timesheetsByEmpDate = [];
         foreach ($timesheets as $ts) {
             if (strtolower($ts['approval_status']) === 'approved') {
                 $empId = $ts['employee_id'];
                 $date = $ts['roster_date'];
-                $timesheetsByEmpDate[$empId][$date] = $ts;
+                $timesheetsByEmpDate[$empId][$date][] = $ts;
             }
         }
         
@@ -427,64 +456,76 @@ public function exportTimesheetTX($start_date, $end_date)
             foreach ($allDates as $dateStr) {
                 // Only add row if employee worked this day
                 if (isset($timesheetsByEmpDate[$empId][$dateStr])) {
-                    $ts = $timesheetsByEmpDate[$empId][$dateStr];
+                    $shifts = $timesheetsByEmpDate[$empId][$dateStr];
                     
-                    $clockIn = $ts['clock_in_time'];
-                    $clockOut = $ts['clock_out_time'];
+                    // Aggregate all shifts for this employee on this date
+                    $totalWorkedSeconds = 0;
+                    $totalBreakMinutes = 0;
+                    $hasManualOverride = false;
+                    $manualBreakTotal = 0;
                     
-                    if (!empty($clockIn) && !empty($clockOut)) {
-                        // Round clock in/out to nearest quarter hour for consistent export
-                        $clockIn = $this->roundClockTime($clockIn);
-                        $clockOut = $this->roundClockTime($clockOut);
+                    foreach ($shifts as $ts) {
+                        $clockIn = $ts['clock_in_time'];
+                        $clockOut = $ts['clock_out_time'];
                         
-                        // Use helper function to calculate worked seconds (handles overnight shifts)
+                        if (empty($clockIn) || empty($clockOut)) {
+                            continue;
+                        }
+                        
+                        $clockIn = $this->roundTime($clockIn);
+                        $clockOut = $this->roundTime($clockOut);
+                        
                         $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
-                        $totalHoursWorked = $workedSeconds / 3600;
+                        $totalWorkedSeconds += $workedSeconds;
                         
-                        // Get break duration using rounded break start/end times
-                        // This ensures rounding even for older records that predate real-time rounding
-                        $breakMinutes = $this->getRoundedBreakMinutes($ts['timesheet_id'], $ts['employee_id']);
+                        $breakMins = $this->getRoundedBreakMinutes($ts['timesheet_id'], $ts['employee_id']);
                         
-                        // Check for manual break override first
                         $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
                         $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
                         
                         if ($manualOverride && $manualBreakMinutes !== null) {
-                            // Use manual break override
-                            $breakMinutes = $manualBreakMinutes;
-                        } elseif ($breakMinutes == 0) {
-                            // Apply automatic break logic if no break recorded and no manual override
-                            if ($totalHoursWorked > 10) {
-                                $breakMinutes = 60; // 60 mins for 10+ hours
-                            } elseif ($totalHoursWorked > 5) {
-                                $breakMinutes = 30; // 30 mins for 5-10 hours
+                            $hasManualOverride = true;
+                            $manualBreakTotal += $manualBreakMinutes;
+                        } else {
+                            $totalBreakMinutes += $breakMins;
+                        }
+                    }
+                    
+                    if ($totalWorkedSeconds > 0) {
+                        $totalHoursWorked = $totalWorkedSeconds / 3600;
+                        
+                        if ($hasManualOverride) {
+                            $breakMinutes = $manualBreakTotal + $totalBreakMinutes;
+                        } else {
+                            $breakMinutes = $totalBreakMinutes;
+                            if ($breakMinutes == 0) {
+                                if ($totalHoursWorked > 10) {
+                                    $breakMinutes = 60;
+                                } elseif ($totalHoursWorked > 5) {
+                                    $breakMinutes = 30;
+                                }
                             }
                         }
                         
                         $breakSeconds = $breakMinutes * 60;
-                        $netSeconds = max(0, $workedSeconds - $breakSeconds);
+                        $netSeconds = max(0, $totalWorkedSeconds - $breakSeconds);
                         $decimalHours = round($netSeconds / 3600, 2);
                         
                         $formattedDate = date('m/d/y', strtotime($dateStr));
                         
-                        // Determine correct service item and payroll item based on day type
-                        // Check if it's a public holiday first
                         $isPublicHoliday = in_array($dateStr, $publicHolidays);
-                        $dayOfWeek = date('N', strtotime($dateStr)); // 1=Mon, 7=Sun
+                        $dayOfWeek = date('N', strtotime($dateStr));
                         
                         if ($isPublicHoliday) {
                             $serviceItem = 'Pub Hol';
                             $payrollItem = 'Pub Hol';
                         } elseif ($dayOfWeek == 6) {
-                            // Saturday
                             $serviceItem = 'Sat Rate';
                             $payrollItem = 'Sat Rate';
                         } elseif ($dayOfWeek == 7) {
-                            // Sunday
                             $serviceItem = 'Sun Rate';
                             $payrollItem = 'Sun Rate';
                         } else {
-                            // Monday to Friday
                             $serviceItem = 'M-F Rate';
                             $payrollItem = 'M-F Rate';
                         }
@@ -543,13 +584,13 @@ exit;
     // Fetch all timesheets (approved only)
     $timesheets = $this->timesheet_model->get_timesheets_by_date_range($start_date, $end_date, $this->location_id, true);
     
-    // Organize timesheets by employee and date
+    // Organize timesheets by employee and date (multiple shifts per date)
     $timesheetsByEmpDate = [];
     foreach ($timesheets as $ts) {
         if (strtolower($ts['approval_status']) === 'approved') {
             $empId = $ts['employee_id'];
             $date = $ts['roster_date'];
-            $timesheetsByEmpDate[$empId][$date] = $ts;
+            $timesheetsByEmpDate[$empId][$date][] = $ts;
         }
     }
     
@@ -580,13 +621,22 @@ exit;
             
             // Check if employee worked this day
             if (isset($timesheetsByEmpDate[$empId][$dateStr])) {
-                $ts = $timesheetsByEmpDate[$empId][$dateStr];
+                $shifts = $timesheetsByEmpDate[$empId][$dateStr];
                 
-                // Calculate worked hours using helper function (handles overnight shifts)
-                $clockIn = $this->roundTime($ts['clock_in_time']);
-                $clockOut = $this->roundTime($ts['clock_out_time']);
+                // Aggregate all shifts for this employee on this date
+                $totalEarlyStartHours = 0;
+                $totalRegularHours = 0;
+                $hasValidShift = false;
                 
-                if (!empty($clockIn) && !empty($clockOut)) {
+                foreach ($shifts as $ts) {
+                    $clockIn = $this->roundTime($ts['clock_in_time']);
+                    $clockOut = $this->roundTime($ts['clock_out_time']);
+                    
+                    if (empty($clockIn) || empty($clockOut)) {
+                        continue;
+                    }
+                    $hasValidShift = true;
+                    
                     $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
                     $totalHoursWorked = $workedSeconds / 3600;
                     
@@ -594,28 +644,23 @@ exit;
                     $breakMinutes = 0;
                     if (!empty($ts['total_break_duration'])) {
                         if (strpos($ts['total_break_duration'], ':') !== false) {
-                            // TIME format HH:MM:SS
                             $breakParts = explode(':', $ts['total_break_duration']);
                             $breakMinutes = ((int)$breakParts[0] * 60) + (int)$breakParts[1];
                         } else {
-                            // Numeric minutes
                             $breakMinutes = (int)$ts['total_break_duration'];
                         }
                     }
                     
-                    // Check for manual break override first
                     $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
                     $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
                     
                     if ($manualOverride && $manualBreakMinutes !== null) {
-                        // Use manual break override
                         $breakMinutes = $manualBreakMinutes;
                     } elseif ($breakMinutes == 0) {
-                        // Apply automatic break logic if no break recorded and no manual override
                         if ($totalHoursWorked > 10) {
-                            $breakMinutes = 60; // 60 mins for 10+ hours
+                            $breakMinutes = 60;
                         } elseif ($totalHoursWorked > 5) {
-                            $breakMinutes = 30; // 30 mins for 5-10 hours
+                            $breakMinutes = 30;
                         }
                     }
                     
@@ -623,15 +668,13 @@ exit;
                     $netSeconds = max(0, $workedSeconds - $breakSeconds);
                     $decimalHours = $netSeconds / 3600;
                     
-                    // Check for early start (before 7 AM)
+                    // Check for early start (before 7 AM) per shift
                     $clockInHour = (int)date('H', strtotime($clockIn));
                     $earlyStartHours = 0;
                     $regularHours = $decimalHours;
                     
-                    // Calculate clock in/out timestamps for early start calculations
                     $clockInTimestamp = strtotime($dateStr . ' ' . $clockIn);
                     $clockOutTimestamp = strtotime($dateStr . ' ' . $clockOut);
-                    // Handle overnight - if clockOut is before clockIn, add a day
                     if ($clockOutTimestamp <= $clockInTimestamp) {
                         $clockOutTimestamp += 86400;
                     }
@@ -648,30 +691,33 @@ exit;
                         }
                     }
                     
-                    // Add early start row if applicable
-                    if ($earlyStartHours > 0) {
+                    $totalEarlyStartHours += $earlyStartHours;
+                    $totalRegularHours += $regularHours;
+                }
+                
+                if ($hasValidShift) {
+                    if ($totalEarlyStartHours > 0) {
                         $output_rows[] = [
                             $formattedDate,
                             $firstName,
                             $lastName,
                             'Early Start',
-                            number_format($earlyStartHours, 2, '.', '')
+                            number_format($totalEarlyStartHours, 2, '.', '')
                         ];
                     }
                     
-                    // Add base/weekend hours row (only if regularHours > 0 or no early start)
-                    if ($regularHours > 0 || $earlyStartHours == 0) {
+                    if ($totalRegularHours > 0 || $totalEarlyStartHours == 0) {
                         $category = $isWeekend ? $weekendCategory : 'Base Hourly';
                         $output_rows[] = [
                             $formattedDate,
                             $firstName,
                             $lastName,
                             $category,
-                            number_format($regularHours, 2, '.', '')
+                            number_format($totalRegularHours, 2, '.', '')
                         ];
                     }
                     
-                    // Add uniform allowance for worked days
+                    // Add uniform allowance for worked days (once per day)
                     $output_rows[] = [
                         $formattedDate,
                         $firstName,
@@ -843,15 +889,31 @@ public function downloadWeeklyReport($start_date, $end_date)
             $employeeData[$empId]['weekday_cost'] += ($hoursWorked * $rate);
         }
         
-        // Store daily data
-        $employeeData[$empId]['daily'][$date] = [
-            'clock_in' => date('H:i', strtotime($clockIn)),
-            'clock_out' => date('H:i', strtotime($clockOut)),
-            'break_minutes' => $breakMinutes,
-            'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
-            'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
-            'hours' => $hoursWorked
-        ];
+        // Aggregate daily data (handle multiple shifts on same day)
+        $clockInFormatted = date('H:i', strtotime($clockIn));
+        $clockOutFormatted = date('H:i', strtotime($clockOut));
+        
+        if (isset($employeeData[$empId]['daily'][$date]) && !empty($employeeData[$empId]['daily'][$date]['clock_in'])) {
+            $existing = &$employeeData[$empId]['daily'][$date];
+            if (strtotime($clockIn) < strtotime($existing['clock_in'])) {
+                $existing['clock_in'] = $clockInFormatted;
+            }
+            if (strtotime($clockOut) > strtotime($existing['clock_out'])) {
+                $existing['clock_out'] = $clockOutFormatted;
+            }
+            $existing['break_minutes'] += $breakMinutes;
+            $existing['hours'] += $hoursWorked;
+            unset($existing);
+        } else {
+            $employeeData[$empId]['daily'][$date] = [
+                'clock_in' => $clockInFormatted,
+                'clock_out' => $clockOutFormatted,
+                'break_minutes' => $breakMinutes,
+                'roster_start' => $ts['roster_start_time'] ? date('H:i', strtotime($ts['roster_start_time'])) : null,
+                'roster_end' => $ts['roster_end_time'] ? date('H:i', strtotime($ts['roster_end_time'])) : null,
+                'hours' => $hoursWorked
+            ];
+        }
     }
     
     // Add roster data for days without timesheet entries

@@ -27,9 +27,14 @@ class Timesheet_model extends CI_Model{
 		$clockOutHasDate = (strpos($clockOut, '-') !== false && strlen($clockOut) > 10);
 		
 		if ($clockInHasDate && $clockOutHasDate) {
-			// Both are DATETIME format - simple calculation
+			// Both are DATETIME format
 			$clockInTimestamp = strtotime($clockIn);
 			$clockOutTimestamp = strtotime($clockOut);
+			
+			// Handle overnight shift (clock_out before clock_in on same date)
+			if ($clockOutTimestamp <= $clockInTimestamp) {
+				$clockOutTimestamp += 86400;
+			}
 		} else {
 			// TIME format - need to handle overnight shifts
 			// If no roster date provided, use today
