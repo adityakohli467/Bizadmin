@@ -647,6 +647,71 @@
                                                             </span>
                                                         </div>
 
+                                                        <!-- Original (Unrounded) Times Panel -->
+                                                        <?php 
+                                                        $hasOriginalTimes = (!empty($timesheet['original_clock_in_time']) || !empty($timesheet['original_clock_out_time']) || !empty($timesheet['original_break_times']));
+                                                        ?>
+                                                        <div id="original-times-<?php echo htmlspecialchars($timesheet['timesheet_id']); ?>" 
+                                                             class="original-times-panel hidden mt-2 ml-0 p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-xs" style="width: 100%;">
+                                                            <div class="flex items-center gap-1.5 mb-2">
+                                                                <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i>
+                                                                <span class="font-semibold text-indigo-700">Original (Exact) Times</span>
+                                                            </div>
+                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                                <div class="flex items-center gap-2">
+                                                                    <span class="text-gray-500 font-medium">Clock In:</span>
+                                                                    <span class="text-indigo-800 font-semibold">
+                                                                        <?php 
+                                                                        echo (!empty($timesheet['original_clock_in_time']) && strtotime($timesheet['original_clock_in_time'])) 
+                                                                            ? htmlspecialchars(date('h:i:s A', strtotime($timesheet['original_clock_in_time']))) 
+                                                                            : '<span class="text-gray-400 italic">N/A</span>';
+                                                                        ?>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="flex items-center gap-2">
+                                                                    <span class="text-gray-500 font-medium">Clock Out:</span>
+                                                                    <span class="text-indigo-800 font-semibold">
+                                                                        <?php 
+                                                                        echo (!empty($timesheet['original_clock_out_time']) && strtotime($timesheet['original_clock_out_time'])) 
+                                                                            ? htmlspecialchars(date('h:i:s A', strtotime($timesheet['original_clock_out_time']))) 
+                                                                            : '<span class="text-gray-400 italic">N/A</span>';
+                                                                        ?>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <?php 
+                                                            // Parse original break times
+                                                            $originalBreaks = [];
+                                                            if (!empty($timesheet['original_break_times'])) {
+                                                                $breakPairs = explode(',', $timesheet['original_break_times']);
+                                                                foreach ($breakPairs as $pair) {
+                                                                    $parts = explode('|', $pair);
+                                                                    if (count($parts) >= 2 && (!empty($parts[0]) || !empty($parts[1]))) {
+                                                                        $originalBreaks[] = [
+                                                                            'start' => trim($parts[0]),
+                                                                            'end' => trim($parts[1])
+                                                                        ];
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (!empty($originalBreaks)): ?>
+                                                            <div class="mt-2 pt-2 border-t border-indigo-200">
+                                                                <span class="text-gray-500 font-medium">Breaks:</span>
+                                                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                                                    <?php foreach ($originalBreaks as $idx => $brk): ?>
+                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                                                        <?php 
+                                                                        $brkStart = !empty($brk['start']) ? date('h:i:s A', strtotime($brk['start'])) : '-';
+                                                                        $brkEnd = !empty($brk['end']) ? date('h:i:s A', strtotime($brk['end'])) : '-';
+                                                                        echo htmlspecialchars($brkStart . ' – ' . $brkEnd);
+                                                                        ?>
+                                                                    </span>
+                                                                    <?php endforeach; ?>
+                                                                </div>
+                                                            </div>
+                                                            <?php endif; ?>
+                                                        </div>
+
                                                         <!--calculate employee hrs for each day FIRST to determine auto-break-->
                                                         
                                                         <?php 
@@ -855,8 +920,12 @@
                                                     <?php endif; ?>
                                                     <?php endif; ?>
                                                     
-                                                    <button class="text-gray-500 hover:text-gray-700 p-1">
-                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    <button class="text-indigo-600 hover:text-indigo-800 px-2 py-1 text-xs border border-indigo-300 rounded hover:bg-indigo-50 showOriginalTimesheetBtn" 
+                                                            data-timesheet-id="<?php echo isset($timesheet['timesheet_id']) ? htmlspecialchars($timesheet['timesheet_id']) : ''; ?>"
+                                                            data-timesheet='<?php echo htmlspecialchars(json_encode($timesheet), ENT_QUOTES, 'UTF-8'); ?>' 
+                                                            title="View original (unrounded) clock times">
+                                                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>
+                                                        <span class="hidden sm:inline">Original Times</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -1397,6 +1466,16 @@ function updateSummaryCounts() {
 }
 
         $(document).ready(function() {
+            // Show Original Timesheet toggle handler
+            $(document).on('click', '.showOriginalTimesheetBtn', function(e) {
+                e.stopPropagation();
+                var timesheetId = $(this).data('timesheet-id');
+                var $panel = $('#original-times-' + timesheetId);
+                $panel.toggleClass('hidden');
+                // Toggle button active state
+                $(this).toggleClass('bg-indigo-100 border-indigo-500 text-indigo-800');
+            });
+
             // Break override dropdown change handler
             $(document).on('change', '.break-override-dropdown', function() {
                 handleBreakOverride(this);

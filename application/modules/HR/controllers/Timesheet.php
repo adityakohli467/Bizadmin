@@ -14,6 +14,7 @@ class Timesheet extends MY_Controller {
         parent::__construct();
         !$this->ion_auth->logged_in() ? redirect('auth/login', 'refresh') : '';
         // $this->load->helper('notification');
+		$this->load->helper('timesheet');
 		$this->load->model('timesheet_model');
 	    $this->load->model('common_model');
 	    $this->load->model('employee_model');
@@ -136,6 +137,21 @@ class Timesheet extends MY_Controller {
     
     $data['timesheets'] = $this->timesheet_model->get_timesheets_by_date_range($start_date, $end_date, $this->location_id);
     
+    // Pre-process timesheets: preserve original times, replace with rounded for display/calculations
+    foreach ($data['timesheets'] as &$ts) {
+        // Store original (exact) clock times for the "Show Original Times" feature
+        $ts['original_clock_in_time'] = $ts['clock_in_time'];
+        $ts['original_clock_out_time'] = $ts['clock_out_time'];
+        // Replace with rounded times for all display and calculations
+        if (!empty($ts['clock_in_time'])) {
+            $ts['clock_in_time'] = $this->roundTime($ts['clock_in_time']);
+        }
+        if (!empty($ts['clock_out_time'])) {
+            $ts['clock_out_time'] = $this->roundTime($ts['clock_out_time']);
+        }
+    }
+    unset($ts); // break the reference
+    
     // Fetch ALL roster shifts for employees in this date range (for multi-shift display)
     $data['allRosterShifts'] = $this->getRosterShiftsForDateRange($start_date, $end_date);
     
@@ -239,8 +255,8 @@ public function exportTimesheetExcel($start_date, $end_date)
 
     foreach ($timesheets as $ts) {
 
-        $clockIn  = $ts['clock_in_time'];
-        $clockOut = $ts['clock_out_time'];
+        $clockIn  = $this->roundTime($ts['clock_in_time']);
+        $clockOut = $this->roundTime($ts['clock_out_time']);
 
         if (empty($clockIn) || empty($clockOut)) {
             continue; // skip invalid entries
@@ -566,8 +582,8 @@ exit;
                 $ts = $timesheetsByEmpDate[$empId][$dateStr];
                 
                 // Calculate worked hours using helper function (handles overnight shifts)
-                $clockIn = $ts['clock_in_time'];
-                $clockOut = $ts['clock_out_time'];
+                $clockIn = $this->roundTime($ts['clock_in_time']);
+                $clockOut = $this->roundTime($ts['clock_out_time']);
                 
                 if (!empty($clockIn) && !empty($clockOut)) {
                     $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $dateStr);
@@ -763,9 +779,9 @@ public function downloadWeeklyReport($start_date, $end_date)
         $date = $ts['roster_date'];
         $dayOfWeek = date('N', strtotime($date)); // 1 = Monday, 7 = Sunday
         
-        // Calculate hours worked using helper function (handles overnight shifts)
-        $clockIn = $ts['clock_in_time'];
-        $clockOut = $ts['clock_out_time'];
+        // Round clock times for payroll/export consistency
+        $clockIn = $this->roundTime($ts['clock_in_time']);
+        $clockOut = $this->roundTime($ts['clock_out_time']);
         
         if (empty($clockIn) || empty($clockOut)) {
             // Store entry even if no clock times (for roster display)
@@ -1429,7 +1445,7 @@ public function save_manager_comment() {
         $this->tenantDb->trans_start();
 
         if ($timesheetId == 0 && in_array($action, ['clock_in'])) {
-            $clockInTime = $this->roundClockTime(date('Y-m-d H:i:s'));
+            $clockInTime = date('Y-m-d H:i:s');
             $timesheetData = [
                 'roster_id' => null,
                 'employee_id' => $employeeId,
@@ -1477,8 +1493,8 @@ public function save_manager_comment() {
                 echo json_encode(['status' => 'error', 'message' => 'Employee already clocked in']);
                 exit;
             }
-            $roundedClockIn = $this->roundClockTime(date('Y-m-d H:i:s'));
-            $updateData['clock_in_time'] = $roundedClockIn;
+            $clockInTime = date('Y-m-d H:i:s');
+            $updateData['clock_in_time'] = $clockInTime;
             
             // Add location data for clock in
             if ($latitude && $longitude) {
@@ -1487,6 +1503,8 @@ public function save_manager_comment() {
                 $updateData['clock_in_address'] = $address;
             }
             
+            // Display rounded time in response
+            $roundedClockIn = $this->roundClockTime($clockInTime);
             $responseData['clock_in_time'] = date('h:i A', strtotime($roundedClockIn));
             try {
                 $this->common_model->commonRecordUpdate('HR_timesheet_details', 'timesheet_id', $timesheetId, $updateData);
@@ -1502,7 +1520,7 @@ public function save_manager_comment() {
                 exit;
             }
             // add 30 mins and 60 mins break if emp worked for 5 hrs or 10 hrs accordingly
-            $clockOutTime = $this->roundClockTime(date('Y-m-d H:i:s'));
+            $clockOutTime = date('Y-m-d H:i:s');
            
 $updateData['clock_out_time'] = $clockOutTime;
 
@@ -1513,7 +1531,9 @@ if ($latitude && $longitude) {
     $updateData['clock_out_address'] = $address;
 }
 
-$responseData['clock_out_time'] = date('h:i A', strtotime($clockOutTime));
+// Display rounded time in response
+$roundedClockOut = $this->roundClockTime($clockOutTime);
+$responseData['clock_out_time'] = date('h:i A', strtotime($roundedClockOut));
 
 // Fetch the full timesheet row (for clock_in_time and roster_date)
 $timesheetFull = $this->common_model->fetchRecordsDynamically('HR_timesheet_details', ['clock_in_time', 'roster_date'], ['timesheet_id' => $timesheetId, 'is_deleted' => 0]);
@@ -1521,8 +1541,9 @@ $clockInTime = $timesheetFull[0]['clock_in_time'] ?? null;
 $rosterDate = $timesheetFull[0]['roster_date'] ?? date('Y-m-d');
 
 if ($clockInTime) {
-    // Use helper function to calculate worked seconds (handles overnight shifts)
-    $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockInTime, $clockOutTime, $rosterDate);
+    // Use ROUNDED times for auto-break calculation (payroll consistency)
+    $roundedClockIn = $this->roundClockTime($rosterDate . ' ' . $clockInTime);
+    $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($roundedClockIn, $roundedClockOut, $rosterDate);
     $workedHours = $workedSeconds / 3600;
 
     // Get total break duration for this timesheet
@@ -1578,12 +1599,12 @@ if ($clockInTime) {
                 echo json_encode(['status' => 'error', 'message' => 'A break is already in progress']);
                 exit;
             }
-            // Create new break record with rounded time
-            $roundedBreakStart = $this->roundClockTime(date('Y-m-d H:i:s'));
+            // Create new break record (store original time)
+            $breakStartTime = date('Y-m-d H:i:s');
             $breakData = [
                 'timesheet_id' => $timesheetId,
                 'employee_id' => $employeeId,
-                'break_start_time' => $roundedBreakStart,
+                'break_start_time' => $breakStartTime,
                 'break_end_time' => null,
                 'break_duration' => 0,
                 'is_deleted' => 0,
@@ -1592,6 +1613,8 @@ if ($clockInTime) {
             ];
             try {
                 $breakId = $this->common_model->commonRecordCreate('HR_timesheet_breaks', $breakData);
+                // Display rounded time in response
+                $roundedBreakStart = $this->roundClockTime($breakStartTime);
                 $responseData['break_start_time'] = date('h:i A', strtotime($roundedBreakStart));
             } catch (Exception $e) {
                 $this->tenantDb->trans_rollback();
@@ -1604,8 +1627,11 @@ if ($clockInTime) {
                 echo json_encode(['status' => 'error', 'message' => 'No active break found']);
                 exit;
             }
-            $breakEndTime = $this->roundClockTime(date('Y-m-d H:i:s'));
-            $breakDuration = max(0, (strtotime($breakEndTime) - strtotime($latestBreak['break_start_time'])) / 60);
+            $breakEndTime = date('Y-m-d H:i:s');
+            // Calculate break_duration from ROUNDED times for payroll consistency
+            $roundedBreakEnd = $this->roundClockTime($breakEndTime);
+            $roundedBreakStart = $this->roundClockTime($latestBreak['break_start_time']);
+            $breakDuration = max(0, (strtotime($roundedBreakEnd) - strtotime($roundedBreakStart)) / 60);
             $breakUpdateData = [
                 'break_end_time' => $breakEndTime,
                 'break_duration' => $breakDuration,
@@ -1617,7 +1643,8 @@ if ($clockInTime) {
                 $totalBreakDuration = $this->timesheet_model->getBreakDurationForTimesheet($timesheetId, $employeeId);
                 $this->common_model->commonRecordUpdate('HR_timesheet_details', 'timesheet_id', $timesheetId, ['actual_break_duration' => $totalBreakDuration]);
                 $responseData['break_duration'] = $totalBreakDuration;
-                $responseData['break_end_time'] = date('h:i A', strtotime($breakEndTime));
+                // Display rounded time in response
+                $responseData['break_end_time'] = date('h:i A', strtotime($roundedBreakEnd));
             } catch (Exception $e) {
                 $this->tenantDb->trans_rollback();
                 echo json_encode(['status' => 'error', 'message' => 'Failed to end break: ' . $e->getMessage()]);
@@ -1681,6 +1708,19 @@ if ($clockInTime) {
         
         // Return rounded datetime
         return $date . ' ' . sprintf('%02d:%02d:00', $hours, $roundedMinutes);
+    }
+
+    /**
+     * Round a time string (H:i:s or datetime) to nearest quarter hour.
+     * Returns time in H:i:s format.
+     * 
+     * @param string $timeStr Time or datetime string
+     * @return string|null Rounded time in H:i:s format
+     */
+    private function roundTime($timeStr) {
+        if (empty($timeStr)) return null;
+        $rounded = $this->roundClockTime('2000-01-01 ' . $timeStr);
+        return date('H:i:s', strtotime($rounded));
     }
 
     /**

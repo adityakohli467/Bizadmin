@@ -184,13 +184,14 @@ class Timesheet_model extends CI_Model{
             'p.prep_name',
             'pos.position_name',
             'SUM(b.break_duration) as total_break_duration',
+            'GROUP_CONCAT(DISTINCT CONCAT_WS("|", b.break_start_time, b.break_end_time) ORDER BY b.break_start_time ASC) as original_break_times',
             'TIMEDIFF(HR_timesheet_details.clock_out_time, HR_timesheet_details.clock_in_time) as total_time',
             'SEC_TO_TIME(TIME_TO_SEC(TIMEDIFF(HR_timesheet_details.clock_out_time, HR_timesheet_details.clock_in_time)) - IFNULL(SUM(b.break_duration), 0)) as total_hours',
             'r.shift_start_time',
             'r.shift_end_time'
         ];
         
-        $this->tenantDb->select($fields)
+        $this->tenantDb->select($fields, FALSE)
             ->from('HR_timesheet_details')
             ->join('HR_employee e', 'HR_timesheet_details.employee_id = e.emp_id', 'inner')
             ->join('HR_prepArea p', 'HR_timesheet_details.prep_area_id = p.id', 'inner')

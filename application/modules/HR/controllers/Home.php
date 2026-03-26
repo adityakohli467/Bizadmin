@@ -11,6 +11,7 @@ class Home extends MY_Controller {
 		$this->load->model('dashboard_model');
 		$this->load->model('general_model');
 		  $this->load->model('employee_model');
+	    $this->load->helper('timesheet');
 	    $this->location_id = $this->session->userdata('location_id') ? $this->session->userdata('location_id') : ($this->session->userdata('User_location_ids') ? $this->session->userdata('User_location_ids')[0] : null);
 	    $user_id = $this->ion_auth->user()->row()->id;
         $empData = $this->common_model->fetchRecordsDynamically('HR_employee', ['emp_id','first_name','last_name'], ['userId'=>$user_id]);
@@ -479,8 +480,8 @@ public function index($system_id = '')
                 'prep_name' => $entry['prep_name'] ?? 'None',
                 'position_id' => $entry['position_id'],
                 'position_name' => $entry['position_name'] ?? 'Not Assigned',
-                'clock_in_time' => $entry['clock_in_time'],
-                'clock_out_time' => $entry['clock_out_time'],
+                'clock_in_time' => !empty($entry['clock_in_time']) ? round_time_to_quarter($entry['clock_in_time']) : null,
+                'clock_out_time' => !empty($entry['clock_out_time']) ? round_time_to_quarter($entry['clock_out_time']) : null,
                 'actual_break_duration' => $entry['actual_break_duration'] ?? 0,
                 'latest_break_start_time' => $entry['latest_break_start_time'] ?? null,
                 'latest_break_end_time' => $entry['latest_break_end_time'] ?? null,
@@ -490,9 +491,12 @@ public function index($system_id = '')
             ];
             
             // Calculate total worked seconds for this employee (handles overnight shifts)
+            // Use ROUNDED times for hours calculation (payroll consistency)
             if (!empty($entry['clock_in_time']) && !empty($entry['clock_out_time'])) {
-                $clockInTs = strtotime($entry['clock_in_time']);
-                $clockOutTs = strtotime($entry['clock_out_time']);
+                $roundedIn = round_time_to_quarter($entry['clock_in_time']);
+                $roundedOut = round_time_to_quarter($entry['clock_out_time']);
+                $clockInTs = strtotime($roundedIn);
+                $clockOutTs = strtotime($roundedOut);
                 // Handle overnight shift (clock_out appears earlier than clock_in)
                 if ($clockOutTs <= $clockInTs) {
                     $clockOutTs += 86400; // Add 24 hours
