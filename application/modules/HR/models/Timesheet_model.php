@@ -228,6 +228,7 @@ $this->tenantDb
         $timesheets = $query->result_array();
         
         // Auto-approve timesheets if clock times match shift times (within 5 minutes)
+        $autoApproveIds = [];
         foreach ($timesheets as &$timesheet) {
             if ($timesheet['shift_start_time'] && $timesheet['shift_end_time']) {
                 $clock_in_diff = abs(strtotime($timesheet['clock_in_time']) - strtotime($timesheet['shift_start_time']));
@@ -236,10 +237,16 @@ $this->tenantDb
                 
                 if ($clock_in_diff <= $five_minutes && $clock_out_diff <= $five_minutes) {
                     $timesheet['approval_status'] = 'Approved';
-                    $this->tenantDb->where('timesheet_id', $timesheet['timesheet_id'])
-                        ->update('HR_timesheet_details', ['approval_status' => 'approved']);
+                    $autoApproveIds[] = $timesheet['timesheet_id'];
                 }
             }
+        }
+        unset($timesheet);
+        
+        // Batch update all auto-approved timesheets in a single query
+        if (!empty($autoApproveIds)) {
+            $this->tenantDb->where_in('timesheet_id', $autoApproveIds)
+                ->update('HR_timesheet_details', ['approval_status' => 'approved']);
         }
         
         return $timesheets;

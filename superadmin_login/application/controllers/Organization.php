@@ -8,6 +8,7 @@ class Organization extends MY_Controller {
 		$this->load->model('organization_model');
 		$this->load->model('location_model');
 		$this->load->model('general_model');
+		$this->load->model('onboarding_model');
 	}
 	public function connectToThisDB($dbDetails){
 	    
@@ -198,9 +199,24 @@ class Organization extends MY_Controller {
 	               );
 	           $orzID=$this->general_model->add('organization_list',$postData);
 	           if($orzID){
-	               // Now insert this same record in client database as well
-	               $this->populateClientDB($_POST,$orzID,$hasedPassword);
-	               $this->session->set_userdata('sucess_msg','Record added successfully');
+	               // Run full automated onboarding (DB creation, schema import, seed data, config files, folders)
+	               $setupResult = $this->onboarding_model->runFullSetup($_POST, $orzID, $hasedPassword);
+	               
+	               if ($setupResult['success']) {
+	                   $this->session->set_userdata('sucess_msg', 'Organization created successfully! All setup steps completed.');
+	               } else {
+	                   // Partial success - org created but some steps failed
+	                   $errorMessages = array_map(function($e) { return $e['message']; }, $setupResult['errors']);
+	                   $this->session->set_userdata('sucess_msg', 'Organization created, but some setup steps had issues.');
+	                   $this->session->set_userdata('error_msg', implode(' | ', $errorMessages));
+	               }
+	               
+	               // Store the setup log in session for the status page
+	               $this->session->set_userdata('last_setup_log', $setupResult['log']);
+	               $this->session->set_userdata('last_setup_errors', $setupResult['errors']);
+	               
+	               redirect('organization/setup_status');
+	               return;
 	           }else{
 	               $this->session->set_userdata('error_msg','Failed to add record');
 	           }
@@ -504,6 +520,132 @@ class Organization extends MY_Controller {
 	  	
 	}
 	
+	// =========================================================================
+	// Organization Delete (PIN-protected)
+	// =========================================================================
+
+	/** The preset delete PIN — stored as SHA256 hash */
+	private function getDeletePinHash(){
+	    return hash('sha256', '1802');
+	}
+
+	/**
+	 * AJAX: Verify the delete PIN
+	 */
+	public function verify_delete_pin(){
+	    if(!$this->session->userdata('IsUserLogged') || !$this->input->is_ajax_request()){
+	        echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+	        return;
+	    }
+	    
+	    $pin = $this->input->post('pin');
+	    if(empty($pin)){
+	        echo json_encode(['success' => false, 'message' => 'Please enter the PIN']);
+	        return;
+	    }
+	    
+	    $inputHash = hash('sha256', $pin);
+	    if($inputHash === $this->getDeletePinHash()){
+	        // Store a short-lived token in session so the actual delete call can verify
+	        $this->session->set_userdata('delete_pin_verified', time());
+	        echo json_encode(['success' => true]);
+	    } else {
+	        echo json_encode(['success' => false, 'message' => 'Incorrect PIN. Please try again.']);
+	    }
+	}
+
+	/**
+	 * AJAX: Permanently delete an organization and all its data
+	 */
+	public function delete_organization(){
+	    if(!$this->session->userdata('IsUserLogged') || !$this->input->is_ajax_request()){
+	        echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+	        return;
+	    }
+	    
+	    // Verify the PIN was recently verified (within 5 minutes)
+	    $pinVerifiedAt = $this->session->userdata('delete_pin_verified');
+	    if(!$pinVerifiedAt || (time() - $pinVerifiedAt) > 300){
+	        echo json_encode(['success' => false, 'message' => 'PIN verification expired. Please re-enter PIN.']);
+	        return;
+	    }
+	    
+	    $orzId = (int)$this->input->post('orz_id');
+	    if($orzId <= 0){
+	        echo json_encode(['success' => false, 'message' => 'Invalid organization ID']);
+	        return;
+	    }
+	    
+	    // Fetch org details (need db credentials, tenant_identifier, etc.)
+	    $orgRecord = $this->general_model->fetchAllRecord('organization_list', $orzId);
+	    if(empty($orgRecord)){
+	        echo json_encode(['success' => false, 'message' => 'Organization not found']);
+	        return;
+	    }
+	    
+	    $org = $orgRecord[0];
+	    
+	    // Run the full delete via Onboarding_model
+	    $result = $this->onboarding_model->deleteOrganizationData($org, $orzId);
+	    
+	    // Clear the PIN verification
+	    $this->session->unset_userdata('delete_pin_verified');
+	    
+	    echo json_encode($result);
+	}
+
+	/**
+	 * AJAX: Send PIN reset email
+	 */
+	public function forgot_delete_pin(){
+	    if(!$this->session->userdata('IsUserLogged') || !$this->input->is_ajax_request()){
+	        echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+	        return;
+	    }
+	    
+	    $to = 'adityakohli467@gmail.com';
+	    $subject = 'Bizadmin Super Admin - Delete PIN Reminder';
+	    $message = '<html><body>';
+	    $message .= '<h3>Bizadmin Super Admin - Delete PIN</h3>';
+	    $message .= '<p>Your current delete PIN for organization deletion is: <strong>1802</strong></p>';
+	    $message .= '<p>This PIN is required to permanently delete an organization and all its data.</p>';
+	    $message .= '<p><small>Requested at: ' . date('Y-m-d H:i:s') . '</small></p>';
+	    $message .= '</body></html>';
+	    
+	    $this->email->from('info@bizadmin.com.au', 'Bizadmin Super Admin');
+	    $this->email->to($to);
+	    $this->email->subject($subject);
+	    $this->email->message($message);
+	    $this->email->set_mailtype('html');
+	    
+	    if($this->email->send()){
+	        echo json_encode(['success' => true, 'message' => 'PIN has been sent to your registered email.']);
+	    } else {
+	        echo json_encode(['success' => true, 'message' => 'PIN has been sent to your registered email.']);
+	        // We still show success to not leak email delivery status
+	        log_message('error', 'Failed to send delete PIN email: ' . $this->email->print_debugger());
+	    }
+	}
+
+	/**
+	 * Display the setup status page after automated onboarding
+	 */
+	public function setup_status(){
+	    if($this->session->userdata('IsUserLogged')){
+	        $data['setup_log']    = $this->session->userdata('last_setup_log') ?: [];
+	        $data['setup_errors'] = $this->session->userdata('last_setup_errors') ?: [];
+	        
+	        // Clear the session data after displaying
+	        $this->session->unset_userdata('last_setup_log');
+	        $this->session->unset_userdata('last_setup_errors');
+	        
+	        $this->load->view('general/header');
+	        $this->load->view('organization/setup_status', $data);
+	        $this->load->view('general/footer');
+	    } else {
+	        redirect('auth');
+	    }
+	}
 
 
 }
