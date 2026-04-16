@@ -306,8 +306,8 @@ $disable_db_pass     = (!empty($record[0]->db_pass)) ? 'readonly' : '';
             <label class="control-label">Database Name</label>
             <div class="controls">
                 <input required 
-                       type="password" 
-                       autocomplete="off" 
+                       type="text" 
+                       autocomplete="new-password" 
                        name="db_name" 
                        id="db_name" 
                        class="form-control"  
@@ -322,8 +322,8 @@ $disable_db_pass     = (!empty($record[0]->db_pass)) ? 'readonly' : '';
             <label class="control-label">Database Username</label>
             <div class="controls">
                 <input required 
-                       type="password" 
-                       autocomplete="off" 
+                       type="text" 
+                       autocomplete="new-password" 
                        name="db_username" 
                        id="db_username" 
                        class="form-control"  
@@ -338,8 +338,8 @@ $disable_db_pass     = (!empty($record[0]->db_pass)) ? 'readonly' : '';
             <label class="control-label">Database Password</label>
             <div class="controls">
                 <input required 
-                       type="password" 
-                       autocomplete="off" 
+                       type="text" 
+                       autocomplete="new-password" 
                        name="db_pass" 
                        id="db_pass" 
                        class="form-control"  

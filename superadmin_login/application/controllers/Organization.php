@@ -339,8 +339,25 @@ class Organization extends MY_Controller {
 
         if ($res) {
 
+            // Fetch stored DB credentials from the database (NOT from POST - browser autofill corrupts password fields)
+            $orgRecord = $this->general_model->fetchAllRecord('organization_list', $id);
+            if (!empty($orgRecord)) {
+                $storedOrg = $orgRecord[0];
+                $dbDetails = [
+                    'db_name'     => $storedOrg->db_name,
+                    'db_username' => $storedOrg->db_username,
+                    'db_pass'     => $storedOrg->db_pass,
+                ];
+            } else {
+                $dbDetails = [
+                    'db_name'     => $post['db_name'] ?? '',
+                    'db_username' => $post['db_username'] ?? '',
+                    'db_pass'     => $post['db_pass'] ?? '',
+                ];
+            }
+
             // Now update ORG user in tenant DB
-            $newDBConn = $this->connectToThisDB($post);
+            $newDBConn = $this->connectToThisDB($dbDetails);
 
             if ($newDBConn) {
                 $orz_user_id = get_user_id_by_organization_id($newDBConn, $id);
