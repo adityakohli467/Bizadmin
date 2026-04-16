@@ -823,6 +823,10 @@ if (!$this->ion_auth->logged_in())
        
 		if ($this->form_validation->run() === TRUE && $userid = $this->ion_auth->register($identity, $password, $email, $additional_data,$group))
 		{  
+		    // Auto-assign all menus for Manager role (role_id = 2)
+		    if ($role_id == 2) {
+		        $this->autoAssignAllMenus($userid, $this->input->post('systemIds'));
+		    }
 		  
 			// check to see if we are creating the user
 			// redirect them back to the admin page
@@ -1051,6 +1055,63 @@ if (!$this->ion_auth->logged_in())
     	$this->_render_page('general' . DIRECTORY_SEPARATOR . 'landingPageFooter');
 
 	}
+
+  /**
+   * Auto-assign ALL menus and submenus from all assigned systems to a user.
+   * Used when creating a Manager so they get full access by default.
+   */
+  private function autoAssignAllMenus($userId, $systemIds) {
+      if (empty($systemIds) || !is_array($systemIds)) return;
+
+      $allMenuIds    = [];
+      $allSubMenuIds = [];
+
+      foreach ($systemIds as $systemId) {
+          $systemId = (int) $systemId;
+          if ($systemId <= 0) continue;
+
+          // Fetch all active menus for this system from superadmin DB
+          $this->db->select('menu_id');
+          $this->db->where('menu_for', $systemId);
+          $this->db->where('is_deleted', 0);
+          $this->db->where('status', 1);
+          $menus = $this->db->get('menu')->result();
+
+          $menuIdsForSystem    = [];
+          $subMenuIdsForSystem = [];
+
+          foreach ($menus as $menu) {
+              $menuIdsForSystem[] = (string) $menu->menu_id;
+
+              // Fetch all active submenus for this menu
+              $this->db->select('id');
+              $this->db->where('parent_menu_id', $menu->menu_id);
+              $this->db->where('is_deleted', 0);
+              $this->db->where('status', 1);
+              $subMenus = $this->db->get('sub_menu')->result();
+
+              foreach ($subMenus as $sub) {
+                  $subMenuIdsForSystem[] = (string) $sub->id;
+              }
+          }
+
+          if (!empty($menuIdsForSystem)) {
+              $allMenuIds[$systemId] = $menuIdsForSystem;
+          }
+          if (!empty($subMenuIdsForSystem)) {
+              $allSubMenuIds[$systemId] = $subMenuIdsForSystem;
+          }
+      }
+
+      if (!empty($allMenuIds)) {
+          $updateData = [
+              'menu_ids'     => serialize($allMenuIds),
+              'sub_menu_ids' => serialize($allSubMenuIds),
+              'overwriteRoleLevelMenu' => 1,
+          ];
+          $this->ion_auth->update($userId, $updateData, true);
+      }
+  }
 
   function filterMenuAndSubMenus($postedMenudata,$existingData,$system_id){
      

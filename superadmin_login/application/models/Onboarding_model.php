@@ -746,16 +746,10 @@ EOT;
             }
         }
 
-        // --- Step 4: Soft-delete the organization_list record ---
+        // --- Step 4: Hard-delete the organization_list record ---
         $this->db->where('organization_list_id', $orzId);
-        $this->db->update('organization_list', [
-            'is_deleted'  => 1,
-            'deleted_at'  => date('Y-m-d'),
-            'db_name'     => null,
-            'db_username'  => null,
-            'db_pass'     => null,
-        ]);
-        log_message('info', '[Delete ORZ] Soft-deleted org ID ' . $orzId . ' (' . $tenantIdentifier . ')');
+        $this->db->delete('organization_list');
+        log_message('info', '[Delete ORZ] Deleted org ID ' . $orzId . ' (' . $tenantIdentifier . ') from organization_list');
 
         if (empty($errors)) {
             return [

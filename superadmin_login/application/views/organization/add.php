@@ -221,7 +221,7 @@
                                   
                                    <div class="col-md-4 mb-4"> 
                                     <div class="form-check form-radio-success mb-3">
-                                                        <input class="form-check-input" type="radio" name="mail_protocol" id="mail" value="mail" checked="<?php echo (isset($record[0]->mail_protocol) && $record[0]->mail_protocol=='mail' ? 'checked' : ''); ?>">
+                                                        <input class="form-check-input" type="radio" name="mail_protocol" id="mail" value="mail" <?php echo (isset($record[0]->mail_protocol) && $record[0]->mail_protocol=='mail') ? 'checked' : ''; ?>>
                                                         
                                                         <label class="form-check-label" for="mail">
                                                            Mail 
@@ -230,7 +230,7 @@
                                                     
                                 <div class="form-check form-radio-success mb-3">
                                                         
-                                                         <input class="form-check-input" type="radio" name="mail_protocol" id="smtp" value="smtp" checked="<?php echo (isset($record[0]->mail_protocol) && $record[0]->mail_protocol=='smtp' ? 'checked' : ''); ?>">
+                                                         <input class="form-check-input" type="radio" name="mail_protocol" id="smtp" value="smtp" <?php echo (($form_type == 'add') || (isset($record[0]->mail_protocol) && $record[0]->mail_protocol=='smtp')) ? 'checked' : ''; ?>>
                                                         <label class="form-check-label" for="smtp">
                                                           SMTP
                                                         </label>
@@ -241,7 +241,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Port</label>
                                       <div class="controls">
-                                        <input required type="text" autocomplete="off" name="mail_port" id="mail_port" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_host)? $record[0]->mail_host : ''); ?>" >
+                                        <input required type="text" autocomplete="off" name="mail_port" id="mail_port" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_port)? $record[0]->mail_port : ($form_type == 'add' ? '25' : '')); ?>" >
                                       </div>
                                     </div>
                                   </div>
@@ -250,7 +250,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Host</label>
                                       <div class="controls">
-                                        <input required type="text" autocomplete="off" name="mail_host" id="mail_host" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_host)? $record[0]->mail_host : ''); ?>" >
+                                        <input required type="text" autocomplete="off" name="mail_host" id="mail_host" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_host)? $record[0]->mail_host : ($form_type == 'add' ? 'smtp.office365.com' : '')); ?>" >
                                       </div>
                                     </div>
                                   </div>
@@ -259,7 +259,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Username</label>
                                       <div class="controls">
-                                        <input required type="text" autocomplete="off" name="mail_username" id="mail_username" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_username)? $record[0]->mail_username : ''); ?>" >
+                                        <input required type="text" autocomplete="off" name="mail_username" id="mail_username" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_username)? $record[0]->mail_username : ($form_type == 'add' ? 'info@bizadmin.com.au' : '')); ?>" >
                                       </div>
                                     </div>
                                   </div>
@@ -268,7 +268,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Password</label>
                                       <div class="controls">
-                                        <input type="text" autocomplete="off" required name="mail_pass" id="mail_pass" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_pass)? $record[0]->mail_pass : ''); ?>">
+                                        <input type="text" autocomplete="off" required name="mail_pass" id="mail_pass" class ='form-control' <?php echo $disable; ?> value="<?php echo (isset($record[0]->mail_pass)? $record[0]->mail_pass : ($form_type == 'add' ? '1800@Organic123!' : '')); ?>">
                                       </div>
                                     </div>
                                 </div>
