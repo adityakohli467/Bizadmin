@@ -59,19 +59,21 @@ class Onboarding_model extends CI_Model {
         $dbUsername        = trim($postData['db_username']);
         $dbPass           = trim($postData['db_pass']);
 
-        // Step 1: Create the database
-        $this->logStep('create_database', 'Creating database: ' . $dbName);
+        // Step 1: Create the database (auto on localhost, detects existing on cPanel)
+        $this->logStep('create_database', 'Checking/creating database: ' . $dbName);
         $dbCreated = $this->createDatabase($dbName, $dbUsername, $dbPass);
 
-        // Step 2: Import reference schema
-        if ($dbCreated) {
-            $this->logStep('import_schema', 'Importing reference schema into: ' . $dbName);
-            $this->importSchema($dbName, $dbUsername, $dbPass);
-        }
+        // Step 2: Import reference schema — always attempt if we can connect to the DB
+        $this->logStep('import_schema', 'Importing reference schema into: ' . $dbName);
+        $schemaImported = $this->importSchema($dbName, $dbUsername, $dbPass);
 
-        // Step 3: Populate seed data (roles, admin user, SMTP, locations)
-        $this->logStep('populate_seed_data', 'Populating admin user, roles, SMTP settings');
-        $this->populateSeedData($postData, $orzId, $hashedPassword);
+        // Step 3: Populate seed data — only if schema was imported (tables must exist)
+        if ($schemaImported) {
+            $this->logStep('populate_seed_data', 'Populating admin user, roles, SMTP settings');
+            $this->populateSeedData($postData, $orzId, $hashedPassword);
+        } else {
+            $this->logError('populate_seed_data', 'SKIPPED: Cannot seed data because schema import failed');
+        }
 
         // Step 4: Update database.php config files
         $this->logStep('update_config_files', 'Updating database config files');
@@ -104,35 +106,41 @@ class Onboarding_model extends CI_Model {
      */
     private function createDatabase($dbName, $dbUsername, $dbPass) {
         try {
-            // Use the existing default connection to create the database
+            // First: try to connect directly to the database using tenant credentials.
+            // This is the most reliable check — works on both localhost and cPanel.
+            $directConn = @new mysqli('localhost', $dbUsername, $dbPass, $dbName);
+            if (!$directConn->connect_error) {
+                $this->logStep('create_database', 'Database already exists and tenant credentials work: ' . $dbName . ' (skipping creation)');
+                $directConn->close();
+                return true;
+            }
+
+            // Second: try with superadmin credentials to connect to the database
             $hostname = $this->db->hostname;
             $username = $this->db->username;
             $password = $this->db->password;
+            $directConn = @new mysqli($hostname, $username, $password, $dbName);
+            if (!$directConn->connect_error) {
+                $this->logStep('create_database', 'Database already exists (connected via superadmin): ' . $dbName . ' (skipping creation)');
+                $directConn->close();
+                return true;
+            }
 
-            $conn = new mysqli($hostname, $username, $password);
+            // Database doesn't exist or can't connect — try to create it (localhost only)
+            $conn = @new mysqli($hostname, $username, $password);
             if ($conn->connect_error) {
                 $this->logError('create_database', 'Cannot connect to MySQL: ' . $conn->connect_error);
                 return false;
             }
 
-            // Check if database already exists
-            $result = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" . $conn->real_escape_string($dbName) . "'");
-            if ($result && $result->num_rows > 0) {
-                $this->logStep('create_database', 'Database already exists: ' . $dbName . ' (skipping creation)');
-                $conn->close();
-                return true;
-            }
-
-            // Try to create the database
             $escaped = $conn->real_escape_string($dbName);
             if ($conn->query("CREATE DATABASE IF NOT EXISTS `{$escaped}` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci")) {
                 $this->logStep('create_database', 'Database created successfully: ' . $dbName);
                 $conn->close();
                 return true;
             } else {
-                $this->logError('create_database', 'Failed to create database (may need manual creation on cPanel): ' . $conn->error);
+                $this->logError('create_database', 'Failed to create database (on cPanel, create it manually first): ' . $conn->error);
                 $conn->close();
-                // Not a fatal error — on shared hosting the DB must be pre-created
                 return false;
             }
         } catch (Exception $e) {
@@ -186,16 +194,24 @@ class Onboarding_model extends CI_Model {
 
                 if ($conn->error) {
                     $this->logError('import_schema', 'SQL import completed with errors: ' . $conn->error);
-                } else {
-                    $this->logStep('import_schema', 'Schema imported successfully');
                 }
             } else {
-                $this->logError('import_schema', 'Failed to import schema: ' . $conn->error);
+                $this->logError('import_schema', 'Failed to start schema import: ' . $conn->error);
             }
 
             $conn->query("SET FOREIGN_KEY_CHECKS = 1");
+
+            // Verify tables were actually created by checking table count
+            $tableCheck = $conn->query("SHOW TABLES");
+            $tableCount = $tableCheck ? $tableCheck->num_rows : 0;
+            if ($tableCount > 0) {
+                $this->logStep('import_schema', 'Schema imported successfully (' . $tableCount . ' tables created)');
+            } else {
+                $this->logError('import_schema', 'Schema import ran but NO tables were created! Check the SQL file and MySQL error logs.');
+            }
+
             $conn->close();
-            return true;
+            return ($tableCount > 0);
 
         } catch (Exception $e) {
             $this->logError('import_schema', 'Exception during import: ' . $e->getMessage());
@@ -301,6 +317,20 @@ class Onboarding_model extends CI_Model {
                 return false;
             }
 
+            // --- Verify tables exist before inserting ---
+            $tableCheck = $newDb->query("SHOW TABLES LIKE 'Global_roles'");
+            if (!$tableCheck || $tableCheck->num_rows() == 0) {
+                $this->logError('populate_seed_data', 'CRITICAL: Global_roles table does not exist! Schema import likely failed. Cannot seed data.');
+                return false;
+            }
+
+            // --- Check if data already exists (re-run safety) ---
+            $existingRoles = $newDb->get('Global_roles');
+            if ($existingRoles && $existingRoles->num_rows() > 0) {
+                $this->logStep('populate_seed_data', 'Seed data already exists (' . $existingRoles->num_rows() . ' roles found). Skipping seed to avoid duplicates.');
+                return true;
+            }
+
             // --- Insert 5 Default Roles ---
             $roles = [
                 ['id' => 1, 'name' => 'Admin',     'displayName' => 'Admin',     'description' => 'Owner',                                              'status' => 1, 'showSeprateChecklist' => 0, 'location_id' => 0],
@@ -313,7 +343,14 @@ class Onboarding_model extends CI_Model {
             foreach ($roles as $role) {
                 $newDb->insert('Global_roles', $role);
             }
-            $this->logStep('populate_seed_data', '5 default roles created (Admin, Manager, Staff, Employee, Timesheet)');
+            
+            // Verify roles were actually inserted
+            $rolesCheck = $newDb->get('Global_roles');
+            if (!$rolesCheck || $rolesCheck->num_rows() == 0) {
+                $this->logError('populate_seed_data', 'FAILED: Roles insert ran but Global_roles is still empty!');
+                return false;
+            }
+            $this->logStep('populate_seed_data', $rolesCheck->num_rows() . ' default roles created (Admin, Manager, Staff, Employee, Timesheet)');
 
             // --- Insert Admin User ---
             $adminData = [
@@ -332,6 +369,10 @@ class Onboarding_model extends CI_Model {
             ];
             $newDb->insert('Global_users', $adminData);
             $adminUserId = $newDb->insert_id();
+            if (!$adminUserId || $adminUserId == 0) {
+                $this->logError('populate_seed_data', 'FAILED: Admin user insert failed! insert_id returned: ' . $adminUserId);
+                return false;
+            }
             $this->logStep('populate_seed_data', 'Admin user created (ID: ' . $adminUserId . ')');
 
             // --- Assign Admin Role to User ---
