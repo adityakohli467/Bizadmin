@@ -283,10 +283,9 @@ class Organization extends MY_Controller {
             'orz_email'     => isset($post['orz_email']) ? trim($post['orz_email']) : '',
             'tenant_identifier' => isset($post['tenant_identifier']) ? trim($post['tenant_identifier']) : '',
             
-            // add DB info while creating orz not while updayting, if needed uncomment this c ode
-            // 'db_name'     => isset($_POST['db_name']) ? trim($_POST['db_name']) : '',
-            // 'db_username' => isset($_POST['db_username']) ? trim($_POST['db_username']) : '',
-            // 'db_pass'     => isset($_POST['db_pass']) ? trim($_POST['db_pass']) : '',
+            'db_name'       => isset($post['db_name']) ? trim($post['db_name']) : '',
+            'db_username'   => isset($post['db_username']) ? trim($post['db_username']) : '',
+            'db_pass'       => isset($post['db_pass']) ? trim($post['db_pass']) : '',
 
 
             'mail_protocol' => isset($post['mail_protocol']) ? trim($post['mail_protocol']) : '',

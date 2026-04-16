@@ -294,9 +294,10 @@
                                  
                               <div class="row">
                                   <?php
-$disable_db_name     = (!empty($record[0]->db_name)) ? 'readonly' : '';
-$disable_db_username = (!empty($record[0]->db_username)) ? 'readonly' : '';
-$disable_db_pass     = (!empty($record[0]->db_pass)) ? 'readonly' : '';
+// DB fields are editable - no readonly restriction
+$disable_db_name     = '';
+$disable_db_username = '';
+$disable_db_pass     = '';
 ?>
 
 
