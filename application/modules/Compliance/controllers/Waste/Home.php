@@ -122,11 +122,11 @@ class Home extends MY_Controller {
         
     }
     
-    public function historyData($encodedDateRange = '', $prep_id = '') {
+    public function historyData($encodedDateRange = '', $site_id = '') {
         // Handle input
-        if ($encodedDateRange == '' && $prep_id == '') {
+        if ($encodedDateRange == '' && $site_id == '') {
             $dateRange = $this->input->post('date_range');
-            $prep_id = $this->input->post('site_id');
+            $site_id = $this->input->post('site_id');
         } else {
             $dateRange = urldecode($encodedDateRange);
         }
@@ -157,8 +157,13 @@ class Home extends MY_Controller {
                 'date_entered <=' => $toDate,
                 'location_id' => $this->selected_location_id
             );
-            if ($prep_id != '') {
-                $condition['prep_id'] = $prep_id;
+            // If a site is selected, find all prep areas for that site and filter by their IDs
+            if ($site_id != '') {
+                $sitePreps = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea', array('id'), array('site_id' => $site_id));
+                if (!empty($sitePreps)) {
+                    $prepIds = array_column($sitePreps, 'id');
+                    $this->common_model->tenantDb->where_in('prep_id', $prepIds);
+                }
             }
             // echo "<pre>"; print_r($condition); exit;
             $history_data = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagement_history', '', $condition);
@@ -177,7 +182,7 @@ class Home extends MY_Controller {
             // Pass data to view
             $data['uniqueDates'] = $uniqueDates;
             $data['dateRange'] = $dateRange;
-            $data['site_id'] = $prep_id;
+            $data['site_id'] = $site_id;
             $data['weeklyWasteData'] = $weeklyWasteData;
             
             //  echo "<pre>"; print_r($data['site_detail']);
