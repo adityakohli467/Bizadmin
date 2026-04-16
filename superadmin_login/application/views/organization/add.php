@@ -83,7 +83,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Email *</label>
                                       <div class="controls">
-                                        <input required type="text" name="orz_email" id="orz_email" class ='form-control required' <?php echo $disable; ?> value="<?php echo (isset($record[0]->orz_email)? $record[0]->orz_email : ''); ?>">
+                                        <input required type="text" name="orz_email" id="orz_email" class ='form-control required' <?php echo $disable; ?> value="<?php echo (isset($record[0]->orz_email)? $record[0]->orz_email : ($form_type == 'add' ? 'kaushika@aaria.com.au' : '')); ?>">
                                       <div class="invalid-feedback">Please enter valid email.</div>
                                       </div>
                                     </div>
@@ -92,7 +92,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Phone</label>
                                       <div class="controls">
-                                        <input type="text" name="orz_phone" id="orz_phone" class ='form-control required' <?php echo $disable; ?> value="<?php echo (isset($record[0]->orz_phone)? $record[0]->orz_phone : ''); ?>">
+                                        <input type="text" name="orz_phone" id="orz_phone" class ='form-control required' <?php echo $disable; ?> value="<?php echo (isset($record[0]->orz_phone)? $record[0]->orz_phone : ($form_type == 'add' ? '123456789' : '')); ?>">
                                       <div class="invalid-feedback">Please enter phone number.</div>
                                       </div>
                                     </div>
@@ -102,7 +102,7 @@
                                     <div class="control-group">
                                       <label class="control-label">Password *</label>
                                       <div class="form-icon right">
-                                            <input type="password" class="form-control" id="orz_password" name="orz_password" <?php echo $disable; ?> placeholder="****">
+                                            <input type="password" class="form-control" id="orz_password" name="orz_password" <?php echo $disable; ?> placeholder="****" value="<?php echo ($form_type == 'add' ? '1800@Bendigo123!' : ''); ?>">
                                             <i class="ri-eye-fill pointerCursor" title="View Password" onclick="view_password()"></i>
                                         </div>
                                      
@@ -183,7 +183,8 @@
                                     if(!empty($record[0]->system_ids)){
                                         $system_ids = unserialize($record[0]->system_ids);
                                     }else{
-                                        $system_ids = [];
+                                        // Default systems: HR(104), Supplier(101), Clean(110), Temp(109), Compliance(107), Cash(102), DMS(111)
+                                        $system_ids = ($form_type == 'add') ? ['101','102','104','107','109','110','111'] : [];
                                     }
                                 ?>
                                 <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
