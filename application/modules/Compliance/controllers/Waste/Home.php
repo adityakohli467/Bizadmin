@@ -278,7 +278,7 @@ public function updateWasteHistory() {
    // product add update etc..
    
      function listProduct(){
-         $productCondition = array('status' => 1,'is_deleted' => 0,'location_id' => $this->selected_location_id);
+         $productCondition = array('status' => 1,'is_deleted' => 0);
          $condition = array('status' => 1,'location_id' => $this->selected_location_id);
         $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts','',$productCondition);
         $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites','',$condition);
@@ -297,7 +297,6 @@ public function updateWasteHistory() {
          'product_name' => $this->input->post('product_name') ?? null,
          'par_level'    => $this->input->post('par_level') ?? null,
          'prep_id'      => $this->input->post('prep_id') ?? null,
-         'location_id'  => $this->selected_location_id,
          'status'       => 1,
          'is_deleted'   => 0,
         ];

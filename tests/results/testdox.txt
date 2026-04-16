@@ -1,3 +1,12 @@
-Roster
- [x] R010b overnight shift should be valid
+Waste Product
+ [x] Insert data only contains valid columns
+ [x] Insert data does not contain location id
+ [x] Insert data sets status to active
+ [x] Insert data sets is deleted to zero
+ [x] List product condition does not have location id
+ [x] List product condition filters correctly
+ [x] Site prep condition uses location id
+ [x] New product matches list filter
+ [x] Delete sets is deleted to one
+ [x] Required fields present
 
