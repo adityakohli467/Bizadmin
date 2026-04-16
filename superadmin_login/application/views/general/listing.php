@@ -106,6 +106,14 @@
                                                     <!--  <button class="btn btn-sm btn-danger remove-item-btn" data-rel="delete" data-rel-id="<?php echo  $row->$idName ?>" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>-->
                                                     <!--</div>-->
                                                     <?php if($table_name == 'organization_list'){ ?>
+                                                    <div class="rerun">
+                                                        <a class="btn btn-sm btn-warning" 
+                                                            href="<?php echo base_url(); ?>index.php/organization/rerun_setup/<?php echo $row->$idName; ?>"
+                                                            title="Re-run automated setup (schema import, seed data, config, folders)"
+                                                            onclick="return confirm('Re-run setup for <?php echo htmlspecialchars($row->orz_name, ENT_QUOTES); ?>? This will re-import schema and re-seed data.');">
+                                                            <i class="ri-refresh-line"></i> Re-run Setup
+                                                        </a>
+                                                    </div>
                                                     <div class="remove">
                                                         <button class="btn btn-sm btn-danger delete-orz-btn" 
                                                             data-orz-id="<?php echo $row->$idName; ?>" 

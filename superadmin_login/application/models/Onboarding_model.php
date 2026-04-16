@@ -159,6 +159,7 @@ class Onboarding_model extends CI_Model {
             $conn = new mysqli('localhost', $dbUsername, $dbPass, $dbName);
             if ($conn->connect_error) {
                 // Fallback: try with root/superadmin credentials
+                $this->logStep('import_schema', 'Tenant credentials failed, trying superadmin credentials...');
                 $conn = new mysqli($this->db->hostname, $this->db->username, $this->db->password, $dbName);
                 if ($conn->connect_error) {
                     $this->logError('import_schema', 'Cannot connect to new database: ' . $conn->connect_error);
@@ -270,12 +271,22 @@ class Onboarding_model extends CI_Model {
                 'password' => $postData['db_pass'],
                 'database' => $postData['db_name'],
                 'dbdriver' => 'mysqli',
+                'db_debug' => FALSE,
             ];
-            $newDb = $this->load->database($config, TRUE);
+            $newDb = @$this->load->database($config, TRUE);
 
             if (!$newDb || !$newDb->conn_id) {
-                $this->logError('populate_seed_data', 'Cannot connect to tenant database');
-                return false;
+                // Fallback: try with superadmin credentials
+                $this->logStep('populate_seed_data', 'Tenant credentials failed, trying superadmin credentials...');
+                $config['hostname'] = $this->db->hostname;
+                $config['username'] = $this->db->username;
+                $config['password'] = $this->db->password;
+                $newDb = @$this->load->database($config, TRUE);
+
+                if (!$newDb || !$newDb->conn_id) {
+                    $this->logError('populate_seed_data', 'Cannot connect to tenant database with either tenant or superadmin credentials');
+                    return false;
+                }
             }
 
             // --- Insert 5 Default Roles ---
@@ -543,12 +554,21 @@ EOT;
                 'password' => $postData['db_pass'],
                 'database' => $postData['db_name'],
                 'dbdriver' => 'mysqli',
+                'db_debug' => FALSE,
             ];
-            $verifyDb = $this->load->database($config, TRUE);
+            $verifyDb = @$this->load->database($config, TRUE);
 
             if (!$verifyDb || !$verifyDb->conn_id) {
-                $this->logError('verify_setup', 'Cannot connect to tenant DB for verification');
-                return;
+                // Fallback: try with superadmin credentials
+                $config['hostname'] = $this->db->hostname;
+                $config['username'] = $this->db->username;
+                $config['password'] = $this->db->password;
+                $verifyDb = @$this->load->database($config, TRUE);
+
+                if (!$verifyDb || !$verifyDb->conn_id) {
+                    $this->logError('verify_setup', 'Cannot connect to tenant DB for verification');
+                    return;
+                }
             }
 
             // Check 1: Global_users has admin record

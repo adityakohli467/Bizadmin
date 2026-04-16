@@ -647,5 +647,66 @@ class Organization extends MY_Controller {
 	    }
 	}
 
+	/**
+	 * Re-run the automated setup for an existing organization
+	 * Useful when the initial setup failed partway through
+	 */
+	public function rerun_setup($orzId = 0){
+	    if(!$this->session->userdata('IsUserLogged')){
+	        redirect('auth');
+	        return;
+	    }
+	    
+	    $orzId = (int)$orzId;
+	    if($orzId <= 0){
+	        $this->session->set_flashdata('error_msg', 'Invalid organization ID');
+	        redirect('organization');
+	        return;
+	    }
+	    
+	    // Fetch org details
+	    $orgRecord = $this->general_model->fetchAllRecord('organization_list', $orzId);
+	    if(empty($orgRecord)){
+	        $this->session->set_flashdata('error_msg', 'Organization not found');
+	        redirect('organization');
+	        return;
+	    }
+	    
+	    $org = $orgRecord[0];
+	    
+	    // Build postData from the org record (same format as add form)
+	    $postData = [
+	        'tenant_identifier' => $org->tenant_identifier,
+	        'orz_name'          => $org->orz_name,
+	        'orz_email'         => $org->orz_email,
+	        'orz_phone'         => isset($org->orz_phone) ? $org->orz_phone : '',
+	        'db_name'           => $org->db_name,
+	        'db_username'       => $org->db_username,
+	        'db_pass'           => $org->db_pass,
+	        'organization_list_status' => $org->organization_list_status,
+	        'system_ids'        => unserialize($org->system_ids),
+	        'location_ids'      => unserialize($org->location_ids),
+	    ];
+	    
+	    // Use the stored hashed password for the admin user
+	    $hashedPassword = $org->orz_password;
+	    
+	    // Run the full setup again
+	    $setupResult = $this->onboarding_model->runFullSetup($postData, $orzId, $hashedPassword);
+	    
+	    if ($setupResult['success']) {
+	        $this->session->set_userdata('sucess_msg', 'Setup re-run completed successfully!');
+	    } else {
+	        $errorMessages = array_map(function($e) { return $e['message']; }, $setupResult['errors']);
+	        $this->session->set_userdata('sucess_msg', 'Setup re-run completed with some issues.');
+	        $this->session->set_userdata('error_msg', implode(' | ', $errorMessages));
+	    }
+	    
+	    $this->session->set_userdata('last_setup_log', $setupResult['log']);
+	    $this->session->set_userdata('last_setup_errors', $setupResult['errors']);
+	    
+	    redirect('organization/setup_status');
+	}
+
 
 }

@@ -37,7 +37,12 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <?php if (empty($setup_errors)): ?>
+                                <?php if (empty($setup_log) && empty($setup_errors)): ?>
+                                    <div class="summary-card summary-error">
+                                        <h6 class="mb-1"><i class="ri-close-circle-fill"></i> No Setup Data Available</h6>
+                                        <p class="mb-0">The setup may have failed before any steps could run. Please go back to the organization list, and click <strong>"Re-run Setup"</strong> on the organization to retry.</p>
+                                    </div>
+                                <?php elseif (empty($setup_errors)): ?>
                                     <div class="summary-card summary-success">
                                         <h6 class="mb-1"><i class="ri-checkbox-circle-fill"></i> All Setup Steps Completed Successfully!</h6>
                                         <p class="mb-0">The organization has been fully onboarded. The new tenant can now log in.</p>
