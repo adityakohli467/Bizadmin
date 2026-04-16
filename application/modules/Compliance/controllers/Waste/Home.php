@@ -236,15 +236,15 @@ public function updateWasteHistory() {
         'location_id' => $location_id
     );
 
-    // Determine which field is being updated
+    // Determine which field is being updated (only include fields actually sent in POST)
     $update_data = array();
-    if ($wasteM_value !== '' && $wasteM_value !== NULL) {
+    if ($this->input->post('wasteM_value') !== FALSE) {
         $update_data['wasteM_value'] = $wasteM_value;
     }
-    if ($entered_by !== '' && $entered_by !== NULL) {
+    if ($this->input->post('entered_by') !== FALSE) {
         $update_data['entered_by'] = $entered_by;
     }
-    if ($items_wasted !== '' && $items_wasted !== NULL) {
+    if ($this->input->post('items_wasted') !== FALSE) {
         $update_data['items_wasted'] = $items_wasted;
     }
 

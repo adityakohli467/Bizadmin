@@ -30,7 +30,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <?php if (isset($weeklyWasteData) && !empty($weeklyWasteData)) { ?>
+                    <?php if (isset($uniqueDates) && !empty($uniqueDates)) { ?>
                         <div class="table-responsive table-card">
                             <form id="wasteHistoryForm" action="#" method="post">
                                 <input type="hidden" name="dateRange" value="<?php echo htmlspecialchars($dateRange); ?>">
