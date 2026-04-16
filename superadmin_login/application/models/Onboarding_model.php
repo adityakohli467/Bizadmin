@@ -265,28 +265,40 @@ class Onboarding_model extends CI_Model {
      */
     private function populateSeedData($postData, $orzId, $hashedPassword) {
         try {
+            // Try connecting with tenant credentials first, then fallback to superadmin
+            $dbName = $postData['db_name'];
+            $connHost = 'localhost';
+            $connUser = $postData['db_username'];
+            $connPass = $postData['db_pass'];
+
+            $testConn = @new mysqli($connHost, $connUser, $connPass, $dbName);
+            if ($testConn->connect_error) {
+                // Fallback to superadmin credentials
+                $this->logStep('populate_seed_data', 'Tenant credentials failed, trying superadmin credentials...');
+                $connHost = $this->db->hostname;
+                $connUser = $this->db->username;
+                $connPass = $this->db->password;
+                $testConn = @new mysqli($connHost, $connUser, $connPass, $dbName);
+                if ($testConn->connect_error) {
+                    $this->logError('populate_seed_data', 'Cannot connect to tenant database: ' . $testConn->connect_error);
+                    return false;
+                }
+            }
+            $testConn->close();
+
             $config = [
-                'hostname' => 'localhost',
-                'username' => $postData['db_username'],
-                'password' => $postData['db_pass'],
-                'database' => $postData['db_name'],
+                'hostname' => $connHost,
+                'username' => $connUser,
+                'password' => $connPass,
+                'database' => $dbName,
                 'dbdriver' => 'mysqli',
                 'db_debug' => FALSE,
             ];
             $newDb = @$this->load->database($config, TRUE);
 
             if (!$newDb || !$newDb->conn_id) {
-                // Fallback: try with superadmin credentials
-                $this->logStep('populate_seed_data', 'Tenant credentials failed, trying superadmin credentials...');
-                $config['hostname'] = $this->db->hostname;
-                $config['username'] = $this->db->username;
-                $config['password'] = $this->db->password;
-                $newDb = @$this->load->database($config, TRUE);
-
-                if (!$newDb || !$newDb->conn_id) {
-                    $this->logError('populate_seed_data', 'Cannot connect to tenant database with either tenant or superadmin credentials');
-                    return false;
-                }
+                $this->logError('populate_seed_data', 'CI database loader failed despite successful mysqli test');
+                return false;
             }
 
             // --- Insert 5 Default Roles ---
@@ -548,32 +560,50 @@ EOT;
      */
     private function verifySetup($postData, $orzId) {
         try {
+            // Try connecting with tenant credentials first, then fallback to superadmin
+            $dbName = $postData['db_name'];
+            $connHost = 'localhost';
+            $connUser = $postData['db_username'];
+            $connPass = $postData['db_pass'];
+
+            $testConn = @new mysqli($connHost, $connUser, $connPass, $dbName);
+            if ($testConn->connect_error) {
+                $connHost = $this->db->hostname;
+                $connUser = $this->db->username;
+                $connPass = $this->db->password;
+                $testConn = @new mysqli($connHost, $connUser, $connPass, $dbName);
+                if ($testConn->connect_error) {
+                    $this->logError('verify_setup', 'Cannot connect to tenant DB for verification: ' . $testConn->connect_error);
+                    return;
+                }
+            }
+            $testConn->close();
+
             $config = [
-                'hostname' => 'localhost',
-                'username' => $postData['db_username'],
-                'password' => $postData['db_pass'],
-                'database' => $postData['db_name'],
+                'hostname' => $connHost,
+                'username' => $connUser,
+                'password' => $connPass,
+                'database' => $dbName,
                 'dbdriver' => 'mysqli',
                 'db_debug' => FALSE,
             ];
             $verifyDb = @$this->load->database($config, TRUE);
 
             if (!$verifyDb || !$verifyDb->conn_id) {
-                // Fallback: try with superadmin credentials
-                $config['hostname'] = $this->db->hostname;
-                $config['username'] = $this->db->username;
-                $config['password'] = $this->db->password;
-                $verifyDb = @$this->load->database($config, TRUE);
+                $this->logError('verify_setup', 'CI database loader failed for verification');
+                return;
+            }
 
-                if (!$verifyDb || !$verifyDb->conn_id) {
-                    $this->logError('verify_setup', 'Cannot connect to tenant DB for verification');
-                    return;
-                }
+            // Quick connection test - run a simple query first
+            $testQuery = $verifyDb->query("SELECT 1");
+            if (!$testQuery) {
+                $this->logError('verify_setup', 'Database connection exists but queries fail - tables may not have been imported');
+                return;
             }
 
             // Check 1: Global_users has admin record
             $users = $verifyDb->get('Global_users');
-            if ($users->num_rows() > 0) {
+            if ($users && $users->num_rows() > 0) {
                 $admin = $users->row();
                 if ($admin->role_id == 1 && $admin->company == $orzId) {
                     $this->logStep('verify_setup', 'PASS: Global_users has admin record (company=' . $orzId . ')');
@@ -581,49 +611,53 @@ EOT;
                     $this->logError('verify_setup', 'WARN: Global_users admin record has unexpected role_id=' . $admin->role_id . ' or company=' . $admin->company . ' (expected company=' . $orzId . ')');
                 }
             } else {
-                $this->logError('verify_setup', 'FAIL: Global_users is empty!');
+                $this->logError('verify_setup', 'FAIL: Global_users is empty or table does not exist!');
             }
 
             // Check 2: Global_roles has 5 records
             $roles = $verifyDb->get('Global_roles');
-            $roleCount = $roles->num_rows();
-            if ($roleCount == 5) {
-                $this->logStep('verify_setup', 'PASS: Global_roles has 5 records');
+            if ($roles && $roles->num_rows() > 0) {
+                $roleCount = $roles->num_rows();
+                if ($roleCount == 5) {
+                    $this->logStep('verify_setup', 'PASS: Global_roles has 5 records');
+                } else {
+                    $this->logError('verify_setup', 'FAIL: Global_roles has ' . $roleCount . ' records (expected 5)');
+                }
             } else {
-                $this->logError('verify_setup', 'FAIL: Global_roles has ' . $roleCount . ' records (expected 5)');
+                $this->logError('verify_setup', 'FAIL: Global_roles is empty or table does not exist!');
             }
 
             // Check 3: Global_userid_to_roles has admin mapping
             $roleMap = $verifyDb->get('Global_userid_to_roles');
-            if ($roleMap->num_rows() > 0) {
+            if ($roleMap && $roleMap->num_rows() > 0) {
                 $this->logStep('verify_setup', 'PASS: Global_userid_to_roles has ' . $roleMap->num_rows() . ' record(s)');
             } else {
-                $this->logError('verify_setup', 'FAIL: Global_userid_to_roles is empty!');
+                $this->logError('verify_setup', 'FAIL: Global_userid_to_roles is empty or table does not exist!');
             }
 
             // Check 4: Global_users_to_location has location assignments
             $locMap = $verifyDb->get('Global_users_to_location');
-            if ($locMap->num_rows() > 0) {
+            if ($locMap && $locMap->num_rows() > 0) {
                 $this->logStep('verify_setup', 'PASS: Global_users_to_location has ' . $locMap->num_rows() . ' location(s)');
             } else {
-                $this->logError('verify_setup', 'FAIL: Global_users_to_location is empty!');
+                $this->logError('verify_setup', 'FAIL: Global_users_to_location is empty or table does not exist!');
             }
 
             // Check 5: Global_SmtpSettings has backup SMTP
             $verifyDb->where('location_id', 9999);
             $smtp = $verifyDb->get('Global_SmtpSettings');
-            if ($smtp->num_rows() > 0) {
+            if ($smtp && $smtp->num_rows() > 0) {
                 $this->logStep('verify_setup', 'PASS: Global_SmtpSettings has backup SMTP (location_id=9999)');
             } else {
-                $this->logError('verify_setup', 'FAIL: Global_SmtpSettings missing backup SMTP record!');
+                $this->logError('verify_setup', 'FAIL: Global_SmtpSettings missing backup SMTP record or table does not exist!');
             }
 
             // Check 6: SUPPLIERS_orderStatusList has data
             $orderStatuses = $verifyDb->get('SUPPLIERS_orderStatusList');
-            if ($orderStatuses->num_rows() > 0) {
+            if ($orderStatuses && $orderStatuses->num_rows() > 0) {
                 $this->logStep('verify_setup', 'PASS: SUPPLIERS_orderStatusList has ' . $orderStatuses->num_rows() . ' status(es)');
             } else {
-                $this->logError('verify_setup', 'WARN: SUPPLIERS_orderStatusList is empty - order statuses not seeded');
+                $this->logError('verify_setup', 'WARN: SUPPLIERS_orderStatusList is empty or table does not exist');
             }
 
             // Check 7: Verify config files have the tenant entry
