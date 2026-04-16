@@ -115,8 +115,8 @@
                                       <div class="controls">
                                         <select name="organization_list_status" id="organization_list_status" class ='form-control' <?php echo $disable; ?>>
                                             <?php if($form_type != 'view'){ ?><option value="">Select</option><?php } ?>
-                                            <option value="1" <?php echo (isset($record[0]->orz_address) && $record[0]->organization_list_status == 1 ? 'selected' : ''); ?>>Enable</option>
-                                            <option value="0" <?php echo (isset($record[0]->orz_address) && $record[0]->organization_list_status == 0 ? 'selected' : ''); ?>>Disable</option>
+                                            <option value="1" <?php echo ($form_type == 'add' || (isset($record[0]->organization_list_status) && $record[0]->organization_list_status == 1) ? 'selected' : ''); ?>>Enable</option>
+                                            <option value="0" <?php echo (isset($record[0]->organization_list_status) && $record[0]->organization_list_status == 0 ? 'selected' : ''); ?>>Disable</option>
                                         </select>
                                       </div>
                                     </div>
