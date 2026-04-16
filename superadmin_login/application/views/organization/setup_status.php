@@ -123,30 +123,36 @@
                                         <tbody>
                                             <tr>
                                                 <td>1</td>
-                                                <td>Database created &amp; schema imported</td>
-                                                <td><?php echo _checkStepHelper($setup_log, 'import_schema'); ?></td>
-                                                <td>Verify via phpMyAdmin if needed</td>
+                                                <td>Database connection verified</td>
+                                                <td><?php echo _checkStepHelper($setup_log, 'check_database'); ?></td>
+                                                <td>DB must be pre-created in cPanel with user/privileges assigned</td>
                                             </tr>
                                             <tr>
                                                 <td>2</td>
+                                                <td>Schema/tables verified</td>
+                                                <td><?php echo _checkStepHelper($setup_log, 'check_schema'); ?></td>
+                                                <td>Import bizadmincom_db.sql via phpMyAdmin before adding org</td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
                                                 <td>Admin user, roles (5), SMTP configured</td>
                                                 <td><?php echo _checkStepHelper($setup_log, 'populate_seed_data'); ?></td>
                                                 <td>Admin, Manager, Staff, Employee, Timesheet</td>
                                             </tr>
                                             <tr>
-                                                <td>3</td>
+                                                <td>4</td>
                                                 <td>Database config files updated</td>
                                                 <td><?php echo _checkStepHelper($setup_log, 'update_config_files'); ?></td>
                                                 <td>Both application/ and External/ configs</td>
                                             </tr>
                                             <tr>
-                                                <td>4</td>
+                                                <td>5</td>
                                                 <td>Upload folders created</td>
                                                 <td><?php echo _checkStepHelper($setup_log, 'create_folders'); ?></td>
                                                 <td>With system subfolders</td>
                                             </tr>
                                             <tr>
-                                                <td>5</td>
+                                                <td>6</td>
                                                 <td>Notification times configured</td>
                                                 <td><span class="text-warning"><i class="ri-information-line"></i> Manual</span></td>
                                                 <td>Must be done by the org admin after first login (for each location &amp; system)</td>

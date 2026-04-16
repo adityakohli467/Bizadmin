@@ -59,21 +59,36 @@ class Onboarding_model extends CI_Model {
         $dbUsername        = trim($postData['db_username']);
         $dbPass           = trim($postData['db_pass']);
 
-        // Step 1: Create the database (auto on localhost, detects existing on cPanel)
-        $this->logStep('create_database', 'Checking/creating database: ' . $dbName);
-        $dbCreated = $this->createDatabase($dbName, $dbUsername, $dbPass);
+        // Step 1: Verify database exists and we can connect
+        $this->logStep('check_database', 'Verifying database connection: ' . $dbName);
+        $conn = $this->verifyDatabaseConnection($dbName, $dbUsername, $dbPass);
 
-        // Step 2: Import reference schema — always attempt if we can connect to the DB
-        $this->logStep('import_schema', 'Importing reference schema into: ' . $dbName);
-        $schemaImported = $this->importSchema($dbName, $dbUsername, $dbPass);
-
-        // Step 3: Populate seed data — only if schema was imported (tables must exist)
-        if ($schemaImported) {
-            $this->logStep('populate_seed_data', 'Populating admin user, roles, SMTP settings');
-            $this->populateSeedData($postData, $orzId, $hashedPassword);
-        } else {
-            $this->logError('populate_seed_data', 'SKIPPED: Cannot seed data because schema import failed');
+        if (!$conn) {
+            $this->logError('check_database', 'Cannot connect to database "' . $dbName . '". Please create the database and import the schema via phpMyAdmin/cPanel first.');
+            return [
+                'success' => false,
+                'log'     => $this->setupLog,
+                'errors'  => $this->errors,
+            ];
         }
+
+        // Step 2: Verify schema is imported (tables exist)
+        $this->logStep('check_schema', 'Verifying database schema (tables must be imported beforehand)');
+        $tablesOk = $this->verifySchemaImported($conn);
+        $conn->close();
+
+        if (!$tablesOk) {
+            $this->logError('check_schema', 'Required tables not found in "' . $dbName . '". Please import the reference SQL file (bizadmincom_db.sql) into this database via phpMyAdmin first.');
+            return [
+                'success' => false,
+                'log'     => $this->setupLog,
+                'errors'  => $this->errors,
+            ];
+        }
+
+        // Step 3: Populate seed data (roles, admin user, SMTP, locations)
+        $this->logStep('populate_seed_data', 'Populating admin user, roles, SMTP settings');
+        $this->populateSeedData($postData, $orzId, $hashedPassword);
 
         // Step 4: Update database.php config files
         $this->logStep('update_config_files', 'Updating database config files');
@@ -95,176 +110,74 @@ class Onboarding_model extends CI_Model {
     }
 
     // =========================================================================
-    // STEP 1: Create Database
+    // STEP 1: Verify Database Connection
     // =========================================================================
 
     /**
-     * Create the MySQL database. 
-     * Uses the default (superadmin) DB connection's credentials which should 
-     * have CREATE DATABASE privileges. On shared hosting (cPanel), the database 
-     * must be pre-created manually — this step will detect that and skip.
+     * Try to connect to the tenant database. Returns a mysqli connection on success, or false.
+     * Tries tenant credentials first, then superadmin as fallback.
      */
-    private function createDatabase($dbName, $dbUsername, $dbPass) {
-        try {
-            // First: try to connect directly to the database using tenant credentials.
-            // This is the most reliable check — works on both localhost and cPanel.
-            $directConn = @new mysqli('localhost', $dbUsername, $dbPass, $dbName);
-            if (!$directConn->connect_error) {
-                $this->logStep('create_database', 'Database already exists and tenant credentials work: ' . $dbName . ' (skipping creation)');
-                $directConn->close();
-                return true;
-            }
-
-            // Second: try with superadmin credentials to connect to the database
-            $hostname = $this->db->hostname;
-            $username = $this->db->username;
-            $password = $this->db->password;
-            $directConn = @new mysqli($hostname, $username, $password, $dbName);
-            if (!$directConn->connect_error) {
-                $this->logStep('create_database', 'Database already exists (connected via superadmin): ' . $dbName . ' (skipping creation)');
-                $directConn->close();
-                return true;
-            }
-
-            // Database doesn't exist or can't connect — try to create it (localhost only)
-            $conn = @new mysqli($hostname, $username, $password);
-            if ($conn->connect_error) {
-                $this->logError('create_database', 'Cannot connect to MySQL: ' . $conn->connect_error);
-                return false;
-            }
-
-            $escaped = $conn->real_escape_string($dbName);
-            if ($conn->query("CREATE DATABASE IF NOT EXISTS `{$escaped}` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci")) {
-                $this->logStep('create_database', 'Database created successfully: ' . $dbName);
-                $conn->close();
-                return true;
-            } else {
-                $this->logError('create_database', 'Failed to create database (on cPanel, create it manually first): ' . $conn->error);
-                $conn->close();
-                return false;
-            }
-        } catch (Exception $e) {
-            $this->logError('create_database', 'Exception: ' . $e->getMessage());
-            return false;
+    private function verifyDatabaseConnection($dbName, $dbUsername, $dbPass) {
+        // Try tenant credentials
+        $conn = @new mysqli('localhost', $dbUsername, $dbPass, $dbName);
+        if (!$conn->connect_error) {
+            $this->logStep('check_database', 'Connected to database "' . $dbName . '" with tenant credentials');
+            return $conn;
         }
+
+        // Fallback to superadmin credentials
+        $this->logStep('check_database', 'Tenant credentials failed, trying superadmin credentials...');
+        $conn = @new mysqli($this->db->hostname, $this->db->username, $this->db->password, $dbName);
+        if (!$conn->connect_error) {
+            $this->logStep('check_database', 'Connected to database "' . $dbName . '" with superadmin credentials');
+            return $conn;
+        }
+
+        return false;
     }
 
     // =========================================================================
-    // STEP 2: Import Reference Schema
+    // STEP 2: Verify Schema is Imported
     // =========================================================================
 
     /**
-     * Import the reference SQL schema into the new tenant database.
-     * Strips all INSERT statements except SUPPLIERS_orderStatusList.
+     * Check that the required tables exist in the tenant database.
+     * The user must import the schema manually via phpMyAdmin before onboarding.
      */
-    private function importSchema($dbName, $dbUsername, $dbPass) {
-        if (!file_exists($this->referenceSqlPath)) {
-            $this->logError('import_schema', 'Reference SQL file not found at: ' . $this->referenceSqlPath);
+    private function verifySchemaImported($conn) {
+        $requiredTables = [
+            'Global_users',
+            'Global_roles',
+            'Global_userid_to_roles',
+            'Global_users_to_location',
+            'Global_SmtpSettings',
+        ];
+
+        $tableCheck = $conn->query("SHOW TABLES");
+        if (!$tableCheck || $tableCheck->num_rows == 0) {
+            $this->logError('check_schema', 'Database is completely empty — no tables found!');
             return false;
         }
 
-        try {
-            $conn = new mysqli('localhost', $dbUsername, $dbPass, $dbName);
-            if ($conn->connect_error) {
-                // Fallback: try with root/superadmin credentials
-                $this->logStep('import_schema', 'Tenant credentials failed, trying superadmin credentials...');
-                $conn = new mysqli($this->db->hostname, $this->db->username, $this->db->password, $dbName);
-                if ($conn->connect_error) {
-                    $this->logError('import_schema', 'Cannot connect to new database: ' . $conn->connect_error);
-                    return false;
-                }
+        $tableCount = $tableCheck->num_rows;
+        $this->logStep('check_schema', 'Found ' . $tableCount . ' tables in database');
+
+        // Check each required table
+        $missing = [];
+        foreach ($requiredTables as $table) {
+            $result = $conn->query("SHOW TABLES LIKE '" . $conn->real_escape_string($table) . "'");
+            if (!$result || $result->num_rows == 0) {
+                $missing[] = $table;
             }
+        }
 
-            $sql = file_get_contents($this->referenceSqlPath);
-
-            // Clean the SQL: remove all INSERT statements EXCEPT SUPPLIERS_orderStatusList
-            $cleanedSql = $this->cleanSqlForImport($sql);
-
-            // Disable foreign key checks during import
-            $conn->query("SET FOREIGN_KEY_CHECKS = 0");
-            $conn->query("SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO'");
-
-            if ($conn->multi_query($cleanedSql)) {
-                // Consume all results to avoid "Commands out of sync" errors
-                do {
-                    if ($result = $conn->store_result()) {
-                        $result->free();
-                    }
-                } while ($conn->more_results() && $conn->next_result());
-
-                if ($conn->error) {
-                    $this->logError('import_schema', 'SQL import completed with errors: ' . $conn->error);
-                }
-            } else {
-                $this->logError('import_schema', 'Failed to start schema import: ' . $conn->error);
-            }
-
-            $conn->query("SET FOREIGN_KEY_CHECKS = 1");
-
-            // Verify tables were actually created by checking table count
-            $tableCheck = $conn->query("SHOW TABLES");
-            $tableCount = $tableCheck ? $tableCheck->num_rows : 0;
-            if ($tableCount > 0) {
-                $this->logStep('import_schema', 'Schema imported successfully (' . $tableCount . ' tables created)');
-            } else {
-                $this->logError('import_schema', 'Schema import ran but NO tables were created! Check the SQL file and MySQL error logs.');
-            }
-
-            $conn->close();
-            return ($tableCount > 0);
-
-        } catch (Exception $e) {
-            $this->logError('import_schema', 'Exception during import: ' . $e->getMessage());
+        if (!empty($missing)) {
+            $this->logError('check_schema', 'Missing required tables: ' . implode(', ', $missing));
             return false;
         }
-    }
 
-    /**
-     * Clean SQL dump for import:
-     * - Keep all CREATE TABLE, ALTER TABLE, SET statements
-     * - Remove all INSERT statements EXCEPT for SUPPLIERS_orderStatusList
-     * - Remove database-specific USE/CREATE DATABASE statements
-     */
-    private function cleanSqlForImport($sql) {
-        $lines = explode("\n", $sql);
-        $cleanedLines = [];
-        $skipInsert = false;
-
-        foreach ($lines as $line) {
-            $trimmed = trim($line);
-
-            // Skip USE and CREATE DATABASE statements
-            if (preg_match('/^(USE |CREATE DATABASE )/i', $trimmed)) {
-                continue;
-            }
-
-            // Handle INSERT statements - only keep SUPPLIERS_orderStatusList
-            if (preg_match('/^INSERT INTO/i', $trimmed)) {
-                if (stripos($trimmed, 'SUPPLIERS_orderStatusList') !== false) {
-                    $cleanedLines[] = $line;
-                    // Multi-line INSERT: keep reading until semicolon
-                    if (substr(rtrim($trimmed), -1) !== ';') {
-                        $skipInsert = false; // Actually we want to keep this one
-                    }
-                } else {
-                    // Skip this INSERT and any continuation lines
-                    if (substr(rtrim($trimmed), -1) !== ';') {
-                        $skipInsert = true;
-                    }
-                    continue;
-                }
-            } elseif ($skipInsert) {
-                // We're in a multi-line INSERT that should be skipped
-                if (substr(rtrim($trimmed), -1) === ';') {
-                    $skipInsert = false;
-                }
-                continue;
-            } else {
-                $cleanedLines[] = $line;
-            }
-        }
-
-        return implode("\n", $cleanedLines);
+        $this->logStep('check_schema', 'All required tables exist (Global_users, Global_roles, Global_userid_to_roles, Global_users_to_location, Global_SmtpSettings)');
+        return true;
     }
 
     // =========================================================================
@@ -272,12 +185,11 @@ class Onboarding_model extends CI_Model {
     // =========================================================================
 
     /**
-     * Insert all required seed data into the new tenant database:
-     * - 5 default roles (Admin, Manager, Staff, Employee, Timesheet)
-     * - Admin user record
-     * - User-to-role mapping
-     * - User-to-location mappings
-     * - Backup SMTP settings
+     * Insert/fix all required seed data into the new tenant database.
+     * IMPORTANT: This cleans old data from imported dumps and re-seeds with
+     * correct tenant-specific values (company ID, username, system_ids, locations, etc.)
+     * 
+     * Safe to re-run: truncates seed tables and re-inserts fresh.
      */
     private function populateSeedData($postData, $orzId, $hashedPassword) {
         try {
@@ -289,7 +201,6 @@ class Onboarding_model extends CI_Model {
 
             $testConn = @new mysqli($connHost, $connUser, $connPass, $dbName);
             if ($testConn->connect_error) {
-                // Fallback to superadmin credentials
                 $this->logStep('populate_seed_data', 'Tenant credentials failed, trying superadmin credentials...');
                 $connHost = $this->db->hostname;
                 $connUser = $this->db->username;
@@ -320,18 +231,24 @@ class Onboarding_model extends CI_Model {
             // --- Verify tables exist before inserting ---
             $tableCheck = $newDb->query("SHOW TABLES LIKE 'Global_roles'");
             if (!$tableCheck || $tableCheck->num_rows() == 0) {
-                $this->logError('populate_seed_data', 'CRITICAL: Global_roles table does not exist! Schema import likely failed. Cannot seed data.');
+                $this->logError('populate_seed_data', 'CRITICAL: Global_roles table does not exist! Import the SQL schema first.');
                 return false;
             }
 
-            // --- Check if data already exists (re-run safety) ---
-            $existingRoles = $newDb->get('Global_roles');
-            if ($existingRoles && $existingRoles->num_rows() > 0) {
-                $this->logStep('populate_seed_data', 'Seed data already exists (' . $existingRoles->num_rows() . ' roles found). Skipping seed to avoid duplicates.');
-                return true;
-            }
+            // =====================================================================
+            // Clean old/imported data from ALL seed tables to avoid stale tenant data
+            // This ensures no leftover data from a previously imported dump
+            // =====================================================================
+            $this->logStep('populate_seed_data', 'Cleaning old data from seed tables (in case DB was imported from another org)...');
+            $newDb->truncate('Global_users');
+            $newDb->truncate('Global_roles');
+            $newDb->truncate('Global_userid_to_roles');
+            $newDb->truncate('Global_users_to_location');
+            $newDb->query("DELETE FROM Global_SmtpSettings WHERE location_id = 9999 AND system_id = '9999'");
 
-            // --- Insert 5 Default Roles ---
+            // =====================================================================
+            // 1. INSERT 5 Default Roles (IDs 1-5, location_id = 0)
+            // =====================================================================
             $roles = [
                 ['id' => 1, 'name' => 'Admin',     'displayName' => 'Admin',     'description' => 'Owner',                                              'status' => 1, 'showSeprateChecklist' => 0, 'location_id' => 0],
                 ['id' => 2, 'name' => 'Manager',   'displayName' => 'Manager',   'description' => 'Site Manager - Who does what owner delegates',        'status' => 1, 'showSeprateChecklist' => 0, 'location_id' => 0],
@@ -344,15 +261,18 @@ class Onboarding_model extends CI_Model {
                 $newDb->insert('Global_roles', $role);
             }
             
-            // Verify roles were actually inserted
+            // Verify roles
             $rolesCheck = $newDb->get('Global_roles');
-            if (!$rolesCheck || $rolesCheck->num_rows() == 0) {
-                $this->logError('populate_seed_data', 'FAILED: Roles insert ran but Global_roles is still empty!');
+            $roleCount = ($rolesCheck) ? $rolesCheck->num_rows() : 0;
+            if ($roleCount != 5) {
+                $this->logError('populate_seed_data', 'FAILED: Expected 5 roles, found ' . $roleCount);
                 return false;
             }
-            $this->logStep('populate_seed_data', $rolesCheck->num_rows() . ' default roles created (Admin, Manager, Staff, Employee, Timesheet)');
+            $this->logStep('populate_seed_data', '5 roles created: Admin(1), Manager(2), Staff(3), Employee(4), Timesheet(5) — all with location_id=0');
 
-            // --- Insert Admin User ---
+            // =====================================================================
+            // 2. INSERT Admin User (company = orzId from organization_list)
+            // =====================================================================
             $adminData = [
                 'id'           => 1,
                 'role_id'      => 1,
@@ -370,30 +290,38 @@ class Onboarding_model extends CI_Model {
             $newDb->insert('Global_users', $adminData);
             $adminUserId = $newDb->insert_id();
             if (!$adminUserId || $adminUserId == 0) {
-                $this->logError('populate_seed_data', 'FAILED: Admin user insert failed! insert_id returned: ' . $adminUserId);
+                $this->logError('populate_seed_data', 'FAILED: Admin user insert failed!');
                 return false;
             }
-            $this->logStep('populate_seed_data', 'Admin user created (ID: ' . $adminUserId . ')');
+            $this->logStep('populate_seed_data', 'Admin user created — ID: ' . $adminUserId . ', username: ' . $postData['tenant_identifier'] . ', company(orzId): ' . $orzId);
 
-            // --- Assign Admin Role to User ---
+            // =====================================================================
+            // 3. INSERT Admin Role Mapping (group_id = 1 for Admin)
+            // =====================================================================
             $newDb->insert('Global_userid_to_roles', [
                 'user_id'  => $adminUserId,
-                'group_id' => 1, // Admin role
+                'group_id' => 1,
             ]);
-            $this->logStep('populate_seed_data', 'Admin role assigned to user');
+            $this->logStep('populate_seed_data', 'Admin role (group_id=1) assigned to user_id=' . $adminUserId);
 
-            // --- Assign All Locations to Admin ---
+            // =====================================================================
+            // 4. INSERT Location Assignments (all locations from ORZ edit page)
+            // =====================================================================
+            $locationCount = 0;
             if (isset($postData['location_ids']) && is_array($postData['location_ids'])) {
                 foreach ($postData['location_ids'] as $locationId) {
                     $newDb->insert('Global_users_to_location', [
                         'user_id'     => $adminUserId,
                         'location_id' => (int)$locationId,
                     ]);
+                    $locationCount++;
                 }
-                $this->logStep('populate_seed_data', count($postData['location_ids']) . ' location(s) assigned to admin');
             }
+            $this->logStep('populate_seed_data', $locationCount . ' location(s) assigned to admin (IDs: ' . implode(',', $postData['location_ids'] ?? []) . ')');
 
-            // --- Insert Backup SMTP Settings ---
+            // =====================================================================
+            // 5. INSERT Backup SMTP (location_id=9999, system_id=9999)
+            // =====================================================================
             $smtpData = [
                 'id'                 => 1,
                 'location_id'        => 9999,
@@ -407,7 +335,17 @@ class Onboarding_model extends CI_Model {
                 'mail_from'          => 'info@bizadmin.com.au',
             ];
             $newDb->insert('Global_SmtpSettings', $smtpData);
-            $this->logStep('populate_seed_data', 'Backup SMTP settings inserted (location_id=9999)');
+            $this->logStep('populate_seed_data', 'Backup SMTP inserted (smtp_username: info@bizadmin.com.au, location_id=9999)');
+
+            // =====================================================================
+            // FINAL SUMMARY — cross-check log
+            // =====================================================================
+            $this->logStep('populate_seed_data', '--- CROSS-CHECK SUMMARY ---');
+            $this->logStep('populate_seed_data', 'Global_users: 1 admin record, company=' . $orzId . ' (must match organization_list_id in Super Admin)');
+            $this->logStep('populate_seed_data', 'Global_roles: 5 records (Admin=1, Manager=2, Staff=3, Employee=4, Timesheet=5), all location_id=0');
+            $this->logStep('populate_seed_data', 'Global_userid_to_roles: 1 record (user_id=' . $adminUserId . ', group_id=1)');
+            $this->logStep('populate_seed_data', 'Global_users_to_location: ' . $locationCount . ' records for admin');
+            $this->logStep('populate_seed_data', 'Global_SmtpSettings: 1 backup record (location_id=9999, system_id=9999)');
 
             return true;
 
