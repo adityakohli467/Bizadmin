@@ -5,7 +5,7 @@
             <div class="card py-3" id="orderList">
                 <div class="card-header border-0">
                     <div class="d-flex align-items-center gap-2">
-                        <h5 class="card-title mb-0 flex-grow-1 text-dark">Cakes</h5>
+                        <h5 class="card-title mb-0 flex-grow-1 text-dark">Waste Management Products</h5>
                         <button type="button" class="btn btn-primary btn-sm fs-14" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openProductModal()">
                             <i class="bi bi-plus-lg me-1"></i> Add Product
                         </button>
