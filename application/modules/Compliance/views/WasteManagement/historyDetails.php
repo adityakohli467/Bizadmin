@@ -72,6 +72,14 @@
                                                                                    data-product-id="<?php echo $product['id']; ?>"
                                                                                    data-date="<?php echo $dateToFind; ?>"
                                                                                    data-prep-id="<?php echo $prep_area['id']; ?>">
+                                                                            <input type="text"
+                                                                                   name="items_wasted_<?php echo $site['id']; ?>_<?php echo $prep_area['id']; ?>_<?php echo $product['id']; ?>_<?php echo $dateToFind; ?>"
+                                                                                   value="<?php echo isset($weeklyWasteData[$dateToFind][$product['id']]) ? htmlspecialchars($weeklyWasteData[$dateToFind][$product['id']]['items_wasted']) : ''; ?>"
+                                                                                   class="form-control items-wasted mt-2"
+                                                                                   placeholder="Items wasted"
+                                                                                   data-product-id="<?php echo $product['id']; ?>"
+                                                                                   data-date="<?php echo $dateToFind; ?>"
+                                                                                   data-prep-id="<?php echo $prep_area['id']; ?>">
                                                                         </td>
                                                                     <?php } ?>
                                                                 </tr>
@@ -106,17 +114,19 @@ $(document).ready(function() {
         $('.wasteViewT').toggleClass('d-none');
     });
 
-    // Handle input changes for wasteM_value and entered_by
-    $('.wasteM-value, .entered-by').on('change', function() {
+    // Handle input changes for wasteM_value, entered_by, and items_wasted
+    $('.wasteM-value, .entered-by, .items-wasted').on('change', function() {
         var $input = $(this);
         var product_id = $input.data('product-id');
         var date_entered = $input.data('date');
         var prep_id = $input.data('prep-id');
-        var field = $input.hasClass('wasteM-value') ? 'wasteM_value' : 'entered_by';
+        var field = 'wasteM_value';
+        if ($input.hasClass('entered-by')) field = 'entered_by';
+        if ($input.hasClass('items-wasted')) field = 'items_wasted';
         var value = $input.val();
 
         // Disable all inputs to prevent concurrent updates
-        $('.wasteM-value, .entered-by').prop('disabled', true).addClass('loading');
+        $('.wasteM-value, .entered-by, .items-wasted').prop('disabled', true).addClass('loading');
 
         // AJAX request to update data
         $.ajax({
@@ -143,7 +153,7 @@ $(document).ready(function() {
             },
             complete: function() {
                 // Re-enable all inputs after the request completes
-                $('.wasteM-value, .entered-by').prop('disabled', false).removeClass('loading');
+                $('.wasteM-value, .entered-by, .items-wasted').prop('disabled', false).removeClass('loading');
             }
         });
     });

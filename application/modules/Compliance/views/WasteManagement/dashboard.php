@@ -68,6 +68,7 @@
                                                 <tr class="text-muted">
                                                     <th scope="col">Product Name</th>
                                                     <th scope="col">Enter Value</th>
+                                                    <th scope="col">Item Wasted</th>
                                                     <th scope="col">Par Level</th>
                                                     <th scope="col">Entered By</th>
                                                 </tr>
@@ -77,7 +78,7 @@
                                                     <?php foreach ($prep_detail as $prep_area) { ?>
                                                         <?php if ($prep_area['site_id'] == $site['id']) { ?>
                                                             <tbody class="prep_<?php echo $prep_area['id'] ?> tbodySite <?php echo 'siteId_' . $site['id'] ?>">
-                                                                <th colspan="4" class="text-black w-100" style="background-color: #dff0fa;">
+                                                                <th colspan="5" class="text-black w-100" style="background-color: #dff0fa;">
                                                                     <b><?php echo $prep_area['prep_name']; ?> (Site: <?php echo $site['site_name']; ?>)</b>
                                                                 </th>
                                                                 <?php if (isset($products) && !empty($products)) { ?>
@@ -90,6 +91,13 @@
                                                                                            data-product-id="<?= $product['id']; ?>" 
                                                                                            data-field="wasteM_value"
                                                                                            value="<?= isset($todaysEnteredData[$product['id']]) ? $todaysEnteredData[$product['id']]['wasteM_value'] : ''; ?>">
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input type="text" class="form-control auto-save" 
+                                                                                           data-product-id="<?= $product['id']; ?>" 
+                                                                                           data-field="items_wasted"
+                                                                                           placeholder="Number of items wasted"
+                                                                                           value="<?= isset($todaysEnteredData[$product['id']]['items_wasted']) ? $todaysEnteredData[$product['id']]['items_wasted'] : ''; ?>">
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php echo isset($product['par_level']) ? $product['par_level'] : 'N/A'; ?>
@@ -105,7 +113,7 @@
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
-                                                                        <td colspan="4" class="text-center">No products found for this prep area.</td>
+                                                                        <td colspan="5" class="text-center">No products found for this prep area.</td>
                                                                     </tr>
                                                                 <?php } ?>
                                                             </tbody>
@@ -115,7 +123,7 @@
                                             <?php } else { ?>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No sites or prep areas found.</td>
+                                                        <td colspan="5" class="text-center">No sites or prep areas found.</td>
                                                     </tr>
                                                 </tbody>
                                             <?php } ?>

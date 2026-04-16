@@ -5,6 +5,7 @@ Waste Product
  [x] Insert data sets is deleted to zero
  [x] List product condition does not have location id
  [x] List product condition filters correctly
+ [x] Dashboard condition does not have location id
  [x] Site prep condition uses location id
  [x] New product matches list filter
  [x] Delete sets is deleted to one

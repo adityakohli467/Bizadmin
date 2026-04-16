@@ -28,6 +28,7 @@ class WasteProductTest extends TestCase
             'product_name' => 'Test Cake',
             'par_level'    => 10,
             'prep_id'      => 1,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
@@ -47,6 +48,7 @@ class WasteProductTest extends TestCase
             'product_name' => 'Test Product',
             'par_level'    => 5,
             'prep_id'      => 2,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
@@ -64,6 +66,7 @@ class WasteProductTest extends TestCase
             'product_name' => 'Active Product',
             'par_level'    => 3,
             'prep_id'      => 1,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
@@ -81,6 +84,7 @@ class WasteProductTest extends TestCase
             'product_name' => 'Not Deleted Product',
             'par_level'    => 7,
             'prep_id'      => 1,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
@@ -114,6 +118,17 @@ class WasteProductTest extends TestCase
     }
 
     /**
+     * Test 6b: Dashboard condition must also NOT have location_id
+     */
+    public function testDashboardConditionDoesNotHaveLocationId()
+    {
+        $dashboardCondition = array('status' => 1, 'is_deleted' => 0);
+
+        $this->assertArrayNotHasKey('location_id', $dashboardCondition,
+            "Dashboard product condition should NOT filter by location_id");
+    }
+
+    /**
      * Test 7: Sites/Prep tables condition uses location_id (those tables DO have it)
      */
     public function testSitePrepConditionUsesLocationId()
@@ -137,6 +152,7 @@ class WasteProductTest extends TestCase
             'product_name' => 'Chocolate Cake',
             'par_level'    => 10,
             'prep_id'      => 1,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
@@ -177,11 +193,12 @@ class WasteProductTest extends TestCase
             'product_name' => 'Test',
             'par_level'    => 5,
             'prep_id'      => 1,
+            'site_id'      => 1,
             'status'       => 1,
             'is_deleted'   => 0,
         ];
 
-        $requiredKeys = ['product_name', 'par_level', 'prep_id', 'status', 'is_deleted'];
+        $requiredKeys = ['product_name', 'par_level', 'prep_id', 'site_id', 'status', 'is_deleted'];
         foreach ($requiredKeys as $key) {
             $this->assertArrayHasKey($key, $data, "Required field '$key' is missing from insert data");
         }

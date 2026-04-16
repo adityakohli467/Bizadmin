@@ -41,7 +41,7 @@ class Home extends MY_Controller {
           if(isset($emailSettings->mail_from)){
            $this->session->set_userdata('mail_from',$emailSettings->mail_from);
           }
-          $condition = array('status' => 1,'location_id' => $this->selected_location_id); 
+          $condition = array('status' => 1,'is_deleted' => 0); 
           $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts','',$condition);
           
           // todays data
@@ -53,6 +53,7 @@ class Home extends MY_Controller {
         foreach ($history_data as $record) {
             $todaysEnteredData[$record['product_id']] = array(
                 'wasteM_value' => $record['wasteM_value'],
+                'items_wasted' => isset($record['items_wasted']) ? $record['items_wasted'] : '',
                 'entered_by' => $record['entered_by']
             );
         }
@@ -73,11 +74,17 @@ class Home extends MY_Controller {
      $product_id = $this->input->post('product_id');
      $field = $this->input->post('field');
      $value = $this->input->post('value');
-     $prepId = $this->input->post('prep');
  
      if (!$product_id || !$field) {
          echo json_encode(['status' => 'error', 'message' => 'Invalid input']);
          return;
+     }
+ 
+     // Look up the product's actual prep_id (JS sends site_id, not prep_id)
+     $prepId = 0;
+     $productRecord = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts', '', array('id' => $product_id));
+     if (!empty($productRecord)) {
+         $prepId = $productRecord[0]['prep_id'];
      }
  
      $data = [
@@ -141,8 +148,8 @@ class Home extends MY_Controller {
             // Fetch data
             $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites', '', array('location_id' => $this->selected_location_id)); 
             $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea', '', array('location_id' => $this->selected_location_id)); 
-            $condition = array('status' => 1,'location_id' => $this->selected_location_id);
-            $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts', '', $condition);
+            $productCondition = array('status' => 1, 'is_deleted' => 0);
+            $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts', '', $productCondition);
 
             // Fetch history data
             $condition = array(
@@ -170,7 +177,7 @@ class Home extends MY_Controller {
             // Pass data to view
             $data['uniqueDates'] = $uniqueDates;
             $data['dateRange'] = $dateRange;
-            $data['site_id'] = $site_id;
+            $data['site_id'] = $prep_id;
             $data['weeklyWasteData'] = $weeklyWasteData;
             
             //  echo "<pre>"; print_r($data['site_detail']);
@@ -212,6 +219,7 @@ public function updateWasteHistory() {
     $location_id = $this->input->post('location_id', TRUE);
     $wasteM_value = $this->input->post('wasteM_value', TRUE);
     $entered_by = $this->input->post('entered_by', TRUE);
+    $items_wasted = $this->input->post('items_wasted', TRUE);
 
     // Check for required fields
     if (empty($product_id) || empty($date_entered) || empty($prep_id) || empty($location_id)) {
@@ -236,6 +244,9 @@ public function updateWasteHistory() {
     if ($entered_by !== '' && $entered_by !== NULL) {
         $update_data['entered_by'] = $entered_by;
     }
+    if ($items_wasted !== '' && $items_wasted !== NULL) {
+        $update_data['items_wasted'] = $items_wasted;
+    }
 
     // If no fields to update, return error
     if (empty($update_data)) {
@@ -259,7 +270,8 @@ public function updateWasteHistory() {
             'prep_id' => $prep_id,
             'location_id' => $location_id,
             'wasteM_value' => $wasteM_value ?: NULL,
-            'entered_by' => $entered_by ?: NULL
+            'entered_by' => $entered_by ?: NULL,
+            'items_wasted' => $items_wasted ?: NULL
         );
         // Insert new record
         $insert_id = $this->common_model->commonRecordCreate('Compliance_wasteManagement_history', $data);
@@ -292,11 +304,22 @@ public function updateWasteHistory() {
     
    public function addOrUpdateProduct() {
         $id = $this->input->post('id');
-  
+        $prep_id = $this->input->post('prep_id');
+
+        // Look up site_id from the selected prep area
+        $site_id = 0;
+        if ($prep_id) {
+            $prepRecord = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea', '', array('id' => $prep_id));
+            if (!empty($prepRecord)) {
+                $site_id = $prepRecord[0]['site_id'];
+            }
+        }
+
        $data = [
          'product_name' => $this->input->post('product_name') ?? null,
          'par_level'    => $this->input->post('par_level') ?? null,
-         'prep_id'      => $this->input->post('prep_id') ?? null,
+         'prep_id'      => $prep_id ?? null,
+         'site_id'      => $site_id,
          'status'       => 1,
          'is_deleted'   => 0,
         ];
