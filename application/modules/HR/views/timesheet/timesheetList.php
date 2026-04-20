@@ -30,9 +30,9 @@
             </button>
            
 
-              <button type="button" id="downloadExcelBtn" class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md text-white font-medium text-xs transition">
+              <button type="button" id="downloadExcelBtn" class="bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-md text-white font-medium text-xs transition">
                 <i class="fa-solid fa-download mr-1"></i>
-                <span class="font-medium">Download EX</span>
+                <span class="font-medium">Download CSV</span>
             </button>
             
             
