@@ -254,86 +254,125 @@ public function exportTimesheetExcel($start_date, $end_date)
     /* ================= DATA ================= */
     $row = 2;
 
-    // Group timesheets by employee and date to aggregate multiple shifts per day
-    $groupedTimesheets = [];
-    foreach ($timesheets as $ts) {
-        $key = $ts['employee_id'] . '_' . $ts['roster_date'];
-        $groupedTimesheets[$key][] = $ts;
+    // Build all dates in the range
+    $allDates = [];
+    $currentDate = new DateTime($start_date);
+    $endDateObj = new DateTime($end_date);
+    while ($currentDate <= $endDateObj) {
+        $allDates[] = $currentDate->format('Y-m-d');
+        $currentDate->modify('+1 day');
     }
 
-    foreach ($groupedTimesheets as $entries) {
-        $firstEntry = $entries[0];
-        $totalWorkedSeconds = 0;
-        $totalBreakMinutes = 0;
-        $earliestClockIn = null;
-        $latestClockOut = null;
-        $hasManualOverride = false;
-        $manualBreakTotal = 0;
-        $hasValidShift = false;
-
-        foreach ($entries as $ts) {
-            $clockIn  = $this->roundTime($ts['clock_in_time']);
-            $clockOut = $this->roundTime($ts['clock_out_time']);
-
-            if (empty($clockIn) || empty($clockOut)) {
-                continue;
-            }
-            $hasValidShift = true;
-
-            if ($earliestClockIn === null || strtotime($clockIn) < strtotime($earliestClockIn)) {
-                $earliestClockIn = $clockIn;
-            }
-            if ($latestClockOut === null || strtotime($clockOut) > strtotime($latestClockOut)) {
-                $latestClockOut = $clockOut;
-            }
-
-            $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $ts['roster_date']);
-            $totalWorkedSeconds += $workedSeconds;
-
-            $breakMins = (int) ($ts['total_break_duration'] ?? 0);
-            $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
-            $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
-
-            if ($manualOverride && $manualBreakMinutes !== null) {
-                $hasManualOverride = true;
-                $manualBreakTotal += $manualBreakMinutes;
-            } else {
-                $totalBreakMinutes += $breakMins;
-            }
+    // Collect unique employees (preserve name mapping)
+    $employees = [];
+    foreach ($timesheets as $ts) {
+        if (!isset($employees[$ts['employee_id']])) {
+            $employees[$ts['employee_id']] = $ts['employee_name'];
         }
+    }
 
-        if (!$hasValidShift) {
-            continue;
-        }
+    // Group timesheets by employee_id and date to aggregate multiple shifts per day
+    $groupedByEmpDate = [];
+    foreach ($timesheets as $ts) {
+        $empId = $ts['employee_id'];
+        $date = $ts['roster_date'];
+        $groupedByEmpDate[$empId][$date][] = $ts;
+    }
 
-        $totalHoursWorked = $totalWorkedSeconds / 3600;
+    // Iterate each employee for every date in the range
+    foreach ($employees as $empId => $empName) {
+        foreach ($allDates as $dateStr) {
+            if (isset($groupedByEmpDate[$empId][$dateStr])) {
+                $entries = $groupedByEmpDate[$empId][$dateStr];
+                $totalWorkedSeconds = 0;
+                $totalBreakMinutes = 0;
+                $earliestClockIn = null;
+                $latestClockOut = null;
+                $hasManualOverride = false;
+                $manualBreakTotal = 0;
+                $hasValidShift = false;
 
-        if ($hasManualOverride) {
-            $breakMinutes = $manualBreakTotal + $totalBreakMinutes;
-        } else {
-            $breakMinutes = $totalBreakMinutes;
-            if ($breakMinutes == 0) {
-                if ($totalHoursWorked > 10) {
-                    $breakMinutes = 60;
-                } elseif ($totalHoursWorked > 5) {
-                    $breakMinutes = 30;
+                foreach ($entries as $ts) {
+                    $clockIn  = $this->roundTime($ts['clock_in_time']);
+                    $clockOut = $this->roundTime($ts['clock_out_time']);
+
+                    if (empty($clockIn) || empty($clockOut)) {
+                        continue;
+                    }
+                    $hasValidShift = true;
+
+                    if ($earliestClockIn === null || strtotime($clockIn) < strtotime($earliestClockIn)) {
+                        $earliestClockIn = $clockIn;
+                    }
+                    if ($latestClockOut === null || strtotime($clockOut) > strtotime($latestClockOut)) {
+                        $latestClockOut = $clockOut;
+                    }
+
+                    $workedSeconds = $this->timesheet_model->calculateWorkedSeconds($clockIn, $clockOut, $ts['roster_date']);
+                    $totalWorkedSeconds += $workedSeconds;
+
+                    $breakMins = (int) ($ts['total_break_duration'] ?? 0);
+                    $manualOverride = isset($ts['manual_break_override']) && $ts['manual_break_override'] == 1;
+                    $manualBreakMinutes = isset($ts['manual_break_minutes']) ? (int)$ts['manual_break_minutes'] : null;
+
+                    if ($manualOverride && $manualBreakMinutes !== null) {
+                        $hasManualOverride = true;
+                        $manualBreakTotal += $manualBreakMinutes;
+                    } else {
+                        $totalBreakMinutes += $breakMins;
+                    }
                 }
+
+                if (!$hasValidShift) {
+                    // Has timesheet entry but no valid clock times — show 0
+                    $sheet->setCellValue('A' . $row, $empName);
+                    $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($dateStr)));
+                    $sheet->setCellValue('C' . $row, '');
+                    $sheet->setCellValue('D' . $row, '');
+                    $sheet->setCellValue('E' . $row, 0);
+                    $sheet->setCellValue('F' . $row, 0);
+                    $row++;
+                    continue;
+                }
+
+                $totalHoursWorked = $totalWorkedSeconds / 3600;
+
+                if ($hasManualOverride) {
+                    $breakMinutes = $manualBreakTotal + $totalBreakMinutes;
+                } else {
+                    $breakMinutes = $totalBreakMinutes;
+                    if ($breakMinutes == 0) {
+                        if ($totalHoursWorked > 10) {
+                            $breakMinutes = 60;
+                        } elseif ($totalHoursWorked > 5) {
+                            $breakMinutes = 30;
+                        }
+                    }
+                }
+
+                $breakHours = round($breakMinutes / 60, 2);
+                $netSeconds = $totalWorkedSeconds - ($breakMinutes * 60);
+                if ($netSeconds < 0) $netSeconds = 0;
+                $decimalHours = round($netSeconds / 3600, 2);
+
+                $sheet->setCellValue('A' . $row, $empName);
+                $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($dateStr)));
+                $sheet->setCellValue('C' . $row, date('h:i A', strtotime($earliestClockIn)));
+                $sheet->setCellValue('D' . $row, date('h:i A', strtotime($latestClockOut)));
+                $sheet->setCellValue('E' . $row, $breakHours);
+                $sheet->setCellValue('F' . $row, $decimalHours);
+            } else {
+                // Employee did not work this day — output 0 row
+                $sheet->setCellValue('A' . $row, $empName);
+                $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($dateStr)));
+                $sheet->setCellValue('C' . $row, '');
+                $sheet->setCellValue('D' . $row, '');
+                $sheet->setCellValue('E' . $row, 0);
+                $sheet->setCellValue('F' . $row, 0);
             }
+
+            $row++;
         }
-
-        $breakHours = round($breakMinutes / 60, 2);
-        $netSeconds = $totalWorkedSeconds - ($breakMinutes * 60);
-        if ($netSeconds < 0) $netSeconds = 0;
-        $decimalHours = round($netSeconds / 3600, 2);
-
-        $sheet->setCellValue('A' . $row, $firstEntry['employee_name']);
-        $sheet->setCellValue('B' . $row, date('d-m-Y', strtotime($firstEntry['roster_date'])));
-        $sheet->setCellValue('C' . $row, date('h:i A', strtotime($earliestClockIn)));
-        $sheet->setCellValue('D' . $row, date('h:i A', strtotime($latestClockOut)));
-        $sheet->setCellValue('E' . $row, $breakHours);
-        $sheet->setCellValue('F' . $row, $decimalHours);
-
-        $row++;
     }
 
     /* ================= FORMAT ================= */
