@@ -28,6 +28,13 @@
                 <i class="fa-solid fa-download mr-1"></i>
                 <span class="font-medium">Download TXT</span>
             </button>
+           
+
+              <button type="button" id="downloadExcelBtn" class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md text-white font-medium text-xs transition">
+                <i class="fa-solid fa-download mr-1"></i>
+                <span class="font-medium">Download EX</span>
+            </button>
+            
             
             <div class="relative">
                 <input 
@@ -143,6 +150,8 @@
 </main>
 <!-- Hidden form for bulk TXT export -->
 <form id="bulkExportForm" method="POST" action="<?php echo base_url('HR/Timesheet/exportTimesheetTXBulk'); ?>" style="display:none;"></form>
+<!-- Hidden form for bulk Excel export -->
+<form id="bulkExcelExportForm" method="POST" action="<?php echo base_url('HR/Timesheet/exportTimesheetExcelBulk'); ?>" style="display:none;"></form>
 
 <div class="modal fade" id="recreateTimesheetModal" tabindex="-1" aria-labelledby="recreateRoster" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
@@ -217,6 +226,27 @@ $('#downloadTxtBtn').on('click', function() {
     }
 
     var form = $('#bulkExportForm');
+    form.empty();
+
+    checked.each(function() {
+        var dateFrom = $(this).data('date-from');
+        var dateTo = $(this).data('date-to');
+        form.append('<input type="hidden" name="date_from[]" value="' + dateFrom + '">');
+        form.append('<input type="hidden" name="date_to[]" value="' + dateTo + '">');
+    });
+
+    form.submit();
+});
+
+// Download Excel for selected timesheets
+$('#downloadExcelBtn').on('click', function() {
+    var checked = $('.timesheet-checkbox:checked');
+    if (checked.length === 0) {
+        alert('Please select at least one timesheet week to download.');
+        return;
+    }
+
+    var form = $('#bulkExcelExportForm');
     form.empty();
 
     checked.each(function() {
