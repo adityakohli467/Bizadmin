@@ -426,7 +426,7 @@ public function exportTimesheetTX($start_date, $end_date)
     
     // Fetch all employees who have timesheets in this range (both approved and non-approved)
     $this->tenantDb->distinct()
-        ->select('e.emp_id, e.first_name, e.last_name, e.employee_type, pos.position_name')
+        ->select('e.emp_id, e.first_name, e.last_name, e.employee_type, e.tier, pos.position_name')
         ->from('HR_timesheet_details td')
         ->join('HR_employee e', 'td.employee_id = e.emp_id', 'inner')
         ->join('HR_emp_position pos', 'td.position_id = pos.position_id', 'left')
@@ -555,7 +555,13 @@ public function exportTimesheetTX($start_date, $end_date)
                         $isPublicHoliday = in_array($dateStr, $publicHolidays);
                         $dayOfWeek = date('N', strtotime($dateStr));
                         
-                        if ($isPublicHoliday) {
+                        // Tier 4 (Flat Rate) employees get "Hourly Pay" regardless of day
+                        $employeeTier = isset($employee['tier']) ? $employee['tier'] : '1';
+                        
+                        if ($employeeTier == '4') {
+                            $serviceItem = 'Hourly Pay';
+                            $payrollItem = 'Hourly Pay';
+                        } elseif ($isPublicHoliday) {
                             $serviceItem = 'Pub Hol';
                             $payrollItem = 'Pub Hol';
                         } elseif ($dayOfWeek == 6) {

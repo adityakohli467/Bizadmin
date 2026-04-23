@@ -322,6 +322,7 @@
                                                     <select class="form-select" name="tier" id="tier">
                                                         <option value="1" <?php echo (isset($employee['tier']) && ($employee['tier'] == '1' || $employee['tier'] == '')) ? 'selected' : ''; ?>>Tier 1</option>
                                                         <option value="2" <?php echo (isset($employee['tier']) && $employee['tier'] == '2') ? 'selected' : ''; ?>>Tier 2</option>
+                                                        <option value="4" <?php echo (isset($employee['tier']) && $employee['tier'] == '4') ? 'selected' : ''; ?>>Tier 4 (Flat Rate)</option>
                                                     </select>
                                                 </div>
                                                 
