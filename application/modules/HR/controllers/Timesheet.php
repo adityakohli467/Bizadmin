@@ -435,9 +435,9 @@ public function exportTimesheetTX($start_date, $end_date)
         ->where('td.location_id', $this->location_id)
         ->where('td.is_deleted', 0);
     
-    // Only export Tier 1 employees when tier-based payroll is enabled
+    // Only export Tier 1 and Tier 4 (Flat Rate) employees when tier-based payroll is enabled
     if ($tierBasedEnabled) {
-        $this->tenantDb->where('e.tier', '1');
+        $this->tenantDb->where_in('e.tier', ['1', '4']);
     }
     
     $this->tenantDb->order_by('e.first_name', 'ASC')
@@ -2685,8 +2685,8 @@ private function calculateNetIncome($timesheet_id, $timesheet, $superConfig) {
     // echo "<pre>"; print_r($details); exit;
     
     foreach ($details as $detail) {
-        // Skip if tier-based is enabled and employee is not tier 1
-        if ($tierBasedEnabled && $detail['tier'] != 1) {
+        // Skip if tier-based is enabled and employee is not tier 1 or tier 4
+        if ($tierBasedEnabled && $detail['tier'] != 1 && $detail['tier'] != 4) {
             continue;
         }
         
