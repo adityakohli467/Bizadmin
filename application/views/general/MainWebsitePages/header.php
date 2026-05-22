@@ -34,14 +34,12 @@
     border: 8px solid black;
   }
   
-   #mobile-menu {
+   #mobileMenu {
             transform: translateX(100%);
-        }
-        #mobile-menu.is-open {
-            transform: translateX(0);
-        }
-        #mobile-menu {
             transition: transform 300ms ease-in-out;
+        }
+        #mobileMenu.is-open {
+            transform: translateX(0);
         }
   </style>
   

@@ -1,18 +1,20 @@
 <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    primary: "#132f65",
-                    accent: "#f97316"
-                },
-                fontFamily: {
-                    inter: ["Inter", "sans-serif"],
-                    sans: ["Inter", "sans-serif"]
+    if (typeof tailwind !== 'undefined') {
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#132f65",
+                        accent: "#f97316"
+                    },
+                    fontFamily: {
+                        inter: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"]
+                    }
                 }
             }
-        }
-    };
+        };
+    }
 
     $(document).ready(function() {
         // Desktop Dropdown
@@ -53,19 +55,19 @@
         $burgerMenu.on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $mobileMenu.toggleClass('hidden is-open');
+            $mobileMenu.toggleClass('is-open');
         });
 
         $closeMenu.on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $mobileMenu.removeClass('is-open').addClass('hidden');
+            $mobileMenu.removeClass('is-open');
         });
 
         // Close mobile menu when clicking outside
         $(document).on('click', function(e) {
             if (!$mobileMenu.is(e.target) && !$mobileMenu.find('*').is(e.target) && !$burgerMenu.is(e.target) && !$burgerMenu.find('*').is(e.target)) {
-                $mobileMenu.removeClass('is-open').addClass('hidden');
+                $mobileMenu.removeClass('is-open');
             }
         });
 
@@ -75,7 +77,7 @@
             const page = $(this).data('page');
             if (page) {
                 loadContent(page);
-                $mobileMenu.removeClass('is-open').addClass('hidden'); // Close mobile menu
+                $mobileMenu.removeClass('is-open'); // Close mobile menu
                 $('.menu-item').removeClass('active');
                 $(this).addClass('active');
             }
@@ -243,7 +245,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden mt-4 space-y-4 hidden">
+        <div id="mobileMenu" class="md:hidden mt-4 space-y-4 fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
             <a href="https://bizadmin.com.au/" class="block text-gray-700 hover:text-primary" data-page="homepage">Home</a>
             <a href="#feature-section" class="block text-gray-700 hover:text-primary" >Features</a>
             <a href="#benefits" class="block text-gray-700 hover:text-primary ">Benefits</a>
