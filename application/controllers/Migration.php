@@ -8,24 +8,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Tracks which migrations have been applied per tenant via `schema_migrations` table.
  * 
  * USAGE:
- *   - Via browser (admin only): /migration/run
+ *   - Via browser: /migration/run?key=YOUR_SECRET_KEY
  *   - Via CLI: php index.php migration run
- *   - Dry run (preview only): /migration/run?dry=1
- *   - Run for single tenant: /migration/run?tenant=cjs
- *   - Check status: /migration/status
- *   - Rollback last batch: /migration/rollback  (requires _down.sql files)
+ *   - Dry run (preview only): /migration/run?key=YOUR_SECRET_KEY&dry=1
+ *   - Run for single tenant: /migration/run?key=YOUR_SECRET_KEY&tenant=cjs
+ *   - Check status: /migration/status?key=YOUR_SECRET_KEY
  * 
  * HOW TO ADD A NEW MIGRATION:
  *   1. Create a new .sql file in application/migrations/
  *   2. Name it with incrementing number: 003_description.sql, 004_another_change.sql
  *   3. Write your SQL (ALTER TABLE, CREATE TABLE, etc.)
- *   4. Run /migration/run
+ *   4. Run /migration/run?key=YOUR_SECRET_KEY
  *   5. Done - it applies to ALL tenant databases automatically
  */
-class Migration extends CI_Controller {
+class Migration extends MY_Controller {
 
     private $migrationsPath;
     private $log = [];
+    
+    // Change this secret key to something only you know
+    private $secretKey = 'BizAdmin@Migrate2026!';
 
     public function __construct() {
         parent::__construct();
@@ -347,7 +349,7 @@ class Migration extends CI_Controller {
     }
 
     /**
-     * Authorization check - CLI or super admin session
+     * Authorization check - CLI or secret key in URL
      */
     private function is_authorized() {
         // Always allow CLI access
@@ -355,12 +357,10 @@ class Migration extends CI_Controller {
             return true;
         }
 
-        // Check if user is logged in as super admin (role_id = 1)
-        if ($this->session->userdata('user_id')) {
-            $this->load->library('ion_auth');
-            if ($this->ion_auth->is_admin()) {
-                return true;
-            }
+        // Check secret key in query string
+        $key = $this->input->get('key');
+        if ($key && $key === $this->secretKey) {
+            return true;
         }
 
         return false;
