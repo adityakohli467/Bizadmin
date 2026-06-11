@@ -106,6 +106,7 @@
 #locationDashboard{
     position:relative;
     min-height:calc(100vh - 70px);
+    margin-top:60px;
     padding-bottom:120px;
     overflow:hidden;
 }
