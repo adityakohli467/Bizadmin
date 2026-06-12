@@ -1,8 +1,37 @@
-<div class="container-fluid px-3 py-3" style="margin-top: 110px !important;">
+<div id="checklistPage" class="container-fluid px-3 py-3" style="margin-top: 90px !important;">
+
+                        <?php
+                            $clHour = date('H');
+                            if ($clHour >= 5 && $clHour < 12)      { $clGreeting = 'Good Morning';   $clIcon = 'bx bxs-sun'; }
+                            elseif ($clHour >= 12 && $clHour < 18) { $clGreeting = 'Good Afternoon'; $clIcon = 'bx bxs-sun'; }
+                            else                                   { $clGreeting = 'Good Evening';   $clIcon = 'bx bxs-moon'; }
+                        ?>
+                        <!-- Page hero -->
+                        <div class="cl-hero mb-4">
+                            <div class="cl-hero-left">
+                                <span class="cl-hero-icon"><i class="<?php echo $clIcon; ?>"></i></span>
+                                <div>
+                                    <h1 class="cl-hero-title">
+                                        <?php echo $clGreeting; ?>,
+                                        <span class="cl-hero-name"><?php echo htmlspecialchars($this->session->userdata('username'), ENT_QUOTES, 'UTF-8'); ?></span>
+                                    </h1>
+                                    <p class="cl-hero-sub">Here's what's happening today</p>
+                                </div>
+                            </div>
+                            <?php if($this->session->userdata('location_name') != '') { ?>
+                            <a href="<?php echo base_url('auth/dashboard'); ?>" class="cl-loc-chip" title="Switch location">
+                                <i class="bx bxs-map"></i>
+                                <span><?php echo htmlspecialchars($this->session->userdata('location_name'), ENT_QUOTES, 'UTF-8'); ?></span>
+                                <i class="bx bx-chevron-right cl-loc-chev"></i>
+                            </a>
+                            <?php } ?>
+                        </div>
+
                         <div class="row">
                             
                             <div class="col-xl-5 col-md-5 col-lg-5 d-none d-xl-block">
                                 <div class="d-flex flex-column h-100">
+                                    <div class="cl-section-label">Your Apps</div>
                                     <div class="row">
                                          <?php if(!empty($systemAssignedToThisUser)) {  ?>
                                             <?php foreach($systemAssignedToThisUser as $system)  {  ?>  
@@ -454,7 +483,92 @@ input:checked + .slider:before {
   white-space: normal;
   max-width: none;
 }
-</style>  
+</style>
+
+<!-- ============ Checklist page redesign (matches location screen) ============ -->
+<style>
+#checklistPage{position:relative;max-width:1320px;}
+
+/* Page hero */
+#checklistPage .cl-hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+#checklistPage .cl-hero-left{display:flex;align-items:center;gap:.75rem;}
+#checklistPage .cl-hero-icon{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#172153,#2a3a82);color:#ffd166;font-size:1.4rem;flex-shrink:0;}
+#checklistPage .cl-hero-title{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:700;color:#172153;margin:0;letter-spacing:-.02em;line-height:1.2;}
+#checklistPage .cl-hero-name{background:linear-gradient(135deg,#6366f1,#06b6a4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+#checklistPage .cl-hero-sub{margin:.1rem 0 0;color:#6b7280;font-size:.88rem;}
+#checklistPage .cl-loc-chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.55rem 1rem;font-size:.85rem;font-weight:600;color:#172153;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .2s,box-shadow .2s,transform .2s;}
+#checklistPage .cl-loc-chip:hover{border-color:#6366f1;box-shadow:0 6px 18px rgba(99,102,241,.15);transform:translateY(-1px);}
+#checklistPage .cl-loc-chip i.bxs-map{color:#06b6a4;font-size:1.05rem;}
+#checklistPage .cl-loc-chev{color:#9ca3af;font-size:1.1rem;}
+
+/* Section labels */
+#checklistPage .cl-section-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:.85rem;}
+
+/* App system tiles */
+#checklistPage .card.card-animate{
+    background:linear-gradient(145deg,#20254f 0%,#2c3270 100%)!important;
+    border-radius:18px!important;border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 4px 14px rgba(16,24,64,.12);
+    transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s;
+    position:relative;overflow:hidden;
+}
+#checklistPage .card.card-animate::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6366f1,#06b6a4);transform:scaleX(0);transform-origin:left;transition:transform .3s;z-index:2;}
+#checklistPage .card.card-animate:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(16,24,64,.28);}
+#checklistPage .card.card-animate:hover::after{transform:scaleX(1);}
+#checklistPage .card.card-animate .card-body{padding:1.25rem 1.25rem 1.4rem;}
+#checklistPage .card.card-animate .text-muted{color:#c7cbe6!important;font-size:.78rem;letter-spacing:.04em;}
+#checklistPage .card.card-animate .flex-shrink-0 h4{margin-top:.35rem;}
+
+/* White panels (Today's Checklist / role checklists / My Tasks) */
+#checklistPage .card.card-height-100{
+    border-radius:18px!important;border:0!important;
+    box-shadow:0 2px 10px rgba(16,24,64,.06)!important;
+    background:#fff!important;
+}
+#checklistPage .card.card-height-100 .card-header{
+    background:#fff!important;border:0!important;border-radius:18px 18px 0 0;
+    padding:1.1rem 1.3rem .4rem;
+}
+#checklistPage .card.card-height-100 .card-header .fw-semibold{color:#172153;font-size:1rem;}
+#checklistPage .card.card-height-100 .card-header i.ri-file-list-fill{
+    color:#6366f1;background:#eef0ff;width:32px;height:32px;border-radius:9px;
+    display:inline-grid;place-items:center;font-size:1rem;margin-right:.25rem;
+}
+#checklistPage .card.card-height-100 .card-body{padding:.5rem 1.3rem 1.3rem;}
+
+/* Buttons -> gradient pill (Create Task / Add Task) */
+#checklistPage .btn-primary{
+    background:linear-gradient(135deg,#6366f1,#8b5cf6)!important;border:0!important;
+    border-radius:10px!important;font-weight:600;padding:.5rem .95rem;
+    box-shadow:0 6px 16px -6px rgba(99,102,241,.6);transition:transform .2s,box-shadow .2s;
+}
+#checklistPage .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 22px -6px rgba(99,102,241,.7);}
+
+/* Accordion rows -> soft cards with hover */
+#checklistPage .accordion.accordion-border-box{margin-bottom:.6rem;}
+#checklistPage .accordion-item{border:1px solid #eef0f4!important;border-radius:14px!important;overflow:hidden;background:#fff;transition:box-shadow .2s,border-color .2s;}
+#checklistPage .accordion-item:hover{box-shadow:0 4px 14px rgba(16,24,64,.07);border-color:#e0e3ee!important;}
+#checklistPage .accordion-button{background:transparent!important;box-shadow:none!important;border-radius:14px!important;}
+#checklistPage .accordion-button h6{font-weight:600;}
+#checklistPage .accordion-button::after{display:none;}
+#checklistPage .accordion-body{border-radius:0 0 14px 14px!important;}
+
+/* Toggle slider accent -> theme teal */
+#checklistPage input.success:checked + .slider{background-color:#06b6a4;}
+
+/* My Tasks rows */
+#checklistPage .table-hover > tbody > tr:hover > *{background-color:#f8f9ff;}
+
+/* Empty checklist placeholder */
+#checklistPage .table-card .table tbody:empty::after,
+#checklistPage .dashboardChecklist .table tbody:empty::before{content:'';}
+
+@media (max-width:575.98px){
+    #checklistPage{margin-top:80px!important;}
+    #checklistPage .cl-hero-sub{display:none;}
+}
+</style>
+
 <script>
 function showCheckListInfoModal(id){
  $("#checklistId").val(id);
@@ -572,7 +686,25 @@ $(document).ready(function () {
     });
 });
 
-
-
-
+// Inject a friendly empty-state into any checklist/task panel that has no rows
+$(document).ready(function () {
+    $('#checklistPage .dashboardChecklist').each(function () {
+        var $panel = $(this);
+        var hasRows = $panel.find('.accordion-item, tbody tr').length > 0;
+        if (!hasRows) {
+            $panel.append(
+                '<div class="cl-empty">' +
+                '<i class="bx bx-check-circle"></i>' +
+                '<p>All clear — nothing here right now.</p>' +
+                '</div>'
+            );
+        }
+    });
+});
 </script>
+
+<style>
+#checklistPage .cl-empty{text-align:center;padding:2.5rem 1rem;color:#94a3b8;}
+#checklistPage .cl-empty i{font-size:2.6rem;display:block;margin-bottom:.4rem;color:#cbd5e1;}
+#checklistPage .cl-empty p{margin:0;font-size:.9rem;}
+</style>
