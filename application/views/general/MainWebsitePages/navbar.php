@@ -4,12 +4,16 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#0D1B35",
-                        accent: "#F2690D"
+                        primary: "#1A2942",
+                        accent: "#F05D5E",
+                        coral: "#FF7A59",
+                        cream: "#FFF9F2",
+                        sand: "#F7EBDD"
                     },
                     fontFamily: {
                         inter: ["Inter", "sans-serif"],
-                        sans: ["Inter", "sans-serif"]
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Gelasio", "serif"]
                     }
                 }
             }
@@ -57,51 +61,48 @@
     });
 </script>
 
-<header id="header" class="bg-white py-4 px-6 lg:px-12 border-b border-gray-200 relative z-30">
-    <div class="container mx-auto">
-        <div class="flex justify-between items-center">
+<header id="header" class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
             <!-- Logo -->
-            <div class="flex items-center">
-                <span class="text-2xl font-bold cursor-pointer">
-                    <a href="<?php echo site_url('home'); ?>">
-                        <img class="logo-img" alt="bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/logo.jpg" style="height: 36px;width: 130px;">
-                    </a>
-                </span>
+            <div class="flex items-center space-x-2 cursor-pointer">
+                <a href="<?php echo site_url('home'); ?>">
+                    <img class="logo-img" alt="bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/logo.jpg" style="height: 36px;width: 130px;">
+                </a>
             </div>
 
             <!-- Desktop Menu -->
-            <nav class="hidden md:flex items-center space-x-8">
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="<?php echo site_url('home'); ?>" class="active">Home</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#features">Features</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#pricing">Pricing</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#why-bizadmin">Why Bizadmin</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#contact">Book a Demo</a></span>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#features" class="text-[#4A5568] hover:text-accent font-medium transition-colors">Features</a>
+                <a href="#problem" class="text-[#4A5568] hover:text-accent font-medium transition-colors">Why Bizadmin</a>
+                <a href="#pricing" class="text-[#4A5568] hover:text-accent font-medium transition-colors">Pricing</a>
+                <a href="#timeline" class="text-[#4A5568] hover:text-accent font-medium transition-colors">Stories</a>
             </nav>
 
-            <!-- Burger Icon -->
-            <button id="burgerBtn" class="md:hidden flex items-center text-gray-700 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-
             <!-- Call to Action -->
-            <div class="hidden md:block">
-                <a href="#pricing"><span class="bg-accent hover:bg-accent/90 text-white px-5 py-2 rounded-md transition cursor-pointer font-medium">Start Free Trial</span></a>
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="#contact" class="text-primary font-medium hover:text-accent transition-colors">Book a Demo</a>
+                <a href="#pricing" class="bg-accent hover:bg-coral text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Start Free Trial</a>
             </div>
-        </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden mt-4 space-y-4 fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
-            <button id="close-menu" class="block text-gray-700 hover:text-primary mb-4 text-right w-full">
-                <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+            <!-- Burger Icon -->
+            <button id="burgerBtn" class="md:hidden flex items-center text-primary focus:outline-none">
+                <i class="fa-solid fa-bars text-2xl"></i>
             </button>
-            <a href="<?php echo site_url('home'); ?>" class="block text-gray-700 hover:text-primary font-medium">Home</a>
-            <a href="#features" class="block text-gray-700 hover:text-primary font-medium">Features</a>
-            <a href="#pricing" class="block text-gray-700 hover:text-primary font-medium">Pricing</a>
-            <a href="#why-bizadmin" class="block text-gray-700 hover:text-primary font-medium">Why Bizadmin</a>
-            <a href="#contact" class="block text-gray-700 hover:text-primary font-medium">Book a Demo</a>
-            <a href="#pricing" class="block text-white bg-accent hover:bg-accent/90 px-5 py-2 rounded-md text-center font-medium mt-4">Start Free Trial</a>
         </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
+        <button id="close-menu" class="block text-primary hover:text-accent mb-6 text-right w-full">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+        <a href="<?php echo site_url('home'); ?>" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Home</a>
+        <a href="#features" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Features</a>
+        <a href="#problem" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Why Bizadmin</a>
+        <a href="#pricing" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Pricing</a>
+        <a href="#timeline" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Stories</a>
+        <a href="#contact" class="block text-primary hover:text-accent font-medium py-3 border-b border-gray-100">Book a Demo</a>
+        <a href="#pricing" class="block text-white bg-accent hover:bg-coral px-5 py-3 rounded-full text-center font-medium mt-6 shadow-md">Start Free Trial</a>
     </div>
 </header>
