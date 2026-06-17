@@ -1,185 +1,340 @@
- <!-- Hero Section -->
- <div class="font-inter text-gray-800 ">
-   <section id="hero" class="pt-12 pb-16 md:pt-32 md:pb-24 bg-light">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-12">
-                    <span class="text-accent font-semibold">AI-powered Workforce Intelligence Platform</span>
-                    <h1 class="text-4xl md:text-5xl font-bold text-primary mt-3 mb-6">All-in-One Admin System for Smooth Business Operations.</h1>
-                    <p class="text-gray-600 text-lg mb-8">Streamline your business operations with our comprehensive system that handles task management, schedules, HR processes, and more—all in one place.</p>
-                    <div class="flex space-x-4">
-                        <a href="#contact-form"><span class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-colors cursor-pointer">Let's Talk</span></a>
-                        <a href="#feature-section"><span class="text-primary border border-primary hover:bg-primary/5 font-medium px-6 py-3 rounded-lg transition-colors cursor-pointer">Discover Features</span></a>
-                    </div>
-                </div>
-                <div class="md:w-1/2 flex justify-center">
-                    <img class="w-full max-w-lg rounded-lg" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/banner-image.png" alt="modern laptop mockup showing business admin dashboard interface with dark blue and orange color scheme, professional UI">
-                </div>
-            </div>
+﻿<!-- SECTION 2: Hero -->
+<div class="font-inter text-gray-800">
+  <section id="hero" class="pt-12 pb-16 md:pt-24 md:pb-20 bg-[#F7F8FA]">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-10 md:mb-0 md:pr-12">
+          <h1 class="text-4xl md:text-5xl lg:text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-primary mt-3 mb-6 leading-tight">Stop Paying for 5 Apps to Run One Caf&eacute;.</h1>
+          <p class="text-gray-600 text-lg mb-6 leading-relaxed">Bizadmin replaces Deputy, Tanda, spreadsheets, and paper compliance forms with one platform built for Australian caf&eacute;s &mdash; HR, rostering, HACCP temps, supplier orders, payroll, and compliance, all in one login.</p>
+          <p class="text-sm text-gray-500 mb-8 flex flex-wrap gap-x-4 gap-y-1">
+            <span>&#10004; Built for Fair Work &amp; HIGA compliance</span>
+            <span>&#10004; HACCP temperature monitoring included</span>
+            <span>&#10004; 30-day free trial, no credit card</span>
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="#pricing" class="bg-accent hover:bg-accent/90 text-white font-semibold px-8 py-4 rounded-full transition-all shadow-lg hover:shadow-xl text-center">Start Your Free 30-Day Trial</a>
+            <a href="#how-it-works" class="text-primary border-2 border-primary hover:bg-primary/5 font-semibold px-8 py-4 rounded-full transition-all text-center">Watch 2-Min Demo</a>
+          </div>
         </div>
-    </section>
-
-    <!-- Features Grid Section -->
-    <section id="feature-section" class="bg-primary py-16 lg:py-24">
-        <div class="container mx-auto px-6 lg:px-12">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl lg:text-4xl font-bold text-accent mb-4">Everything you need to build a great business.</h2>
-                <p class="text-white text-lg max-w-2xl mx-auto">Streamline operations and boost productivity with our comprehensive solution.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Feature Card 1 -->
-
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-    <div class="text-accent mb-4">
-        <i class="fa-solid fa-users text-3xl"></i>
+        <div class="md:w-1/2 flex justify-center">
+          <img class="w-full max-w-lg rounded-lg shadow-xl" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/banner-image.png" alt="Bizadmin cafe management dashboard showing rostering, temperature logs, and supplier orders">
+        </div>
+      </div>
     </div>
-    <h3 class="text-xl font-bold mb-3">Human Resources</h3>
-    <p class="text-gray-600 mb-4">
-        
-        Automate roster optimization, detect overtime risks, monitor attendance patterns, 
-        and gain real-time insights into employee productivity.
-    </p>
-    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-        <a href="javascript:void(0)" onclick="toggleAiFeatures()" class="flex items-center">
-    Explore AI HR Features <i class="fa-solid fa-chevron-down ml-2 text-xs" id="aiFeatureChevron"></i>
-</a>
+  </section>
 
-    </span>
-</div>
+  <!-- Social Proof Bar -->
+  <section class="py-6 bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4 max-w-[1200px] text-center">
+      <p class="text-gray-400 text-sm font-medium mb-3">Trusted by caf&eacute; owners across Australia</p>
+      <div class="flex justify-center items-center gap-8 opacity-60 flex-wrap">
+        <span class="text-lg font-bold text-gray-500">XS Espresso</span>
+        <span class="text-gray-300 hidden sm:inline">|</span>
+        <span class="text-lg font-bold text-gray-500">Bean &amp; Gone</span>
+        <span class="text-gray-300 hidden sm:inline">|</span>
+        <span class="text-lg font-bold text-gray-500">The Daily Grind</span>
+      </div>
+    </div>
+  </section>
 
-<div id="aiFeatures" class="hidden mt-6 bg-gray-50 p-6 rounded-lg shadow-inner">
-    <h4 class="text-lg font-bold mb-4">AI-Powered Features</h4>
-
-    <ul class="space-y-3 text-gray-700">
-        <li>🤖 Smart Overtime Alerts – Automatically detect employees exceeding weekly hour limits.</li>
-        <li>📊 Attendance Pattern Insights – Identify frequent late arrivals and absentee trends.</li>
-        <li>🧠 Leave Pattern Detection – Highlight unusual leave behavior (e.g., repeated Mondays/Fridays).</li>
-        <li>💬 Natural Language Dashboard – Ask questions like “Who worked more than 45 hours last week?”</li>
-        <li>📈 Workforce Summary Reports – Auto-generate payroll and shift summaries instantly.</li>
-    </ul>
-</div>
-
-
-<script>
-function toggleAiFeatures() {
-    const section = document.getElementById('aiFeatures');
-    const chevron = document.getElementById('aiFeatureChevron');
-    section.classList.toggle('hidden');
-    if (chevron) chevron.classList.toggle('rotate-180');
-}
-</script>
-
-
-                <!-- Feature Card 2 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-temperature-low text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Temperature Recording</h3>
-                    <p class="text-gray-600 mb-4">Record and monitor daily temperature readings to maintain compliance.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
-                <!-- Feature Card 3 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-broom text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Cleaning Tasks Management</h3>
-                    <p class="text-gray-600 mb-4">Assign tasks and capture visual proof of completion with photos.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
-                <!-- Feature Card 4 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-boxes-stacked text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Supplies &amp; Inventory</h3>
-                    <p class="text-gray-600 mb-4">Know what's in stock, what's low, and what needs ordering.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                     <a href="https://supplier.bizadmin.com.au/">   </a>
-                    </span>
-                </div>
-                
-                <!-- Feature Card 5 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-list-check text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Checklist Management</h3>
-                    <p class="text-gray-600 mb-4">Ensure staff are performing tasks to standard and at the right time.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
-                <!-- Feature Card 6 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Document Management</h3>
-                    <p class="text-gray-600 mb-4">Store business-wide policies and documents all in one place.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
-                <!-- Feature Card 7 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-cash-register text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Cash Management</h3>
-                    <p class="text-gray-600 mb-4">Track finances and manage cash flow to optimize your business performance.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-                
-                <!-- Feature Card 8 -->
-                <div class="bg-white rounded-lg p-6 shadow-lg">
-                    <div class="text-accent mb-4">
-                        <i class="fa-solid fa-cart-shopping text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Ordering Admin</h3>
-                    <p class="text-gray-600 mb-4">Simplify your ordering process with automated purchase orders and tracking.</p>
-                    <span class="text-primary font-medium hover:text-accent transition flex items-center cursor-pointer">
-                        
-                    </span>
-                </div>
-            </div>
+  <!-- SECTION 3: Pain Agitation -->
+  <section id="problem" class="py-16 lg:py-20 bg-[#F7F8FA]">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">Australian Caf&eacute; Owners Are Drowning in Admin</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <!-- Card 1 -->
+        <div class="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-4xl mb-4">&#128184;</div>
+          <h3 class="text-xl font-bold text-primary mb-3">Paying for too many tools</h3>
+          <p class="text-gray-600">The average caf&eacute; owner pays for Deputy, Tanda, a POS system, Xero, and still uses spreadsheets. That&rsquo;s $400&ndash;$600/month before you&rsquo;ve done a thing.</p>
         </div>
-    </section>
+        <!-- Card 2 -->
+        <div class="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-4xl mb-4">&#9878;&#65039;</div>
+          <h3 class="text-xl font-bold text-primary mb-3">Fair Work compliance stress</h3>
+          <p class="text-gray-600">HIGA award rates, penalty rates, overtime rules &mdash; one payroll mistake and you&rsquo;re facing a Fair Work investigation. Most caf&eacute; software doesn&rsquo;t even know what HIGA is.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-4xl mb-4">&#127777;&#65039;</div>
+          <h3 class="text-xl font-bold text-primary mb-3">HACCP paperwork is killing you</h3>
+          <p class="text-gray-600">Council inspections, temperature logs, cleaning checklists &mdash; all on paper, all at risk of being lost. One failed audit can shut your doors.</p>
+        </div>
+      </div>
+      <p class="text-center text-xl font-bold text-primary">There&rsquo;s a better way. One login. Everything sorted.</p>
+    </div>
+  </section>
 
-    <!-- Storytelling Timeline Section -->
+  <!-- SECTION 4: Solution Overview -->
+  <section id="features" class="py-16 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">One Platform That Runs Your Entire Caf&eacute;</h2>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">Everything you need &mdash; from the first staff hire to the daily compliance check &mdash; without switching between apps.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-users text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">HR &amp; Onboarding</h3>
+          <p class="text-gray-600 text-sm">Onboard new staff digitally. Store contracts, certifications, and emergency contacts. No paperwork, no lost forms.</p>
+        </div>
+        <!-- Feature 2 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-calendar-days text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Rostering &amp; Clock In/Out</h3>
+          <p class="text-gray-600 text-sm">Build rosters in minutes. Staff clock in on their phone. Automatic timesheet generation, zero spreadsheets.</p>
+        </div>
+        <!-- Feature 3 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-scale-balanced text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">HIGA Award Compliance</h3>
+          <p class="text-gray-600 text-sm">Bizadmin knows Australian award rates. Automatically calculate penalty rates, overtime, and public holiday loadings under the HIGA.</p>
+        </div>
+        <!-- Feature 4 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-temperature-low text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">HACCP Temperature Recording</h3>
+          <p class="text-gray-600 text-sm">Record fridge and freezer temps digitally. Get alerted when a reading is out of range. Council-ready audit logs at the tap of a button.</p>
+        </div>
+        <!-- Feature 5 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-boxes-stacked text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Supplier Ordering</h3>
+          <p class="text-gray-600 text-sm">Send purchase orders to your suppliers directly from the app. Track deliveries, manage invoices, and never run out of stock again.</p>
+        </div>
+        <!-- Feature 6 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-list-check text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Compliance &amp; Checklists</h3>
+          <p class="text-gray-600 text-sm">Digital opening/closing checklists, cleaning schedules, and food safety forms. Staff complete them on their phone. You see it live.</p>
+        </div>
+        <!-- Feature 7 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-clipboard-list text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Leave, Timesheets &amp; Payroll</h3>
+          <p class="text-gray-600 text-sm">Approve leave requests, review timesheets, and export payroll-ready data to Xero or MYOB with one click.</p>
+        </div>
+        <!-- Feature 8 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-file-lines text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Document Management</h3>
+          <p class="text-gray-600 text-sm">Store your food safety manual, staff policies, and health certificates in one place. Share with your team instantly.</p>
+        </div>
+        <!-- Feature 9 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-7 hover:shadow-lg transition-shadow border border-gray-100">
+          <div class="text-3xl mb-3"><i class="fa-solid fa-cash-register text-accent"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Cash &amp; Finance Tracking</h3>
+          <p class="text-gray-600 text-sm">Track daily takings, manage cash floats, and reconcile your end-of-day. No more sticky notes by the till.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: Comparison Table -->
+  <section id="compare" class="py-16 lg:py-20 bg-[#F7F8FA]">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">Replace Your Entire Tool Stack &mdash; For Less</h2>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">The average caf&eacute; owner spends $480+/month across multiple apps. Bizadmin replaces all of them.</p>
+      </div>
+      <div class="table-scroll-wrapper bg-white rounded-xl shadow-md">
+        <table class="w-full text-sm text-left min-w-[700px]">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="px-5 py-4 font-semibold text-primary">Feature</th>
+              <th class="px-4 py-4 font-semibold text-gray-600">Deputy</th>
+              <th class="px-4 py-4 font-semibold text-gray-600">Tanda</th>
+              <th class="px-4 py-4 font-semibold text-gray-600">Lightspeed</th>
+              <th class="px-4 py-4 font-semibold text-gray-600">Spreadsheets</th>
+              <th class="px-4 py-4 font-bold text-white bg-accent rounded-tr-xl">Bizadmin &#10004;</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700">
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">Rostering &amp; Clock In/Out</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">HIGA Award Compliance</td>
+              <td class="px-4 py-3">&#9888;&#65039; Partial</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">HACCP Temp Recording</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">Supplier Ordering</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#9888;&#65039; Partial</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">Compliance Checklists</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">HR &amp; Onboarding</td>
+              <td class="px-4 py-3">&#9888;&#65039; Partial</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">Payroll Integration</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10004;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-5 py-3 font-medium">Cash Management</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3">&#9888;&#65039; Partial</td>
+              <td class="px-4 py-3">&#10060;</td>
+              <td class="px-4 py-3 font-bold bg-orange-50">&#10004;</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-bold text-primary">Monthly Cost (10 staff)</td>
+              <td class="px-4 py-3">~$45</td>
+              <td class="px-4 py-3">~$40</td>
+              <td class="px-4 py-3">~$99</td>
+              <td class="px-4 py-3">$0</td>
+              <td class="px-4 py-3 font-bold text-accent bg-orange-50">$199 all-in</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Callout box -->
+      <div class="mt-8 bg-[#FFF0E6] border border-accent/20 rounded-xl p-6 text-center">
+        <p class="text-primary font-bold text-lg">&#128161; Most caf&eacute;s pay $400&ndash;$600/month across these tools. Bizadmin replaces all of them for $199/month.<br><span class="text-accent">That&rsquo;s $200&ndash;$400 back in your pocket every month.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: Testimonials -->
+  <section id="why-bizadmin" class="py-16 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">What Australian Caf&eacute; Owners Are Saying</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-8 border border-gray-100">
+          <p class="text-accent mb-3">&#11088;&#11088;&#11088;&#11088;&#11088;</p>
+          <p class="text-gray-700 mb-6 italic">&ldquo;We were using Deputy for rosters, a separate app for temp logs, and still doing supplier orders by phone. Bizadmin replaced all three. Our admin went from 10 hours a week to under 2.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">S</div>
+            <div>
+              <p class="font-semibold text-primary text-sm">Sarah M.</p>
+              <p class="text-gray-500 text-xs">Caf&eacute; Owner, Melbourne VIC</p>
+            </div>
+          </div>
+        </div>
+        <!-- Testimonial 2 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-8 border border-gray-100">
+          <p class="text-accent mb-3">&#11088;&#11088;&#11088;&#11088;&#11088;</p>
+          <p class="text-gray-700 mb-6 italic">&ldquo;The HACCP temperature logging alone was worth it. Council came in for an inspection and I had 6 months of digital records ready in 30 seconds. The inspector was impressed.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">J</div>
+            <div>
+              <p class="font-semibold text-primary text-sm">James T.</p>
+              <p class="text-gray-500 text-xs">Owner-Operator, Sydney NSW</p>
+            </div>
+          </div>
+        </div>
+        <!-- Testimonial 3 -->
+        <div class="bg-[#F7F8FA] rounded-xl p-8 border border-gray-100">
+          <p class="text-accent mb-3">&#11088;&#11088;&#11088;&#11088;&#11088;</p>
+          <p class="text-gray-700 mb-6 italic">&ldquo;I was skeptical about switching from Deputy but the onboarding was smooth and we were up and running in a day. The Fair Work compliance features give me real peace of mind.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">P</div>
+            <div>
+              <p class="font-semibold text-primary text-sm">Priya K.</p>
+              <p class="text-gray-500 text-xs">Hospitality Manager, Brisbane QLD</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: How It Works -->
+  <section id="how-it-works" class="py-16 lg:py-20 bg-[#F7F8FA]">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">Up and Running in Under a Day</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <!-- Connecting line (desktop only) -->
+        <div class="hidden md:block absolute top-16 left-[16.66%] right-[16.66%] h-0.5 bg-gradient-to-r from-accent to-primary"></div>
+        <!-- Step 1 -->
+        <div class="text-center relative">
+          <div class="w-14 h-14 rounded-full bg-accent text-white text-2xl flex items-center justify-center mx-auto mb-4 relative z-10"><i class="fa-solid fa-rocket"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Sign Up &amp; Set Up</h3>
+          <p class="text-gray-600 text-sm">Create your account, add your caf&eacute; details, and import your staff list. Takes 15 minutes.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="text-center relative">
+          <div class="w-14 h-14 rounded-full bg-accent text-white text-2xl flex items-center justify-center mx-auto mb-4 relative z-10"><i class="fa-solid fa-mobile-screen"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">Your Team Downloads the App</h3>
+          <p class="text-gray-600 text-sm">Staff clock in, complete checklists, and log temperatures from their phone. No training needed.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="text-center relative">
+          <div class="w-14 h-14 rounded-full bg-accent text-white text-2xl flex items-center justify-center mx-auto mb-4 relative z-10"><i class="fa-solid fa-chart-line"></i></div>
+          <h3 class="text-lg font-bold text-primary mb-2">You Run the Caf&eacute;, Not the Paperwork</h3>
+          <p class="text-gray-600 text-sm">Monitor everything from your dashboard. Approve timesheets, review compliance, and export payroll &mdash; all in one place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Alex's Cafe Story (kept from original) -->
   <section id="timeline" class="py-20 bg-white">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl text-center text-[#132f65] mb-2">Alex’s Café, Reimagined with Bizadmin</h2>
-      <p class="text-center text-neutral-600 mb-16 max-w-2xl mx-auto">Follow Alex's journey from overwhelmed café manager to operational excellence with Bizadmin.</p>
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <h2 class="text-3xl text-center text-primary font-extrabold mb-2">See How Australian Caf&eacute; Owners Use Bizadmin</h2>
+      <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Follow Alex&rsquo;s journey from overwhelmed caf&eacute; manager to operational excellence with Bizadmin.</p>
       
       <div class="relative">
         <!-- Vertical timeline line -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-neutral-200 z-0"></div>
+        <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200 z-0"></div>
         
         <!-- Timeline Item 1 -->
         <div class="relative z-10 mb-20">
           <div class="flex flex-col md:flex-row items-center">
             <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0 md:text-right">
-              <h3 class="text-xl text-[#132f65] mb-3">A Dream in Peril</h3>
-              <p class="text-neutral-600 mb-4">Alex opened the café with passion—fresh brews, cozy vibes, and a community hub. But behind the smiles and espresso shots, chaos brewed. Paper rosters vanished, supplier calls interrupted rush hours, and hygiene checklists went unchecked.</p>
-              <blockquote class="italic text-neutral-700 border-l-4 border-[#f97316] pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">"Running a café was my dream, but I was drowning in admin work. I barely had time to enjoy the coffee I served."</blockquote>
+              <h3 class="text-xl text-primary font-bold mb-3">A Dream in Peril</h3>
+              <p class="text-gray-600 mb-4">Alex opened the caf&eacute; with passion&mdash;fresh brews, cozy vibes, and a community hub. But behind the smiles and espresso shots, chaos brewed. Paper rosters vanished, supplier calls interrupted rush hours, and hygiene checklists went unchecked.</p>
+              <blockquote class="italic text-gray-700 border-l-4 border-accent pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">&ldquo;Running a caf&eacute; was my dream, but I was drowning in admin work. I barely had time to enjoy the coffee I served.&rdquo;</blockquote>
             </div>
-            <div class="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white">1</div>
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">1</div>
             <div class="md:w-1/2 md:pl-12">
-              <div class=" rounded-lg h-48 flex items-center justify-center">
-                <img alt="A Dream in Peril" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/1-story.png">
+              <div class="rounded-lg h-48 flex items-center justify-center">
+                <img alt="Cafe owner struggling with paperwork and admin tasks" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/1-story.png">
               </div>
             </div>
           </div>
@@ -189,14 +344,14 @@ function toggleAiFeatures() {
         <div class="relative z-10 mb-20">
           <div class="flex flex-col md:flex-row-reverse items-center">
             <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0 md:text-left">
-              <h3 class="text-xl text-[#132f65] mb-3">A Spark of Hope</h3>
-              <p class="text-neutral-600 mb-4">At a networking event, Alex met Maya, another café owner whose face radiated peace. She introduced Alex to Bizadmin—a complete café management system designed to simplify operations.</p>
-              <blockquote class="italic text-neutral-700 border-l-4 border-[#f97316] pl-4">"I couldn’t believe someone had actually built something for *us* café folks. Maya swore by it. I figured—why not?"</blockquote>
+              <h3 class="text-xl text-primary font-bold mb-3">A Spark of Hope</h3>
+              <p class="text-gray-600 mb-4">At a networking event, Alex met Maya, another caf&eacute; owner whose face radiated peace. She introduced Alex to Bizadmin&mdash;a complete caf&eacute; management system designed to simplify operations.</p>
+              <blockquote class="italic text-gray-700 border-l-4 border-accent pl-4">&ldquo;I couldn&rsquo;t believe someone had actually built something for <em>us</em> caf&eacute; folks. Maya swore by it. I figured&mdash;why not?&rdquo;</blockquote>
             </div>
-            <div class="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white">2</div>
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">2</div>
             <div class="md:w-1/2 md:pr-12">
-              <div class=" rounded-lg h-48 flex items-center justify-center">
-                <img alt="A Spark of Hope" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/2-story.png">
+              <div class="rounded-lg h-48 flex items-center justify-center">
+                <img alt="Cafe owner discovering Bizadmin platform" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/2-story.png">
               </div>
             </div>
           </div>
@@ -206,14 +361,14 @@ function toggleAiFeatures() {
         <div class="relative z-10 mb-20">
           <div class="flex flex-col md:flex-row items-center">
             <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0 md:text-right">
-              <h3 class="text-xl text-[#132f65] mb-3">Plugging in the Power</h3>
-              <p class="text-neutral-600 mb-4">Alex started small with digital checklists. Suddenly, daily tasks were tracked, staff were notified automatically, and no one could 'forget' a job. Encouraged, Alex rolled out rosters, onboarding, inventory tracking, and temperature logs.</p>
-              <blockquote class="italic text-neutral-700 border-l-4 border-[#f97316] pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">"It felt like I hired a full-time manager. Except this one lived in my tablet and never called in sick."</blockquote>
+              <h3 class="text-xl text-primary font-bold mb-3">Plugging in the Power</h3>
+              <p class="text-gray-600 mb-4">Alex started small with digital checklists and HACCP temperature logging. Suddenly, daily tasks were tracked, staff were notified automatically, and no one could &lsquo;forget&rsquo; a job. Encouraged, Alex rolled out rosters, onboarding, inventory tracking, and HIGA-compliant timesheets.</p>
+              <blockquote class="italic text-gray-700 border-l-4 border-accent pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">&ldquo;It felt like I hired a full-time manager. Except this one lived in my tablet and never called in sick.&rdquo;</blockquote>
             </div>
-            <div class="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white">3</div>
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">3</div>
             <div class="md:w-1/2 md:pl-12">
-              <div class=" rounded-lg h-48 flex items-center justify-center">
-                <img alt="Plugging in the Power" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/3-story.png">
+              <div class="rounded-lg h-48 flex items-center justify-center">
+                <img alt="Digital checklist and temperature logging on tablet" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/3-story.png">
               </div>
             </div>
           </div>
@@ -223,14 +378,14 @@ function toggleAiFeatures() {
         <div class="relative z-10 mb-20">
           <div class="flex flex-col md:flex-row-reverse items-center">
             <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0 md:text-left">
-              <h3 class="text-xl text-[#132f65] mb-3">Running on Autopilot</h3>
-              <p class="text-neutral-600 mb-4">Weeks turned into months. Bizadmin synced staff timesheets, tracked deliveries, and reminded teams of pending tasks. Supplier orders were one tap away. The café felt alive—but finally, under control.</p>
-              <blockquote class="italic text-neutral-700 border-l-4 border-[#f97316] pl-4">"I stopped reacting and started leading again. My team knew what to do, and I could finally breathe."</blockquote>
+              <h3 class="text-xl text-primary font-bold mb-3">Running on Autopilot</h3>
+              <p class="text-gray-600 mb-4">Weeks turned into months. Bizadmin synced staff timesheets, tracked deliveries, and reminded teams of pending tasks. Supplier orders were one tap away. The caf&eacute; felt alive&mdash;but finally, under control.</p>
+              <blockquote class="italic text-gray-700 border-l-4 border-accent pl-4">&ldquo;I stopped reacting and started leading again. My team knew what to do, and I could finally breathe.&rdquo;</blockquote>
             </div>
-            <div class="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white">4</div>
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">4</div>
             <div class="md:w-1/2 md:pr-12">
-              <div class=" rounded-lg h-48 flex items-center justify-center">
-                <img alt="Running on Autopilot" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/4-story.png">
+              <div class="rounded-lg h-48 flex items-center justify-center">
+                <img alt="Cafe operations running smoothly with Bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/4-story.png">
               </div>
             </div>
           </div>
@@ -240,14 +395,14 @@ function toggleAiFeatures() {
         <div class="relative z-10">
           <div class="flex flex-col md:flex-row items-center">
             <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0 md:text-right">
-              <h3 class="text-xl text-[#132f65] mb-3">The New Normal</h3>
-              <p class="text-neutral-600 mb-4">Today, Alex’s café hums with purpose. Customers linger longer. Staff are happier. And Alex? He enjoys his morning flat white in peace—finally working *on* the business, not *in* it.</p>
-              <blockquote class="italic text-neutral-700 border-l-4 border-[#f97316] pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">"Bizadmin didn’t just fix my café’s chaos—it gave me back my dream."</blockquote>
+              <h3 class="text-xl text-primary font-bold mb-3">The New Normal</h3>
+              <p class="text-gray-600 mb-4">Today, Alex&rsquo;s caf&eacute; hums with purpose. Council inspections pass without stress thanks to HACCP-compliant temperature logs. Fair Work compliance is handled automatically. Customers linger longer. Staff are happier. And Alex? He enjoys his morning flat white in peace&mdash;finally working <em>on</em> the business, not <em>in</em> it.</p>
+              <blockquote class="italic text-gray-700 border-l-4 border-accent pl-4 md:border-l-0 md:border-r-4 md:pr-4 md:pl-0">&ldquo;Bizadmin didn&rsquo;t just fix my caf&eacute;&rsquo;s chaos&mdash;it gave me back my dream. HACCP logs, HIGA compliance, supplier orders &mdash; all sorted in one app.&rdquo;</blockquote>
             </div>
-            <div class="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white">5</div>
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">5</div>
             <div class="md:w-1/2 md:pl-12">
-              <div class=" rounded-lg h-48 flex items-center justify-center">
-                <img alt="The New Normal" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/5-story.png">
+              <div class="rounded-lg h-48 flex items-center justify-center">
+                <img alt="Happy cafe owner enjoying their business success" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/story/5-story.png">
               </div>
             </div>
           </div>
@@ -256,162 +411,153 @@ function toggleAiFeatures() {
     </div>
   </section>
 
-    <!-- Highlight Section -->
-  <section id="benefits" class="py-20 bg-light">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">Discover what BizAdmin can do for your store.</h2>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">Our platform adapts to your unique business needs with powerful, easy-to-use tools.</p>
-            </div>
-            
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-12">
-                    <div class="space-y-6">
-                         <div id="benefit-1" class="flex items-start">
-                            <div class="bg-primary/10 p-3 rounded-full mr-4">
-                                <i class="text-primary text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-clipboard-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="clipboard-check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM305 273L177 401c-9.4 9.4-24.6 9.4-33.9 0L79 337c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L271 239c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path></svg></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-2">Operations & Compliance Management</h3>
-                                <p class="text-gray-600">Streamline daily operations with checklist tracking, temperature recording, and cleaning task automation.</p>
-                            </div>
-                        </div>
-                        
-                        <div id="benefit-2" class="flex items-start">
-                            <div class="bg-primary/10 p-3 rounded-full mr-4">
-                                <i class="text-primary text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-boxes-stacked" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="boxes-stacked" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M248 0H208c-26.5 0-48 21.5-48 48V160c0 35.3 28.7 64 64 64H352c35.3 0 64-28.7 64-64V48c0-26.5-21.5-48-48-48H328V80c0 8.8-7.2 16-16 16H264c-8.8 0-16-7.2-16-16V0zM64 256c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H224c35.3 0 64-28.7 64-64V320c0-35.3-28.7-64-64-64H184v80c0 8.8-7.2 16-16 16H120c-8.8 0-16-7.2-16-16V256H64zM352 512H512c35.3 0 64-28.7 64-64V320c0-35.3-28.7-64-64-64H472v80c0 8.8-7.2 16-16 16H408c-8.8 0-16-7.2-16-16V256H352c-15 0-28.8 5.1-39.7 13.8c4.9 10.4 7.7 22 7.7 34.2V464c0 12.2-2.8 23.8-7.7 34.2C323.2 506.9 337 512 352 512z"></path></svg></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-2">Inventory & Supplier Management</h3>
-                                <p class="text-gray-600">Monitor stock levels, manage suppliers, and track orders efficiently.</p>
-                            </div>
-                        </div>
-                        
-                        <div id="benefit-3" class="flex items-start">
-                            <div class="bg-primary/10 p-3 rounded-full mr-4">
-                                <i class="text-primary text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-users-gear" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="users-gear" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" data-fa-i2svg=""><path fill="currentColor" d="M144 160A80 80 0 1 0 144 0a80 80 0 1 0 0 160zM512 160A80 80 0 1 0 512 0a80 80 0 1 0 0 160zM0 298.7C0 310.4 9.6 320 21.3 320H234.7c.2 0 .4 0 .7 0c-26.6-23.5-43.3-57.8-43.3-96c0-7.6 .7-15 1.9-22.3c-13.6-6.3-28.7-9.7-44.6-9.7H106.7C47.8 192 0 239.8 0 298.7zM320 320c24 0 45.9-8.8 62.7-23.3c2.5-3.7 5.2-7.3 8-10.7c2.7-3.3 5.7-6.1 9-8.3C410 262.3 416 243.9 416 224c0-53-43-96-96-96s-96 43-96 96s43 96 96 96zm65.4 60.2c-10.3-5.9-18.1-16.2-20.8-28.2H261.3C187.7 352 128 411.7 128 485.3c0 14.7 11.9 26.7 26.7 26.7H455.2c-2.1-5.2-3.2-10.9-3.2-16.4v-3c-1.3-.7-2.7-1.5-4-2.3l-2.6 1.5c-16.8 9.7-40.5 8-54.7-9.7c-4.5-5.6-8.6-11.5-12.4-17.6l-.1-.2-.1-.2-2.4-4.1-.1-.2-.1-.2c-3.4-6.2-6.4-12.6-9-19.3c-8.2-21.2 2.2-42.6 19-52.3l2.7-1.5c0-.8 0-1.5 0-2.3s0-1.5 0-2.3l-2.7-1.5zM533.3 192H490.7c-15.9 0-31 3.5-44.6 9.7c1.3 7.2 1.9 14.7 1.9 22.3c0 17.4-3.5 33.9-9.7 49c2.5 .9 4.9 2 7.1 3.3l2.6 1.5c1.3-.8 2.6-1.6 4-2.3v-3c0-19.4 13.3-39.1 35.8-42.6c7.9-1.2 16-1.9 24.2-1.9s16.3 .6 24.2 1.9c22.5 3.5 35.8 23.2 35.8 42.6v3c1.3 .7 2.7 1.5 4 2.3l2.6-1.5c16.8-9.7 40.5-8 54.7 9.7c2.3 2.8 4.5 5.8 6.6 8.7c-2.1-57.1-49-102.7-106.6-102.7zm91.3 163.9c6.3-3.6 9.5-11.1 6.8-18c-2.1-5.5-4.6-10.8-7.4-15.9l-2.3-4c-3.1-5.1-6.5-9.9-10.2-14.5c-4.6-5.7-12.7-6.7-19-3L574.4 311c-8.9-7.6-19.1-13.6-30.4-17.6v-21c0-7.3-4.9-13.8-12.1-14.9c-6.5-1-13.1-1.5-19.9-1.5s-13.4 .5-19.9 1.5c-7.2 1.1-12.1 7.6-12.1 14.9v21c-11.2 4-21.5 10-30.4 17.6l-18.2-10.5c-6.3-3.6-14.4-2.6-19 3c-3.7 4.6-7.1 9.5-10.2 14.6l-2.3 3.9c-2.8 5.1-5.3 10.4-7.4 15.9c-2.6 6.8 .5 14.3 6.8 17.9l18.2 10.5c-1 5.7-1.6 11.6-1.6 17.6s.6 11.9 1.6 17.5l-18.2 10.5c-6.3 3.6-9.5 11.1-6.8 17.9c2.1 5.5 4.6 10.7 7.4 15.8l2.4 4.1c3 5.1 6.4 9.9 10.1 14.5c4.6 5.7 12.7 6.7 19 3L449.6 457c8.9 7.6 19.2 13.6 30.4 17.6v21c0 7.3 4.9 13.8 12.1 14.9c6.5 1 13.1 1.5 19.9 1.5s13.4-.5 19.9-1.5c7.2-1.1 12.1-7.6 12.1-14.9v-21c11.2-4 21.5-10 30.4-17.6l18.2 10.5c6.3 3.6 14.4 2.6 19-3c3.7-4.6 7.1-9.4 10.1-14.5l2.4-4.2c2.8-5.1 5.3-10.3 7.4-15.8c2.6-6.8-.5-14.3-6.8-17.9l-18.2-10.5c1-5.7 1.6-11.6 1.6-17.5s-.6-11.9-1.6-17.6l18.2-10.5zM472 384a40 40 0 1 1 80 0 40 40 0 1 1 -80 0z"></path></svg></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-2">HR & Workforce Management</h3>
-                                <p class="text-gray-600">Simplify employee scheduling, timesheets, and HR processes in one place.</p>
-                            </div>
-                        </div>
-                        
-                        <div id="benefit-4" class="flex items-start">
-                            <div class="bg-primary/10 p-3 rounded-full mr-4">
-                                <i class="text-primary text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-file-invoice-dollar" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-invoice-dollar" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 80c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm128 72c8.8 0 16 7.2 16 16v17.3c8.5 1.2 16.7 3.1 24.1 5.1c8.5 2.3 13.6 11 11.3 19.6s-11 13.6-19.6 11.3c-11.1-3-22-5.2-32.1-5.3c-8.4-.1-17.4 1.8-23.6 5.5c-5.7 3.4-8.1 7.3-8.1 12.8c0 3.7 1.3 6.5 7.3 10.1c6.9 4.1 16.6 7.1 29.2 10.9l.5 .1 0 0 0 0c11.3 3.4 25.3 7.6 36.3 14.6c12.1 7.6 22.4 19.7 22.7 38.2c.3 19.3-9.6 33.3-22.9 41.6c-7.7 4.8-16.4 7.6-25.1 9.1V440c0 8.8-7.2 16-16 16s-16-7.2-16-16V422.2c-11.2-2.1-21.7-5.7-30.9-8.9l0 0c-2.1-.7-4.2-1.4-6.2-2.1c-8.4-2.8-12.9-11.9-10.1-20.2s11.9-12.9 20.2-10.1c2.5 .8 4.8 1.6 7.1 2.4l0 0 0 0 0 0c13.6 4.6 24.6 8.4 36.3 8.7c9.1 .3 17.9-1.7 23.7-5.3c5.1-3.2 7.9-7.3 7.8-14c-.1-4.6-1.8-7.8-7.7-11.6c-6.8-4.3-16.5-7.4-29-11.2l-1.6-.5 0 0c-11-3.3-24.3-7.3-34.8-13.7c-12-7.2-22.6-18.9-22.7-37.3c-.1-19.4 10.8-32.8 23.8-40.5c7.5-4.4 15.8-7.2 24.1-8.7V232c0-8.8 7.2-16 16-16z"></path></svg></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-primary mb-2">Finance & Documentation Control</h3>
-                                <p class="text-gray-600">Manage cash flow, organize important documents, and track financial records seamlessly.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="md:w-1/2 laptopScreen">
-                    <img class="rounded-xl shadow-xl" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/inventory-supplier-feature.jpg" alt="professional business admin dashboard UI with charts, inventory management, and staff scheduling features in dark blue and orange color scheme">
-                </div>
-            </div>
+  <!-- SECTION 8: Pricing -->
+  <section id="pricing" class="py-16 lg:py-20 bg-[#F7F8FA]">
+    <div class="container mx-auto px-4 max-w-[1200px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">Simple, Honest Pricing</h2>
+        <p class="text-gray-600 text-lg">No per-user fees. No hidden charges. Cancel any time.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <!-- Starter -->
+        <div class="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <h3 class="text-xl font-bold text-primary mb-1">Starter</h3>
+          <div class="mb-4">
+            <span class="text-4xl font-extrabold text-primary">$99</span><span class="text-gray-500">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm mb-6">Up to 5 staff</p>
+          <ul class="space-y-3 text-sm text-gray-700 mb-8 flex-grow">
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> HR &amp; Onboarding</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Rostering &amp; Clock In/Out</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Temperature Recording</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Compliance Checklists</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Supplier Ordering</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Email support</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full transition-all">Start Free Trial</a>
         </div>
-    </section>
-
-    <!-- Final Features Section -->
-    <section id="why-choose" class="py-20">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Block 1 -->
-                <div id="exp-block-1" class="bg-primary text-white rounded-xl p-10">
-                    <div class="text-accent mb-6">
-                        <i class="text-4xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-headset" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="headset" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M256 48C141.1 48 48 141.1 48 256v40c0 13.3-10.7 24-24 24s-24-10.7-24-24V256C0 114.6 114.6 0 256 0S512 114.6 512 256V400.1c0 48.6-39.4 88-88.1 88L313.6 488c-8.3 14.3-23.8 24-41.6 24H240c-26.5 0-48-21.5-48-48s21.5-48 48-48h32c17.8 0 33.3 9.7 41.6 24l110.4 .1c22.1 0 40-17.9 40-40V256c0-114.9-93.1-208-208-208zM144 208h16c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H144c-35.3 0-64-28.7-64-64V272c0-35.3 28.7-64 64-64zm224 0c35.3 0 64 28.7 64 64v48c0 35.3-28.7 64-64 64H352c-17.7 0-32-14.3-32-32V240c0-17.7 14.3-32 32-32h16z"></path></svg></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Support That Cares</h3>
-                    <p class="text-white/80 mb-6">Our dedicated team provides personalized onboarding and ongoing support to ensure your success with BizAdmin.</p>
-                    <ul class="space-y-3">
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span> technical support whenever needed</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Personalized onboarding</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Regular check-ins</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Block 2 -->
-                <div id="exp-block-2" class="bg-white rounded-xl p-10 shadow-lg">
-                    <div class="text-accent mb-6">
-                        <i class="text-4xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-layer-group" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="layer-group" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M264.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 149.8C37.4 145.8 32 137.3 32 128s5.4-17.9 13.9-21.8L264.5 5.2zM476.9 209.6l53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 277.8C37.4 273.8 32 265.3 32 256s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2zm-152 198.2l152-70.2 53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 405.8C37.4 401.8 32 393.3 32 384s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0z"></path></svg></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-primary mb-4">All-in-One Platform</h3>
-                    <p class="text-gray-600 mb-6">Eliminate the need for multiple software solutions with our comprehensive platform that handles all aspects of business administration.</p>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Unified dashboard</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Seamless integrations</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Centralized data</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Block 3 -->
-                <div id="exp-block-3" class="bg-white rounded-xl p-10 shadow-lg">
-                    <div class="text-accent mb-6">
-                        <i class="text-4xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-sliders" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sliders" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z"></path></svg></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-primary mb-4">Customizable &amp; Scalable</h3>
-                    <p class="text-gray-600 mb-6">Whether you run a single location or multiple franchises, BizAdmin adapts to your business size and specific needs.</p>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Flexible configurations</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Multi-location management</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Role-based permissions</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Block 4 -->
-                <div id="exp-block-4" class="bg-primary text-white rounded-xl p-10">
-                    <div class="text-accent mb-6">
-                        <i class="text-4xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-rocket" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rocket" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24 288c-8.6 0-16.6-4.6-20.9-12.1s-4.2-16.7 .2-24.1l52.5-88.5c13-21.9 36.5-35.3 61.9-35.3l82.3 0c2.4-4 4.8-7.7 7.2-11.3C289.1-4.1 411.1-8.1 483.9 5.3c11.6 2.1 20.6 11.2 22.8 22.8c13.4 72.9 9.3 194.8-111.4 276.7c-3.5 2.4-7.3 4.8-11.3 7.2v82.3c0 25.4-13.4 49-35.3 61.9l-88.5 52.5c-7.4 4.4-16.6 4.5-24.1 .2s-12.1-12.2-12.1-20.9V380.8c-14.1 4.9-26.4 8.9-35.7 11.9c-11.2 3.6-23.4 .5-31.8-7.8zM384 168a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"></path></svg></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">The BizAdmin Experience</h3>
-                    <p class="text-white/80 mb-6">Join hundreds of businesses that have transformed their operations and achieved sustainable growth with BizAdmin.</p>
-                    <ul class="space-y-3">
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Proven results</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Continuous innovation</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="text-accent mr-3" data-fa-i2svg=""><svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></i>
-                            <span>Business growth focus</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <!-- Cafe (Highlighted) -->
+        <div class="bg-white rounded-xl p-8 shadow-xl border-2 border-accent flex flex-col relative">
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</div>
+          <h3 class="text-xl font-bold text-primary mb-1">Caf&eacute;</h3>
+          <div class="mb-4">
+            <span class="text-4xl font-extrabold text-accent">$199</span><span class="text-gray-500">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm mb-6">Up to 15 staff</p>
+          <ul class="space-y-3 text-sm text-gray-700 mb-8 flex-grow">
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Everything in Starter</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> HIGA Award Compliance</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Payroll Export (Xero / MYOB)</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Leave &amp; Timesheet Management</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Document Management</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Cash Management</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Priority support</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-lg">Start Free Trial</a>
         </div>
-    </section>
+        <!-- Multi-Site -->
+        <div class="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <h3 class="text-xl font-bold text-primary mb-1">Multi-Site</h3>
+          <div class="mb-4">
+            <span class="text-4xl font-extrabold text-primary">$399</span><span class="text-gray-500">/month</span>
+          </div>
+          <p class="text-gray-500 text-sm mb-6">Unlimited locations</p>
+          <ul class="space-y-3 text-sm text-gray-700 mb-8 flex-grow">
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Everything in Caf&eacute;</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Multiple location dashboards</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Cross-location staff management</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Advanced reporting</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Dedicated onboarding specialist</li>
+            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">&#10003;</span> Phone support</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full transition-all">Contact Us</a>
+        </div>
+      </div>
+      <p class="text-center text-gray-500 text-sm mt-8">&#128274; 30-day free trial &middot; No credit card required &middot; Cancel any time &middot; Australian-based support</p>
     </div>
+  </section>
+
+  <!-- SECTION 9: FAQ -->
+  <section id="faq" class="py-16 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 max-w-[800px]">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-primary mb-4">Common Questions</h2>
+      </div>
+      <div class="space-y-4">
+        <!-- FAQ 1 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">Does Bizadmin handle Australian award compliance?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">Yes. Bizadmin is built with the Hospitality Industry General Award (HIGA) in mind. The platform automatically calculates penalty rates, overtime, and public holiday loadings so your payroll is always Fair Work compliant.</p>
+          </div>
+        </div>
+        <!-- FAQ 2 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">Can I replace Deputy with Bizadmin?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">Absolutely. Bizadmin covers everything Deputy does &mdash; rostering, clock in/out, timesheets, and leave management &mdash; plus adds HACCP temperature recording, supplier ordering, and compliance checklists that Deputy doesn&rsquo;t offer.</p>
+          </div>
+        </div>
+        <!-- FAQ 3 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">Does it integrate with Xero or MYOB?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">Yes. You can export payroll-ready timesheets directly to Xero and MYOB with one click. No double data entry.</p>
+          </div>
+        </div>
+        <!-- FAQ 4 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">What is HACCP temperature recording and why do I need it?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">HACCP (Hazard Analysis Critical Control Point) is a legally required food safety framework for Australian food businesses. You must record fridge and freezer temperatures daily. Bizadmin does this digitally so you always have an audit-ready log for council inspections.</p>
+          </div>
+        </div>
+        <!-- FAQ 5 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">How long does it take to set up?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">Most caf&eacute; owners are fully set up within one business day. Our onboarding team will walk you through the setup via a 30-minute video call.</p>
+          </div>
+        </div>
+        <!-- FAQ 6 -->
+        <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition" onclick="this.parentElement.classList.toggle('active')">
+            <span class="font-semibold text-primary pr-4">Is there a free trial?</span>
+            <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-600">Yes &mdash; 30 days, completely free. No credit card required. You get full access to every feature from day one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 10: Final CTA -->
+  <section class="py-20 lg:py-24 bg-primary">
+    <div class="container mx-auto px-4 max-w-[800px] text-center">
+      <h2 class="text-3xl lg:text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold text-white mb-6">Your Caf&eacute; Deserves Better Than Spreadsheets and Sticky Notes.</h2>
+      <p class="text-white/80 text-lg mb-10">Join caf&eacute; owners across Australia who have cut their admin time by 80% and finally passed their council inspection with confidence.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+        <a href="#contact" class="bg-accent hover:bg-accent/90 text-white font-semibold px-10 py-4 rounded-full transition-all shadow-lg text-lg">Start Your Free 30-Day Trial</a>
+        <a href="#contact" class="border-2 border-white text-white hover:bg-white/10 font-semibold px-10 py-4 rounded-full transition-all text-lg">Book a 15-Minute Demo Call</a>
+      </div>
+      <p class="text-white/60 text-sm">No credit card. No lock-in. Australian support team ready to help.</p>
+    </div>
+  </section>
+</div>

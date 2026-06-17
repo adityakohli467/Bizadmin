@@ -4,8 +4,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#132f65",
-                        accent: "#f97316"
+                        primary: "#0D1B35",
+                        accent: "#F2690D"
                     },
                     fontFamily: {
                         inter: ["Inter", "sans-serif"],
@@ -17,36 +17,6 @@
     }
 
     $(document).ready(function() {
-        // Desktop Dropdown
-        const $platformsLink = $('#platforms-link');
-        const $platformsDropdown = $('#platforms-dropdown');
-        const $platformItems = $('.platform-item');
-        const $platformContents = $('.platform-content');
-
-        $platformsLink.on('click', function(e) {
-            e.preventDefault();
-            $platformsDropdown.slideToggle(200);
-        });
-
-        $platformItems.on('click', function(e) {
-            e.preventDefault();
-            const targetContent = $(this).data('target');
-            $platformContents.addClass('hidden');
-            $('#' + targetContent).removeClass('hidden');
-            const page = $(this).data('page');
-            if (page) {
-                loadContent(page);
-                $platformsDropdown.slideUp(200); // Close dropdown after selection
-            }
-        });
-
-        // Close dropdown when clicking outside
-        $(document).on('click', function(e) {
-            if (!$platformsLink.is(e.target) && !$platformsLink.find('*').is(e.target) && !$platformsDropdown.is(e.target) && !$platformsDropdown.find('*').is(e.target)) {
-                $platformsDropdown.slideUp(200);
-            }
-        });
-
         // Mobile Menu Toggle
         const $burgerMenu = $('#burgerBtn');
         const $mobileMenu = $('#mobileMenu');
@@ -71,54 +41,19 @@
             }
         });
 
-        // Menu item click handler (desktop and mobile)
-        $('.menu-item').on('click', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            if (page) {
-                loadContent(page);
-                $mobileMenu.removeClass('is-open'); // Close mobile menu
-                $('.menu-item').removeClass('active');
-                $(this).addClass('active');
-            }
+        // Close mobile menu on link click
+        $mobileMenu.find('a').on('click', function() {
+            $mobileMenu.removeClass('is-open');
         });
 
-        // AJAX content loading
-       function loadContent(page) {
-    const $dynamicContent = $('#dynamic-content-wrapper');
-    
-    // Create overlay and larger loader
-    $('body').append(`
-        <div id="loading-overlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <svg class="animate-spin h-32 w-32 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
-            </svg>
-        </div>
-    `);
-    
-    $.get('<?php echo site_url('home/load_page'); ?>?page=' + page, function(data) {
-        $dynamicContent.html(data);
-        history.pushState({ page: page }, '', '<?php echo base_url(); ?>' + page);
-        $('#loading-overlay').remove(); // Remove overlay on success
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        $dynamicContent.html('<p class="text-red-600 text-center">Error loading content. Please try again.</p>');
-        $('#loading-overlay').remove(); // Remove overlay on error
-        console.error('Error loading page:', page, 'Status:', textStatus, 'Error:', errorThrown);
-    });
-}
-
-        // Handle back/forward navigation
-        $(window).on('popstate', function(event) {
-            if (event.originalEvent.state && event.originalEvent.state.page) {
-                loadContent(event.originalEvent.state.page);
-                $('.menu-item').removeClass('active');
-                $(`.menu-item[data-page="${event.originalEvent.state.page}"]`).addClass('active');
+        // Smooth scroll for anchor links
+        $('a[href^="#"]').on('click', function(e) {
+            const target = $(this.getAttribute('href'));
+            if (target.length) {
+                e.preventDefault();
+                $('html, body').animate({ scrollTop: target.offset().top - 80 }, 600);
             }
         });
-
-        // Show HR content by default in dropdown
-        $('#hr-content').removeClass('hidden');
     });
 </script>
 
@@ -136,99 +71,11 @@
 
             <!-- Desktop Menu -->
             <nav class="hidden md:flex items-center space-x-8">
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="https://bizadmin.com.au/" class="active" >Home</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#feature-section" >Features</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#timeline">Benefits</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#why-choose">Why Choose Us</a></span>
-                <span class="text-gray-700 hover:text-primary flex items-center cursor-pointer" id="platforms-link">Platforms <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
-                <div id="platforms-dropdown" class="hidden absolute top-full left-0 mt-2 bg-white shadow-xl rounded-lg w-[800px] border border-gray-200 z-40">
-                    <div class="flex">
-                        <!-- Left Menu -->
-                        <div class="w-1/3 border-r border-gray-200 py-4">
-                            <ul>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="hr-content" data-page="hrm"><span class="font-semibold">HR & Onboarding</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="suppliers-content" data-page="suppliers"><span class="font-semibold">Suppliers</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="ordering-content" data-page="catering"><span class="font-semibold">Ordering Portal</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="compliance-content" data-page="checklists"><span class="font-semibold">Checklists</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="compliance-content" data-page="cleaning"><span class="font-semibold">Cleaning Schedule</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="compliance-content" data-page="temperature"><span class="font-semibold">Temperature Recording</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="compliance-content" data-page="documents"><span class="font-semibold">Document Manage</span></li>
-                                <li class="platform-item hover:bg-gray-100 px-6 py-3 cursor-pointer" data-target="compliance-content" data-page="cash"><span class="font-semibold">Cash Management</span></li>
-                            </ul>
-                        </div>
-                        <!-- Right Content -->
-                        <div class="w-2/3 p-6">
-                            <div id="hr-content" class="platform-content hidden">
-                                <div class="flex">
-                                    <div class="w-2/3 pr-6">
-                                        <h3 class="text-xl font-bold mb-2 text-primary">HR & Onboarding</h3>
-                                        <p class="text-gray-600 mb-4">Simplify new hires with automated onboarding and employee tracking. Streamline the entire HR process from recruitment to retirement.</p>
-                                        <span class="inline-block px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition cursor-pointer menu-item" data-page="hrm">Know More</span>
-                                    </div>
-                                    <div class="w-1/3 relative">
-                                        <div class="bg-primary rounded-lg overflow-hidden h-40">
-                                            <img class="object-cover w-full h-full opacity-50" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/5bc89ba1d8-59cf72adf5f19865f877.png" alt="modern HR dashboard interface with employee profiles and onboarding tasks">
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <h4 class="text-white font-bold text-xl">HR Onboarding</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="suppliers-content" class="platform-content hidden">
-                                <div class="flex">
-                                    <div class="w-2/3 pr-6">
-                                        <h3 class="text-xl font-bold mb-2 text-primary">Suppliers</h3>
-                                        <p class="text-gray-600 mb-4">Manage all your suppliers in one place. Track orders, invoices, and communications for streamlined procurement.</p>
-                                        <span class="inline-block px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition cursor-pointer menu-item" data-page="suppliers">Know More</span>
-                                    </div>
-                                    <div class="w-1/3 relative">
-                                        <div class="bg-primary rounded-lg overflow-hidden h-40">
-                                            <img class="object-cover w-full h-full opacity-50" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/84b01d059c-a22be8d6d0bbfcf9dbca.png" alt="supplier management dashboard with inventory tracking and order history">
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <h4 class="text-white font-bold text-xl">Supplier Portal</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="ordering-content" class="platform-content hidden">
-                                <div class="flex">
-                                    <div class="w-2/3 pr-6">
-                                        <h3 class="text-xl font-bold mb-2 text-primary">Ordering Portal</h3>
-                                        <p class="text-gray-600 mb-4">Simplify your ordering process with our intuitive portal. Track orders, manage inventory, and streamline procurement.</p>
-                                        <span class="inline-block px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition cursor-pointer menu-item" data-page="ordering">Know More</span>
-                                    </div>
-                                    <div class="w-1/3 relative">
-                                        <div class="bg-primary rounded-lg overflow-hidden h-40">
-                                            <img class="object-cover w-full h-full opacity-50" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/dfe6905bd3-d58a5a386051270d2c5f.png" alt="ordering system interface with product catalog and cart functionality">
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <h4 class="text-white font-bold text-xl">Ordering System</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="compliance-content" class="platform-content hidden">
-                                <div class="flex">
-                                    <div class="w-2/3 pr-6">
-                                        <h3 class="text-xl font-bold mb-2 text-primary">Compliance</h3>
-                                        <p class="text-gray-600 mb-4">Stay compliant with regulatory requirements. Automate reporting, track certifications, and maintain audit trails.</p>
-                                        <span class="inline-block px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition cursor-pointer menu-item" data-page="checklists">Know More</span>
-                                    </div>
-                                    <div class="w-1/3 relative">
-                                        <div class="bg-primary rounded-lg overflow-hidden h-40">
-                                            <img class="object-cover w-full h-full opacity-50" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/2e5a5c3ba1-d1b7ffe95ee76e6bf18c.png" alt="compliance dashboard with regulatory tracking and certification management">
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <h4 class="text-white font-bold text-xl">Compliance Tools</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="<?php echo site_url('home'); ?>" class="active">Home</a></span>
+                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#features">Features</a></span>
+                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#pricing">Pricing</a></span>
+                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#why-bizadmin">Why Bizadmin</a></span>
+                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#contact">Book a Demo</a></span>
             </nav>
 
             <!-- Burger Icon -->
@@ -240,26 +87,21 @@
 
             <!-- Call to Action -->
             <div class="hidden md:block">
-                <a href="#contact"><span class="bg-accent hover:bg-accent/90 text-white px-5 py-2 rounded-md transition cursor-pointer">Get Started</span></a>
+                <a href="#pricing"><span class="bg-accent hover:bg-accent/90 text-white px-5 py-2 rounded-md transition cursor-pointer font-medium">Start Free Trial</span></a>
             </div>
         </div>
 
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="md:hidden mt-4 space-y-4 fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
-            <a href="https://bizadmin.com.au/" class="block text-gray-700 hover:text-primary" data-page="homepage">Home</a>
-            <a href="#feature-section" class="block text-gray-700 hover:text-primary" >Features</a>
-            <a href="#benefits" class="block text-gray-700 hover:text-primary ">Benefits</a>
-            <a href="#why-choose" class="block text-gray-700 hover:text-primary">Why Choose Us</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="hrm">HR & Onboarding</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="suppliers">Suppliers</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="catering">Ordering Portal</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="checklists">Checklists</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="cleaning">Cleaning Schedule</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="temperature">Temperature Recording</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="documents">Document Manage</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="cash">Cash Management</a>
-            <a href="#contact" class="block text-white bg-accent hover:bg-accent/90 px-5 py-2 rounded-md text-center ">Get Started</a>
-            <button id="close-menu" class="block text-gray-700 hover:text-primary">Close</button>
+            <button id="close-menu" class="block text-gray-700 hover:text-primary mb-4 text-right w-full">
+                <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <a href="<?php echo site_url('home'); ?>" class="block text-gray-700 hover:text-primary font-medium">Home</a>
+            <a href="#features" class="block text-gray-700 hover:text-primary font-medium">Features</a>
+            <a href="#pricing" class="block text-gray-700 hover:text-primary font-medium">Pricing</a>
+            <a href="#why-bizadmin" class="block text-gray-700 hover:text-primary font-medium">Why Bizadmin</a>
+            <a href="#contact" class="block text-gray-700 hover:text-primary font-medium">Book a Demo</a>
+            <a href="#pricing" class="block text-white bg-accent hover:bg-accent/90 px-5 py-2 rounded-md text-center font-medium mt-4">Start Free Trial</a>
         </div>
     </div>
 </header>

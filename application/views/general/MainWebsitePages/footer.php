@@ -1,7 +1,7 @@
-<section id="contact" class="py-20 bg-light">
+<section id="contact" class="py-20 bg-[#F7F8FA]">
     <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-primary mb-6">Ready to transform your business operations?</h2>
-        <p class="text-gray-600 text-lg max-w-2xl mx-auto mb-10">Join thousands of businesses that have streamlined their operations with BizAdmin.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-primary mb-6">Book a Free 30-Minute Demo</h2>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto mb-10">Join caf&eacute; owners across Australia who have streamlined their operations with Bizadmin.</p>
         
       <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
     
