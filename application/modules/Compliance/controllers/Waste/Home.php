@@ -20,8 +20,8 @@ class Home extends MY_Controller {
         // $this->load->model('equip_model');
         
         $data['todaysEnteredData'] = $this->generalcomp_model->fetchTodaysEnteredData();
-        $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites',array(),['status=1','location_id' => $this->selected_location_id]); 
-        $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea',array(),['status=1','location_id' => $this->selected_location_id]); 
+        $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites',array(),['status=1','is_deleted'=> 0 ,'location_id' => $this->selected_location_id]); 
+        $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea',array(),['status=1','is_deleted'=> 0 ,'location_id' => $this->selected_location_id]); 
     //   echo "<pre>"; print_r($data['taskListForDash']); exit;
       
        
@@ -114,7 +114,7 @@ class Home extends MY_Controller {
     
     
     function history(){
-      $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites', '', ['status' => 1,'location_id' => $this->selected_location_id]);
+      $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites', '', ['status' => 1,'is_deleted'=> 0 ,'location_id' => $this->selected_location_id]);
       
       $this->load->view('general/header');
       $this->load->view('WasteManagement/history', $data);
@@ -146,8 +146,8 @@ class Home extends MY_Controller {
             }
 
             // Fetch data
-            $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites', '', array('location_id' => $this->selected_location_id)); 
-            $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea', '', array('location_id' => $this->selected_location_id)); 
+            $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites', '', array('is_deleted'=> 0 ,'location_id' => $this->selected_location_id)); 
+            $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea', '', array('is_deleted'=> 0 ,'location_id' => $this->selected_location_id)); 
             $productCondition = array('status' => 1, 'is_deleted' => 0);
             $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts', '', $productCondition);
 
@@ -296,7 +296,7 @@ public function updateWasteHistory() {
    
      function listProduct(){
          $productCondition = array('status' => 1,'is_deleted' => 0);
-         $condition = array('status' => 1,'location_id' => $this->selected_location_id);
+         $condition = array('status' => 1,'is_deleted'=> 0 ,'location_id' => $this->selected_location_id);
         $data['products'] = $this->common_model->fetchRecordsDynamically('Compliance_wasteManagementproducts','',$productCondition);
         $data['site_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementsites','',$condition);
         $data['prep_detail'] = $this->common_model->fetchRecordsDynamically('Compliance_WasteManagementPrepArea','',$condition);

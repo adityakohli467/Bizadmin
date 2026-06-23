@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>BIZ admin</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    
     <script>
     // Note: This example requires that you consent to location sharing when
 // prompted by your browser. If you see the error "The Geolocation service
