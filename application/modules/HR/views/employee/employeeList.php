@@ -671,6 +671,16 @@ function addRecordToEmployeeTable(type) {
             let phone     = formObj.phone || '-';
             let stress    = 'Not Set';
 
+            // Tier badge (matches the server-rendered row)
+            let tierBadge = formObj.tier
+                ? ` <span class="badge bg-info-subtle text-info">(Tier ${formObj.tier})</span>`
+                : '';
+
+            // Onboarding status badge: only "onboard" sends the email
+            let onboardingStatus = (type === 'onboard')
+                ? '<span class="badge bg-warning">Onboarding email sent</span>'
+                : '<span></span>';
+
             // Build the new row HTML
             let newRow = `
                 <tr data-delete-id="${empId}" class="empMainRow">
@@ -680,10 +690,11 @@ function addRecordToEmployeeTable(type) {
                             <label class="form-check-label"><i class="bx bx-chevron-down"></i></label>
                         </div>
                     </th>
-                    <td><a class="first_name" href="/HR/Employee/edit/${empId}">${fullName}</a></td>
+                    <td><a class="first_name" href="/HR/Employee/edit/${empId}">${fullName}</a>${tierBadge}</td>
                     <td><a class="email" href="/HR/Employee/edit/${empId}">${email}</a></td>
                     <td>${hireDate}</td>
                     <td>${phone}</td>
+                    <td>${onboardingStatus}</td>
                     <td>${stress}</td>
                     <td>
                         <ul class="list-inline hstack gap-2 mb-0">
