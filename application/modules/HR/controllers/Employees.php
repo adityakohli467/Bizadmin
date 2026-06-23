@@ -332,7 +332,17 @@ class Employees extends MY_Controller {
  */
   public function sendOnboardingEmail($emp_id, $formData = [])
   {
- 
+    // ---------------------------------------------------------
+    // 0. Ensure SMTP settings are loaded for THIS request.
+    //    The onboarding email is triggered from the employee list
+    //    (AJAX). SMTP session data is normally primed only when the
+    //    user opens the HR dashboard, so when it is missing/stale the
+    //    sendEmail() helper silently falls back to PHP mail() which
+    //    returns success on the server but never delivers. Load the
+    //    settings fresh from the DB here so the SMTP path is always used.
+    // ---------------------------------------------------------
+    $this->primeSmtpSettings();
+
     // ---------------------------------------------------------
     $dataToEncrypt = [
         'location_id'       => $this->location_id,
@@ -390,6 +400,17 @@ class Employees extends MY_Controller {
     $this->session->userdata('mail_from')
 );
 
+// Log the outcome so delivery problems are visible on the server.
+log_message(
+    'error',
+    'Onboarding email | emp_id=' . $emp_id
+    . ' | to=' . $emailSendTo
+    . ' | from=' . $this->session->userdata('mail_from')
+    . ' | protocol=' . $this->session->userdata('mail_protocol')
+    . ' | status=' . var_export($mailStatus['status'], true)
+    . ' | error=' . (isset($mailStatus['error']) ? $mailStatus['error'] : '')
+);
+
 // ---------------------------------------------------------
 // 7. AJAX RESPONSE
 // ---------------------------------------------------------
@@ -406,6 +427,46 @@ $response = [
         ->set_content_type('application/json')
         ->set_output(json_encode($response));
 }
+
+/**
+ * Load SMTP settings into the session for the current request.
+ *
+ * Mirrors the logic in HR\Home::index so that emails triggered outside
+ * the dashboard (e.g. onboarding from the employee list) always use the
+ * configured SMTP server instead of silently falling back to PHP mail().
+ *
+ * @return void
+ */
+  private function primeSmtpSettings()
+  {
+    $this->load->model('general_model');
+
+    $system_id = $this->session->userdata('system_id');
+
+    $emailSettings = $this->general_model->fetchSmtpSettings(
+        $this->location_id ?? '',
+        $system_id
+    );
+
+    if (empty($emailSettings)) {
+        // Fallback backup SMTP record (location_id / system_id = 9999).
+        $emailSettings = $this->general_model->fetchSmtpSettings('9999', '9999');
+    }
+
+    if (is_object($emailSettings)) {
+        if (isset($emailSettings->mail_protocol) && $emailSettings->mail_protocol === 'smtp') {
+            $this->session->set_userdata('mail_protocol', 'smtp');
+            $this->configureSMTP($emailSettings);
+        }
+
+        $this->session->set_userdata(
+            'mail_from',
+            !empty($emailSettings->mail_from) ? $emailSettings->mail_from : 'info@bizadmin.com.au'
+        );
+    } else {
+        $this->session->set_userdata('mail_from', 'info@bizadmin.com.au');
+    }
+  }
 
 	
 	function submitOnboardingProcessForEmployee(){
