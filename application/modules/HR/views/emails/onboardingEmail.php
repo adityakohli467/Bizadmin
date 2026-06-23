@@ -17,10 +17,6 @@
         You have been granted system access for:
     </p>
 
-    <ul style="font-size: 15px; line-height: 1.6;">
-        <!--<li><strong>Café Name:</strong> <?php echo $cafeName; ?></li>-->
-        
-    </ul>
     <?php if (!empty($locationNamesList)) { ?>
     <p style="font-size: 15px;">You have access to the following locations:</p>
     <ul>
