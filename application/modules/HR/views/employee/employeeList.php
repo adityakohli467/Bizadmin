@@ -484,7 +484,22 @@
 
 <script>
 let table = $('#employeeList').DataTable({
-    pageLength: 100,
+    paging: false,
+    lengthChange: false,
+    info: false,
+});
+
+// Keep select2 and the native <select> in sync whenever the onboarding modal
+// opens, and auto-select the location when only one is available. This prevents
+// the false "Select at least one location" error when a location is already shown.
+$('#addEmployeeModal').on('shown.bs.modal', function () {
+    var $loc = $('.employeeLocations');
+    if ($loc.length) {
+        if ($loc.find('option').length === 1) {
+            $loc.find('option').prop('selected', true);
+        }
+        $loc.trigger('change');
+    }
 });
 
 function confirmSendOnboarding(obj, empId) {
@@ -549,10 +564,11 @@ function validateOnboardEmployeeForm() {
         isValid = false;
     }
 
-    // Location Access (required – select2 compatible)
+    // Location Access (required) – read the selected <option>s directly so the
+    // check stays correct even if select2 and the native <select> are out of sync.
     if ($('.employeeLocations').length) {
-        const locations = $('.employeeLocations').val();
-        if (!locations || locations.length === 0) {
+        const selectedLocations = $('.employeeLocations').find('option:selected').length;
+        if (selectedLocations === 0) {
             showError('.employeeLocations', 'Select at least one location');
             isValid = false;
         }
@@ -693,13 +709,15 @@ function addRecordToEmployeeTable(type) {
             // Prepend to table body
             $('#employeeList tbody').prepend(newRow);
 
-            // Show success feedback
+            // Show success feedback (message depends on the action taken)
+            if (type === 'save') {
+                $('.successEmployee').text('Employee details saved successfully.');
+                $("."+type).html('Save');
+            } else {
+                $('.successEmployee').text('Onboarding email successfully sent to employee.');
+                $("."+type).html('Onboard and send email');
+            }
             $('.successEmployee').show();
-             if(type == 'save'){
-           $("."+type).html('Save');  
-        }else{
-           $("."+type).html('Onboard and send email');  
-        }
 
             // Optional: Re-init tooltips if using Bootstrap
             $('[data-bs-toggle="tooltip"]').tooltip();
