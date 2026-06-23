@@ -203,16 +203,7 @@ class MY_Controller extends MX_Controller
         
         $this->phpmailer = new PHPMailer(true);
         $this->phpmailer->isSMTP();
-
-        // ---- Temporary SMTP debugging ----
-        // Capture the full client<->server conversation into the CI log so we
-        // can see exactly what the relay does with the message (accept / queue
-        // id / reject / greylist). Set back to 0 once the issue is resolved.
-        $this->phpmailer->SMTPDebug = 2; // SMTP::DEBUG_SERVER
-        $this->phpmailer->Debugoutput = function ($str, $level) {
-            log_message('error', 'SMTP DEBUG: ' . trim($str));
-        };
-
+        $this->phpmailer->SMTPDebug = 0; // Set to 2 (SMTP::DEBUG_SERVER) for full transcript
         $this->phpmailer->Host = $this->session->userdata('smtp_host');
         $this->phpmailer->Port = $this->session->userdata('smtp_port');
         $this->phpmailer->SMTPAuth = true;
@@ -220,15 +211,6 @@ class MY_Controller extends MX_Controller
         $this->phpmailer->Password = $this->session->userdata('smtp_pass');
         $this->phpmailer->SMTPSecure = 'tls';
         $this->phpmailer->CharSet = 'UTF-8';  
-
-        // Log which relay/account is being used (never the password).
-        log_message(
-            'error',
-            'SMTP CONFIG | host=' . $this->session->userdata('smtp_host')
-            . ' | port=' . $this->session->userdata('smtp_port')
-            . ' | username=' . $this->session->userdata('smtp_username')
-            . ' | secure=tls'
-        );
     }
     // $to = ['recipient1@example.com', 'recipient2@example.com'];
    public function sendEmail(
