@@ -71,6 +71,12 @@ if(isset($superConfig[0]['data']) && $superConfig[0]['data'] !='') {
             
         }
         
+        // Onboarding form tab customization settings
+        $conditionsOnboardingTabs = array('location' => $this->location_id, 'configureFor' => 'onboarding_tabs');
+        $onboardingTabsCfg = $this->common_model->fetchRecordsDynamically('HR_configuration', ['data'], $conditionsOnboardingTabs);
+        $data['onboardingTabsConfig'] = (isset($onboardingTabsCfg[0]['data']) && $onboardingTabsCfg[0]['data'] != '') ? json_decode($onboardingTabsCfg[0]['data'], true) : [];
+        if(!is_array($data['onboardingTabsConfig'])) { $data['onboardingTabsConfig'] = []; }
+        
        
        
     //  echo "<pre>"; print_r($data['uploadedFiles']); exit;
@@ -288,7 +294,53 @@ if(isset($superConfig[0]['data']) && $superConfig[0]['data'] !='') {
         exit;
     } 
     
-    // Add this method in Config controller
+    // Save show/hide state for an individual onboarding form tab
+    public function saveOnboardingTabConfig() {
+        $response = ['status' => 'error', 'message' => 'Invalid request'];
+
+        if($this->input->is_ajax_request()) {
+            $tab_key = $this->input->post('tab_key');
+            $value   = $this->input->post('value');
+            $allowed = ['personalDetails','emergencyDetails','bankDetails','policeClearance','taxDetails','superAnnuation','privacyPolicy'];
+
+            if($tab_key && in_array($tab_key, $allowed, true) && isset($value)) {
+                $existing = $this->common_model->fetchRecordsDynamically('HR_configuration', ['id','data'], ['configureFor' => 'onboarding_tabs','location' => $this->location_id]);
+
+                $config = [];
+                if(isset($existing[0]['data']) && $existing[0]['data'] != '') {
+                    $decoded = json_decode($existing[0]['data'], true);
+                    if(is_array($decoded)) { $config = $decoded; }
+                }
+
+                // Make sure all known tabs are present (default enabled)
+                foreach($allowed as $tk) {
+                    if(!isset($config[$tk])) { $config[$tk] = '1'; }
+                }
+
+                $config[$tab_key] = ($value == '1' || $value === 1) ? '1' : '0';
+
+                $save_data = [
+                    'configureFor' => 'onboarding_tabs',
+                    'data'         => json_encode($config),
+                    'location'     => $this->location_id,
+                    'metaData'     => 'Onboarding Form Tab Customization',
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+
+                if(isset($existing[0]['id'])) {
+                    $this->common_model->commonRecordUpdate('HR_configuration', 'id', $existing[0]['id'], $save_data);
+                } else {
+                    $this->common_model->commonRecordCreate('HR_configuration', $save_data);
+                }
+
+                $response = ['status' => 'success', 'message' => 'Configuration saved'];
+            }
+        }
+
+        echo json_encode($response);
+        exit;
+    }
+    
 
 public function saveSuperannuationSettings() {
     $response = ['status' => 'error', 'message' => 'Invalid request'];

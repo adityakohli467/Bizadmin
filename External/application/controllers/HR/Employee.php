@@ -37,6 +37,12 @@ class Employee extends CI_Controller {
          $fieldsToFetch = ['data','metaData'];
         $employeeData = $this->common_model->fetchRecordsDynamically('HR_employee','',$conditions);
         $data['uploadedFiles'] = $this->common_model->fetchRecordsDynamically('HR_configuration', $fieldsToFetch,$conditionsTwo);
+
+        // Onboarding form tab customization (configured from HR > Settings > Onboarding Form Customize)
+        $onboardingTabsCfg = $this->common_model->fetchRecordsDynamically('HR_configuration', ['data'], array('location' => $location_id, 'configureFor' => 'onboarding_tabs'));
+        $tabsCfg = (isset($onboardingTabsCfg[0]['data']) && $onboardingTabsCfg[0]['data'] != '') ? json_decode($onboardingTabsCfg[0]['data'], true) : [];
+        $data['onboardingTabsConfig'] = is_array($tabsCfg) ? $tabsCfg : [];
+
         if(isset($employeeData[0]['onboarding_status']) && $employeeData[0]['onboarding_status'] == 4){
          echo "Onboarding has been already completed,Please check your email for the login credentials";  exit; 
         }
@@ -79,7 +85,7 @@ class Employee extends CI_Controller {
            
                 $posted_data = $this->input->post();
                 foreach($posted_data as $key=> $value){
-                 if( $key != 'email' && $key != 'emp_id'){
+                 if( $key != 'email' && $key != 'emp_id' && $key != 'final_submit'){
                    ($value !='' ? $data_user[$key] = $value : '');   
                  }
                  }
@@ -118,7 +124,7 @@ class Employee extends CI_Controller {
 			$statusUpdate = array('onboarding_status' => 3); // Status 2 In Progress
           $this->employee_model->update_employee($statusUpdate, $empId);    
 			   
-			if($this->input->post('agree_terms_one') == '1'){
+			if($this->input->post('agree_terms_one') == '1' || $this->input->post('final_submit') == '1'){
 			    
 			     // Generate 4-digit PIN for employee clock in and clock out
                     $pin = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);

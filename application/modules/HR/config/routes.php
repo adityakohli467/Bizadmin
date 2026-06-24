@@ -86,6 +86,7 @@ $route['HR/Config/createStressProfile'] = 'Config/createStressProfile';
 $route['HR/Config/updateStressProfile'] = 'Config/updateStressProfile';
 $route['HR/Config/addleaveType'] = 'Config/addleaveType';
 $route['HR/Config/updateleaveType'] = 'Config/updateleaveType';
+$route['HR/Config/saveOnboardingTabConfig'] = 'Config/saveOnboardingTabConfig';
 $route['HR/Leave/delete'] = 'Config/deleteLeave';
 $route['HR/Config/emailSetting'] = 'Config/addEmailsSetting';
 $route['HR/Config/positionSetting'] = 'Config/addPositionSetting';

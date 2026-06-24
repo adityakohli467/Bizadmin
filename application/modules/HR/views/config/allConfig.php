@@ -14,6 +14,7 @@
                          <a class="nav-link mb-4 fs-16" id="positionSettings-tab" data-bs-toggle="pill" href="#positionSettings" role="tab" aria-selected="false">Positions</a>
                          <a class="nav-link mb-4 fs-16" id="payrollTypeSettings-tab" data-bs-toggle="pill" href="#payrollTypeSettings" role="tab" aria-selected="false">Payroll Type</a>
                          <a class="nav-link mb-4 fs-16" id="superannuationSettings-tab" data-bs-toggle="pill" href="#superannuationSettings" role="tab" aria-selected="false">Superannuation</a>
+                         <a class="nav-link mb-4 fs-16" id="onboardingTabsSettings-tab" data-bs-toggle="pill" href="#onboardingTabsSettings" role="tab" aria-selected="false">Onboarding Form Customize</a>
 
                         </div>
                         </div>
@@ -355,6 +356,53 @@
                                             </table>
                            </div>  
                             </div> 
+                            
+                            <div class="tab-pane fade" id="onboardingTabsSettings" role="tabpanel" aria-labelledby="onboardingTabsSettings-tab">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="mb-2 text-black">Onboarding Form Customize</h5>
+                                    <small class="text-muted d-block mb-3">Turn the onboarding form tabs on or off for this location. Disabled tabs are hidden from the employee onboarding form and their validation is skipped, so employees can still submit the form without getting stuck.</small>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <table class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th data-ordering="false">Onboarding Tab</th>
+                                            <th data-ordering="false">Show in Form</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $onboardingTabsList = [
+                                            'personalDetails'  => 'Personal Details',
+                                            'emergencyDetails' => 'Emergency Details',
+                                            'bankDetails'      => 'Bank Details',
+                                            'policeClearance'  => 'Police Clearance',
+                                            'taxDetails'       => 'Tax Details',
+                                            'superAnnuation'   => 'Super Annuation',
+                                            'privacyPolicy'    => 'Policies'
+                                        ];
+                                        $obCfg = isset($onboardingTabsConfig) && is_array($onboardingTabsConfig) ? $onboardingTabsConfig : [];
+                                        foreach($onboardingTabsList as $obKey => $obLabel):
+                                            $obChecked = (!isset($obCfg[$obKey]) || $obCfg[$obKey] === '1' || $obCfg[$obKey] === 1) ? 'checked' : '';
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $obLabel; ?></td>
+                                            <td>
+                                                <div class="form-check form-switch mb-1" dir="ltr">
+                                                    <input type="checkbox"
+                                                           class="form-check-input onboarding-tab-toggle"
+                                                           data-tab-key="<?php echo $obKey; ?>"
+                                                           <?php echo $obChecked; ?>>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
                             
                             <div class="tab-pane fade" id="superannuationSettings" role="tabpanel" aria-labelledby="superannuationSettings-tab">
     <form method="post" class="form-horizontal" id="superannuationSettingsForm">
@@ -901,6 +949,38 @@ $(document).ready(function() {
                 alert('Network error occurred');
                 // Revert toggle state on error
                 $(this).prop('checked', !isChecked);
+            }
+        });
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('.onboarding-tab-toggle').on('change', function() {
+        var $toggle = $(this);
+        var isChecked = $toggle.is(':checked') ? 1 : 0;
+        var tabKey = $toggle.data('tab-key');
+
+        $.ajax({
+            url: '/HR/Config/saveOnboardingTabConfig',
+            type: 'POST',
+            data: {
+                tab_key: tabKey,
+                value: isChecked
+            },
+            dataType: 'json',
+            success: function(response) {
+                if(response.status === 'success') {
+                    alert('Onboarding form updated successfully!');
+                } else {
+                    alert('Error saving configuration: ' + response.message);
+                    $toggle.prop('checked', !isChecked);
+                }
+            },
+            error: function() {
+                alert('Network error occurred');
+                $toggle.prop('checked', !isChecked);
             }
         });
     });

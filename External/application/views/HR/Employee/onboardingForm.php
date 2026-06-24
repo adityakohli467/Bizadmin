@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding Form</title>
     <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
-    <?php include(APPPATH . '../application/views/general/tailwind_common_assets.php'); ?>
+    <?php include(APPPATH . '../../application/views/general/tailwind_common_assets.php'); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://bizadmin.com.au/login-assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkr6VbGs7uYPJn_AFfvnMZztcQIigx9J0&libraries=places"></script>
@@ -87,6 +87,15 @@
                 ['id' => 'privacyPolicy', 'label' => 'Policies', 'step' => 6]
             ];
 
+            // Show/hide tabs based on the "Onboarding Form Customize" settings (per location)
+            $tabConfig = isset($onboardingTabsConfig) && is_array($onboardingTabsConfig) ? $onboardingTabsConfig : [];
+            $isTabEnabled = function($id) use ($tabConfig) {
+                return !isset($tabConfig[$id]) || $tabConfig[$id] == '1' || $tabConfig[$id] === 1;
+            };
+            $tabs = array_values(array_filter($tabs, function($t) use ($isTabEnabled) {
+                return $isTabEnabled($t['id']);
+            }));
+
             $stepsCompleted = isset($employee['stepsCompleted']) ? $employee['stepsCompleted'] : 0;
 
             foreach ($tabs as $index => $tab) {
@@ -120,6 +129,58 @@
         </div>
     </div>
 </nav>
+<script>
+    // Onboarding tab navigation config (driven by HR "Onboarding Form Customize" settings)
+    var ONBOARDING_FLOW_ORDER = ['personalDetails','emergencyDetails','bankDetails','taxDetails','policeClearance','superAnnuation','privacyPolicy'];
+    var ONBOARDING_ENABLED_TABS = <?php echo json_encode(array_map(function($t){ return $t['id']; }, $tabs)); ?>;
+    var ONBOARDING_EMP_ID = '<?php echo $employee['emp_id']; ?>';
+
+    function getNextEnabledTab(currentId){
+        var startIdx = ONBOARDING_FLOW_ORDER.indexOf(currentId);
+        if(startIdx === -1) return null;
+        for(var i = startIdx + 1; i < ONBOARDING_FLOW_ORDER.length; i++){
+            if(ONBOARDING_ENABLED_TABS.indexOf(ONBOARDING_FLOW_ORDER[i]) !== -1){
+                return ONBOARDING_FLOW_ORDER[i];
+            }
+        }
+        return null;
+    }
+
+    // Move to the next enabled tab, or finalize the onboarding if this is the last enabled tab
+    function proceedFromTab(currentId){
+        var next = getNextEnabledTab(currentId);
+        if(next){
+            $('#loaderContainer').hide();
+            activateTab(next);
+        } else {
+            finalizeOnboarding();
+        }
+    }
+
+    // Final submission used when the last enabled tab is not the Policies tab
+    function finalizeOnboarding(){
+        $('#loaderContainer').show();
+        $.ajax({
+            type: 'POST',
+            url: '/External/Employee/submit_onboarding_process',
+            data: { emp_id: ONBOARDING_EMP_ID, final_submit: 1, stepsCompleted: 7 },
+            success: function(response){
+                $('#loaderContainer').hide();
+                var res;
+                try { res = JSON.parse(response); } catch(e){ res = {}; }
+                if(res && res.status === 'success'){
+                    document.getElementById('onboardSuccessModal').classList.remove('hidden');
+                } else {
+                    alert('Some error occured, Please refresh page and try again.');
+                }
+            },
+            error: function(){
+                $('#loaderContainer').hide();
+                alert('Some error occured, Please refresh page and try again.');
+            }
+        });
+    }
+</script>
 <main id="main-content" class="max-w-9xl mx-auto px-6 py-10">
     <small>Please click on individual tab to fill the details,please scroll tabs from top(in mobile devices)</small>
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-8 md:p-12">
@@ -1565,9 +1626,7 @@
                     success: function(response){
                         let res = JSON.parse(response)
                         if(res?.status=='success'){
-
-                            activateTab('emergencyDetails')
-                            $('#loaderContainer').hide();
+                            proceedFromTab('personalDetails');
                         }
                         else{
                             alert("Some error occured,Please refresh page and try again.")
@@ -1610,7 +1669,7 @@
                     success: function(response){
                         let res = JSON.parse(response)
                         if(res?.status=='success'){
-                            activateTab('bankDetails'); $('#loaderContainer').hide();
+                            proceedFromTab('emergencyDetails');
                         }
                         else{
                             alert("Some error occured,Please refresh page and try again.")
@@ -1648,7 +1707,7 @@
                     success: function(response){
                         let res = JSON.parse(response)
                         if(res?.status=='success'){
-                            activateTab('taxDetails'); $('#loaderContainer').hide();
+                            proceedFromTab('bankDetails');
                         }
                         else{
                             alert("Some error occured,Please refresh page and try again.")
@@ -1717,7 +1776,7 @@
                     success: function(response){
                         let res = JSON.parse(response)
                         if(res?.status=='success'){
-                            activateTab('policeClearance'); $('#loaderContainer').hide();
+                            proceedFromTab('taxDetails');
                         }
                         else{
                             alert("Some error occured,Please refresh page and try again.")
@@ -1764,7 +1823,7 @@
 
                 success: function (res) {
                     if (res && res.status === 'success') {
-                        activateTab('superAnnuation');
+                        proceedFromTab('policeClearance');
                     } else {
                         alert(res.message || 'Upload failed. Please try again.');
                     }
@@ -1823,7 +1882,7 @@
                     success: function(response){
                         let res = JSON.parse(response)
                         if(res?.status=='success'){
-                            activateTab('privacyPolicy'); $('#loaderContainer').hide();
+                            proceedFromTab('superAnnuation');
                         }
                         else{
                             alert("Some error occured,Please refresh page and try again.")
@@ -1942,8 +2001,26 @@
 <script>
     $(document).ready(function () {
 
-        // Default first tab
-        activateTab("personalDetails");
+        // Default to the first enabled tab
+        var defaultTab = (typeof ONBOARDING_ENABLED_TABS !== 'undefined' && ONBOARDING_ENABLED_TABS.length) ? ONBOARDING_ENABLED_TABS[0] : "personalDetails";
+        activateTab(defaultTab);
+
+        // Relabel the last enabled tab's button to "Submit" so the user knows it completes the form
+        (function(){
+            var btnMap = {
+                personalDetails: '#save_continue_personal',
+                emergencyDetails: '#save_continue_emergency',
+                bankDetails: '#save_continue_bank',
+                taxDetails: '#save_continue_tax',
+                policeClearance: '#save_continue_police',
+                superAnnuation: '#save_continue_annuation',
+                privacyPolicy: '#save_continue_privacy'
+            };
+            if(typeof ONBOARDING_ENABLED_TABS !== 'undefined' && ONBOARDING_ENABLED_TABS.length){
+                var last = ONBOARDING_ENABLED_TABS[ONBOARDING_ENABLED_TABS.length - 1];
+                if(btnMap[last]){ $(btnMap[last]).val('Submit'); }
+            }
+        })();
 
         // On click
         $(".tab-btn").on("click", function () {
@@ -1976,6 +2053,7 @@
         function toggleVisaField() {
             let value = document.querySelector("input[name='visa_status']:checked")?.value;
             let wrapper = document.getElementById("visaExpiryWrapper");
+            if (!wrapper) return;
 
             if (value === "yes") {
                 wrapper.classList.remove("hidden");
@@ -2044,17 +2122,21 @@
     function toggleVisaFields() {
         let value = document.querySelector("input[name='visa_status']:checked")?.value;
         let visaDetails = document.getElementById("visaDetails");
+        if (!visaDetails) return;
+
+        let visaExpiry = document.getElementById('visa_expiry');
+        let visaAttachment = document.getElementById('visa_attachment');
 
         if (value === "yes") {
             visaDetails.classList.remove("hidden");
             // Make visa expiry and attachment required
-            document.getElementById('visa_expiry').setAttribute('required', 'required');
-            document.getElementById('visa_attachment').setAttribute('required', 'required');
+            if (visaExpiry) visaExpiry.setAttribute('required', 'required');
+            if (visaAttachment) visaAttachment.setAttribute('required', 'required');
         } else {
             visaDetails.classList.add("hidden");
             // Remove required attributes
-            document.getElementById('visa_expiry').removeAttribute('required');
-            document.getElementById('visa_attachment').removeAttribute('required');
+            if (visaExpiry) visaExpiry.removeAttribute('required');
+            if (visaAttachment) visaAttachment.removeAttribute('required');
         }
     }
 </script>
