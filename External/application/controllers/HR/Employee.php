@@ -135,44 +135,60 @@ class Employee extends CI_Controller {
      	         $fields = array('first_name','email','pin');
                  $empData = $this->common_model->fetchRecordsDynamically('HR_employee',$fields,$conditions);   
 			     
-			     // Set up SMTP
-			     $this->setSmtpSettings($this->session->userdata('decryptedData'));   
-			    
-			     // Prepare PIN email data
-			     $mailData['empName'] =  $empData[0]['first_name'];
-			     $mailData['empEmail'] =  $empData[0]['email'];
-			     $mailData['empPin'] = $pin; // Use the plain text PIN for email
-			     $mailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
+			     // Try to send the PIN + welcome emails, but never let a mail/SMTP failure
+			     // crash the request or block the employee from completing onboarding.
+			     try {
+			         // Set up SMTP
+			         $this->setSmtpSettings($this->session->userdata('decryptedData'));   
+			        
+			         // Prepare PIN email data
+			         $mailData['empName'] =  $empData[0]['first_name'];
+			         $mailData['empEmail'] =  $empData[0]['email'];
+			         $mailData['empPin'] = $pin; // Use the plain text PIN for email
+			         $mailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
+			         
+			         // Load PIN email template
+			         $pinEmailContent = $this->load->view('HR/Email/employeePin',$mailData,TRUE); 
+			         
+			         // Send PIN email
+			         $mail_from = $this->session->userdata('mail_from');
+			         $mail_protocol = $this->session->userdata('mail_protocol');
+			         $this->sendEmail($empData[0]['email'],'Your Employee PIN - Bizadmin',$pinEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
+			         
+			         // Also send the original welcome email
+			         $welcomeMailData['empName'] =  $empData[0]['first_name'];
+			         $welcomeMailData['empEmail'] =  $empData[0]['email'];
+			         $welcomeMailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
+			         $welcomeEmailContent = $this->load->view('HR/Email/employeeCred',$welcomeMailData,TRUE); 
+			         $this->sendEmail($empData[0]['email'],'BizAdmin - Welcome to HR management',$welcomeEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
+			     } catch (\Exception $e) {
+		         // Log and continue - onboarding should still complete even if the mail server fails.
+		         // Also record WHICH SMTP credentials were used (password masked) so the
+		         // failure can be traced to a specific mail config / tenant.
+		         $smtpCfg = $this->session->userdata('decryptedData');
+		         $smtpPass = isset($smtpCfg['smtp_pass']) ? $smtpCfg['smtp_pass'] : '';
+		         log_message(
+		             'error',
+		             'Onboarding email failed for emp_id '.$empId.': '.$e->getMessage()
+		             .' | smtp_host='.(isset($smtpCfg['smtp_host']) ? $smtpCfg['smtp_host'] : '(none)')
+		             .' | smtp_port='.(isset($smtpCfg['smtp_port']) ? $smtpCfg['smtp_port'] : '(none)')
+		             .' | smtp_username='.(isset($smtpCfg['smtp_username']) ? $smtpCfg['smtp_username'] : '(none)')
+		             .' | smtp_pass_len='.strlen($smtpPass)
+		             .' | smtp_pass_set='.($smtpPass !== '' ? 'yes' : 'no')
+		             .' | mail_from='.$this->session->userdata('mail_from')
+		             .' | mail_protocol='.$this->session->userdata('mail_protocol')
+		             .' | phpmailer_error='.(isset($this->phpmailer) ? $this->phpmailer->ErrorInfo : '')
+		         );
+			     }
 			     
-			     // Load PIN email template
-                 $pinEmailContent = $this->load->view('HR/Email/employeePin',$mailData,TRUE); 
-                 
-                 // Send PIN email
-                 $mail_from = $this->session->userdata('mail_from');
-                 $mail_protocol = $this->session->userdata('mail_protocol');
-                 $pinEmailSent = $this->sendEmail($empData[0]['email'],'Your Employee PIN - Bizadmin',$pinEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
-                 
-                 // Also send the original welcome email
-                 $welcomeMailData['empName'] =  $empData[0]['first_name'];
-			     $welcomeMailData['empEmail'] =  $empData[0]['email'];
-			     $welcomeMailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
-                 $welcomeEmailContent = $this->load->view('HR/Email/employeeCred',$welcomeMailData,TRUE); 
-                 $this->sendEmail($empData[0]['email'],'BizAdmin - Welcome to HR management',$welcomeEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
-                 
-                 // Update status to show emails were sent
-                 if($pinEmailSent) {
-                     
-                     
-                    
-                    $statusUpdate['date_modified'] = date("Y-m-d");
-                    $statusUpdate['status'] = 1;
-                    $statusUpdate['onboarding_status'] = 4; 
-                    $statusUpdate['pin'] = $pin;
-                  
-                     
-                     // Status 3: onborading completed
-                     $this->employee_model->update_employee($statusUpdate, $empId);
-                 }
+			     // Mark onboarding as completed regardless of email outcome so the
+			     // employee is not stuck if SMTP is misconfigured. PIN is saved so it
+			     // can be resent/retrieved by an admin later.
+			     $statusUpdate['date_modified'] = date("Y-m-d");
+			     $statusUpdate['status'] = 1;
+			     $statusUpdate['onboarding_status'] = 4; 
+			     $statusUpdate['pin'] = $pin;
+			     $this->employee_model->update_employee($statusUpdate, $empId);
         	          
 			    }
 		    $response['status'] = 'success';
@@ -378,8 +394,18 @@ class Employee extends CI_Controller {
                 // echo "success mail sent"; exit;
                 return true; // Email sent successfully
             } else {
-                // echo "failed"; exit;
-                return true; // Email sending failed
+                // Log which SMTP credentials were used (password masked) plus the error.
+                log_message(
+                    'error',
+                    'SMTP send failed | to='.(is_array($to) ? implode(',', $to) : $to)
+                    .' | host='.$this->phpmailer->Host
+                    .' | port='.$this->phpmailer->Port
+                    .' | username='.$this->phpmailer->Username
+                    .' | pass_len='.strlen((string)$this->phpmailer->Password)
+                    .' | secure='.$this->phpmailer->SMTPSecure
+                    .' | error='.$this->phpmailer->ErrorInfo
+                );
+                return false; // Email sending failed
             }
         } else {
             // Fallback to CodeIgniter's Email library for mail protocol
