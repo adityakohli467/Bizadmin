@@ -159,6 +159,12 @@ class Employee extends CI_Controller {
 			         $welcomeMailData['empName'] =  $empData[0]['first_name'];
 			         $welcomeMailData['empEmail'] =  $empData[0]['email'];
 			         $welcomeMailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
+			         // Branding: use the actual organisation name (falls back to Bizadmin).
+			         $decryptedForOrg = $this->session->userdata('decryptedData');
+			         $welcomeMailData['orgName'] = (!empty($decryptedForOrg['orz_name'])) ? $decryptedForOrg['orz_name'] : 'Bizadmin';
+			         // Password reset link must carry the tenant so the session/DB is set
+			         // even if the user never visited https://bizadmin.com.au/{tenant_id}.
+			         $welcomeMailData['resetUrl'] = base_url('auth/forgot_password').'?tenant='.urlencode($this->session->userdata('tenantIdentifier'));
 			         $welcomeEmailContent = $this->load->view('HR/Email/employeeCred',$welcomeMailData,TRUE); 
 			         $this->sendEmail($empData[0]['email'],'BizAdmin - Welcome to HR management',$welcomeEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
 			     } catch (\Exception $e) {

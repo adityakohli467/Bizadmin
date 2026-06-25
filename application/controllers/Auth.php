@@ -516,6 +516,41 @@ class Auth extends MY_Controller
 				redirect("auth/forgot_password", 'refresh');
 			}
 
+			// -----------------------------------------------------------------
+			// Prime the tenant's SMTP settings so the reset email goes out through
+			// the organisation's configured mail server instead of any hardcoded
+			// credentials. We push them into the session AND re-initialize the CI
+			// email library so Ion_auth uses them when it sends. Failures are logged
+			// (credentials masked) to make delivery problems traceable.
+			$tenantSmtp = $this->fetchSmtpSettingsAtRunTimeForCronJobs();
+			if (!empty($tenantSmtp) && !empty($tenantSmtp->smtp_host))
+			{
+				$this->configureSMTP($tenantSmtp);
+				if (!empty($tenantSmtp->mail_from))
+				{
+					$this->session->set_userdata('mail_from', $tenantSmtp->mail_from);
+				}
+				$this->load->library('email');
+				$this->email->initialize(array(
+					'protocol'     => 'smtp',
+					'smtp_host'    => $tenantSmtp->smtp_host,
+					'smtp_port'    => $tenantSmtp->smtp_port ? $tenantSmtp->smtp_port : 587,
+					'smtp_user'    => $tenantSmtp->smtp_username,
+					'smtp_pass'    => $tenantSmtp->smtp_pass,
+					'smtp_crypto'  => 'tls',
+					'smtp_timeout' => 30,
+					'mailtype'     => 'html',
+					'charset'      => 'utf-8',
+					'newline'      => "\r\n",
+					'crlf'         => "\r\n",
+				));
+				log_message('error', 'Forgot password SMTP primed | tenant='.$this->session->userdata('tenantIdentifier').' | host='.$tenantSmtp->smtp_host.' | port='.$tenantSmtp->smtp_port.' | user='.$tenantSmtp->smtp_username.' | pass_len='.strlen((string) $tenantSmtp->smtp_pass));
+			}
+			else
+			{
+				log_message('error', 'Forgot password: no tenant SMTP settings (Global_SmtpSettings) found for tenant '.$this->session->userdata('tenantIdentifier'));
+			}
+
 			// run the forgotten password method to email an activation code to the user
 			$forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
 

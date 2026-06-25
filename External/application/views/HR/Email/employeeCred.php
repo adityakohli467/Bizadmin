@@ -1,8 +1,13 @@
+<?php
+    // Branding fallbacks so the template is safe if a variable is not supplied.
+    $orgName  = isset($orgName) && $orgName !== '' ? $orgName : 'Bizadmin';
+    $resetUrl = isset($resetUrl) && $resetUrl !== '' ? $resetUrl : (isset($portalUrl) ? $portalUrl : '#');
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Bizadmin HR Portal</title>
+    <title><?php echo htmlspecialchars($orgName); ?> HR Portal</title>
 </head>
 <body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, Helvetica, sans-serif;">
 
@@ -17,7 +22,7 @@
                 <tr>
                     <td style="background:#1a2332; padding:24px; text-align:center;">
                         <h1 style="color:#ffffff; margin:0; font-size:22px; font-weight:600;">
-                            Welcome to Bizadmin
+                            Welcome to <?php echo htmlspecialchars($orgName); ?>
                         </h1>
                         <p style="color:#cfd6e0; margin:6px 0 0; font-size:14px;">
                             HR Management Portal
@@ -34,7 +39,7 @@
                         </p>
 
                         <p>
-                            Welcome to your new <strong>Bizadmin HR Portal</strong>.
+                            Welcome to your new <strong><?php echo htmlspecialchars($orgName); ?> HR Portal</strong>.
                         </p>
 
                         <p>
@@ -66,7 +71,7 @@
                                     </p>
                                     <p style="margin:10px 0 0;">
                                         <strong>Password:</strong>
-                                        <a href="<?php echo $portalUrl; ?>" style="color:#2563eb; text-decoration:none;">
+                                        <a href="<?php echo $resetUrl; ?>" style="color:#2563eb; text-decoration:none;">
                                             Reset your password here
                                         </a>
                                     </p>
@@ -80,7 +85,7 @@
 
                         <p style="margin-bottom:0;">
                             Kind regards,<br>
-                            <strong>Bizadmin Team</strong>
+                            <strong><?php echo htmlspecialchars($orgName); ?> Team</strong>
                         </p>
 
                     </td>
@@ -89,7 +94,7 @@
                 <!-- Footer -->
                 <tr>
                     <td style="background:#f4f6f8; padding:16px; text-align:center; font-size:12px; color:#6b7280;">
-                        © <?php echo date('Y'); ?> Bizadmin. All rights reserved.
+                        © <?php echo date('Y'); ?> <?php echo htmlspecialchars($orgName); ?>. All rights reserved.
                     </td>
                 </tr>
 

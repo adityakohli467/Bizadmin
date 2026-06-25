@@ -357,6 +357,14 @@ class Employees extends MY_Controller {
         'smtp_pass'         => $this->session->userdata('smtp_pass'),
     ];
 
+    // Organisation name (from the global organization_list) so the onboarding
+    // email can be branded with the actual business name instead of "Bizadmin".
+    $orgRow = $this->db->query(
+        "SELECT orz_name FROM organization_list WHERE tenant_identifier = ?",
+        array($this->tenantIdentifier)
+    )->row();
+    $dataToEncrypt['orz_name'] = (!empty($orgRow) && !empty($orgRow->orz_name)) ? $orgRow->orz_name : 'Bizadmin';
+
   
     $locationNamesList = [];
 

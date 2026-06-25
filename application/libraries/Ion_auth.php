@@ -80,25 +80,37 @@ class Ion_auth
 		if ($this->config->item('use_ci_email', 'ion_auth') && isset($email_config) && is_array($email_config))
 		{
 // 			$this->email->initialize($email_config);
-			
-			$email_smtp_config = array(
-        'protocol'     => 'smtp',
-        'smtp_host'    => 'smtp.office365.com',
-        'smtp_port'    => 587,        // Changed from 25 to 587 for Office365
-        'smtp_user'    => 'info@bizadmin.com.au',
-        'smtp_pass'    => '1800@Organic123!',
-        'smtp_crypto'  => 'tls',
-        'smtp_timeout' => 30,         // Add timeout
-        'mailtype'     => 'html',
-        'charset'      => 'utf-8',
-        'newline'      => "\r\n",
-        'crlf'         => "\r\n",
-        'encoding'     => '8bit',
-        'wordwrap'     => FALSE,
-    );
 
-    $this->email->initialize($email_smtp_config);
-    
+			// SECURITY / MULTI-TENANT: do NOT hardcode SMTP credentials here.
+			// Use the tenant's SMTP settings that the sending controller primes into
+			// the session (see Auth::forgot_password). Sending controllers may also
+			// re-initialize $this->email with the correct tenant config right before
+			// dispatching, which overrides whatever is set here.
+			$smtpHost = $this->session->userdata('smtp_host');
+			if (!empty($smtpHost))
+			{
+				$email_smtp_config = array(
+					'protocol'     => 'smtp',
+					'smtp_host'    => $smtpHost,
+					'smtp_port'    => $this->session->userdata('smtp_port') ? $this->session->userdata('smtp_port') : 587,
+					'smtp_user'    => $this->session->userdata('smtp_username'),
+					'smtp_pass'    => $this->session->userdata('smtp_pass'),
+					'smtp_crypto'  => 'tls',
+					'smtp_timeout' => 30,
+					'mailtype'     => 'html',
+					'charset'      => 'utf-8',
+					'newline'      => "\r\n",
+					'crlf'         => "\r\n",
+					'encoding'     => '8bit',
+					'wordwrap'     => FALSE,
+				);
+				$this->email->initialize($email_smtp_config);
+			}
+			else
+			{
+				$this->email->initialize($email_config);
+			}
+
 		}
 
 		$this->ion_auth_model->trigger_events('library_constructor');

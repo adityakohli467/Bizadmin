@@ -20,6 +20,23 @@ class MY_Controller extends MX_Controller
          $tenantIdentifier = $this->uri->uri_string();
           // Cookie valid for 20 Yrs
 
+         // -----------------------------------------------------------------
+         // Allow the tenant to be passed explicitly via a ?tenant= query param.
+         // This is needed for links emailed to users who may never have visited
+         // https://bizadmin.com.au/{tenant_id} on this browser (e.g. the password
+         // reset link in the onboarding email). When a valid tenant is supplied we
+         // prime the session + cookie so the rest of the resolution logic below
+         // (and the tenant DB) point at the correct organisation.
+         $tenantFromQuery = $this->input->get('tenant', TRUE);
+         if(!empty($tenantFromQuery)){
+            $tq = $this->db->query("SELECT tenant_identifier FROM organization_list WHERE tenant_identifier = ?", array($tenantFromQuery))->row();
+            if(!empty($tq)){
+                $this->session->set_userdata('tenantIdentifier', $tq->tenant_identifier);
+                setcookie('tenant_identifier', $tq->tenant_identifier, time() + (86400 * 365 * 20), '/');
+                $_COOKIE['tenant_identifier'] = $tq->tenant_identifier;
+            }
+         }
+
          if($tenantIdentifier != ''){
         // we are doing this so that to match if /cjs or /zouki are valid tenat identifier dont remove this code
         
@@ -180,7 +197,7 @@ class MY_Controller extends MX_Controller
     }
     
     public function fetchSmtpSettingsAtRunTimeForCronJobs(){
-	    $query = $this->tenantDb->query("SELECT smtp_host,mail_protocol,mail_from,reply_to, smtp_port,smtp_username, smtp_pass FROM Global_SmtpSettings WHERE  id = 1");
+	    $query = $this->tenantDb->query("SELECT smtp_host,mail_protocol,mail_from,reply_to, smtp_port,smtp_username, smtp_pass FROM Global_SmtpSettings WHERE  location_id = 9999");
         return $query->row();
     	}
     function setSmtpSettingsAtRunTimeForCronJobs(){
