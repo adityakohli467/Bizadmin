@@ -163,6 +163,82 @@
             background: #f0f9ff !important; border: 1px dashed #93c5fd !important;
             color: #2563eb !important; border-radius: 10px !important; font-weight: 500 !important;
         }
+
+        /* ===== Desktop-only chrome is hidden on mobile (mobile-first) ===== */
+        #ob-desktop-sidebar, #ob-desktop-topbar { display: none; }
+
+        /* =========================================================
+           DESKTOP LAYOUT (>= 1024px): left sidebar + topbar
+           ========================================================= */
+        @media (min-width: 1024px) {
+            /* Hide the mobile topbar + step strip */
+            #header, #tab-navigation { display: none !important; }
+
+            body.bg-gray-50 { background: #f8fafc !important; }
+
+            /* ---- Sidebar ---- */
+            #ob-desktop-sidebar {
+                display: flex; flex-direction: column;
+                position: fixed; top: 0; left: 0; width: 230px; height: 100vh;
+                background: var(--ob-navy); padding: 24px 0; z-index: 40; overflow-y: auto;
+            }
+            #ob-desktop-sidebar .ob-side-brand {
+                padding: 0 20px 20px; border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+            }
+            #ob-desktop-sidebar .ob-side-brand-name { color: #fff; font-size: 16px; font-weight: 600; }
+            #ob-desktop-sidebar .ob-side-brand-sub { color: rgba(255, 255, 255, 0.45); font-size: 11px; margin-top: 2px; }
+
+            #ob-desktop-sidebar .ob-side-steps { padding: 18px 0; flex: 1; }
+            #ob-desktop-sidebar .tab-btn {
+                display: flex; align-items: flex-start; gap: 12px; padding: 10px 20px;
+                width: 100%; background: transparent; border: none; cursor: pointer;
+                position: relative; text-align: left;
+            }
+            #ob-desktop-sidebar .tab-btn::before {
+                content: ''; position: absolute; left: 30px; top: 36px; width: 1.5px;
+                height: calc(100% - 12px); background: rgba(255, 255, 255, 0.1);
+            }
+            #ob-desktop-sidebar .tab-btn:last-child::before { display: none; }
+            #ob-desktop-sidebar .tab-btn.ob-done::before { background: var(--ob-green); }
+            #ob-desktop-sidebar .ob-step-circle { width: 22px; height: 22px; font-size: 10px; margin-top: 1px; }
+            #ob-desktop-sidebar .ob-side-info { display: flex; flex-direction: column; }
+            #ob-desktop-sidebar .ob-side-name { font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.9); line-height: 1.3; }
+            #ob-desktop-sidebar .ob-side-name.ob-name-pending { color: rgba(255, 255, 255, 0.4); }
+            #ob-desktop-sidebar .ob-side-status { font-size: 10px; margin-top: 1px; }
+            #ob-desktop-sidebar .ob-side-status.ob-st-done { color: #86efac; }
+            #ob-desktop-sidebar .ob-side-status.ob-st-active { color: rgba(255, 255, 255, 0.5); }
+            #ob-desktop-sidebar .ob-side-status.ob-st-pending { color: rgba(255, 255, 255, 0.25); }
+
+            #ob-desktop-sidebar .ob-side-footer { padding: 16px 20px 0; border-top: 0.5px solid rgba(255, 255, 255, 0.1); }
+            #ob-desktop-sidebar .ob-progress-label { font-size: 10px; color: rgba(255, 255, 255, 0.45); margin-bottom: 6px; }
+            #ob-desktop-sidebar .ob-progress-bar { height: 3px; background: rgba(255, 255, 255, 0.12); border-radius: 10px; overflow: hidden; }
+            #ob-desktop-sidebar .ob-progress-fill { height: 100%; background: var(--ob-green); width: 0%; border-radius: 10px; transition: width 0.3s ease; }
+
+            /* ---- Desktop topbar ---- */
+            #ob-desktop-topbar {
+                display: flex; align-items: center; justify-content: space-between;
+                background: #fff; border-bottom: 0.5px solid #e2e8f0; padding: 16px 28px;
+                margin-left: 230px; position: sticky; top: 0; z-index: 30;
+            }
+            #ob-desktop-topbar .ob-page-title { font-size: 16px; font-weight: 600; color: #1e293b; }
+            #ob-desktop-topbar .ob-page-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+            #ob-desktop-topbar .ob-save-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #64748b; }
+            #ob-desktop-topbar .ob-save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ob-green); }
+
+            /* ---- Main content shifted right of the sidebar ---- */
+            body > .alert { margin-left: 230px; }
+            #footer { margin-left: 230px; }
+            #main-content {
+                margin-left: 230px !important; max-width: none !important;
+                padding: 24px 28px 60px !important;
+            }
+            #main-content > small { display: none; }
+            .tab-content .tab-pane { padding: 22px; }
+            /* Give the per-step save button a desktop-appropriate (auto) width */
+            #save_continue_personal, #save_continue_emergency, #save_continue_bank,
+            #save_continue_tax, #save_continue_police, #save_continue_annuation,
+            #save_continue_privacy { width: auto !important; min-width: 220px; }
+        }
     </style>
 
 </head>
@@ -225,12 +301,72 @@
         <?php } ?>
     </div>
 </nav>
+
+<!-- Desktop sidebar navigation (shown only on >=1024px) -->
+<aside id="ob-desktop-sidebar">
+    <div class="ob-side-brand">
+        <div class="ob-side-brand-name">BizAdmin</div>
+        <div class="ob-side-brand-sub">Employee onboarding</div>
+    </div>
+    <div class="ob-side-steps">
+        <?php foreach ($tabs as $index => $tab):
+            $isActive = $index === 0 ? 'active' : ''; ?>
+            <button
+                    type="button"
+                    class="tab-btn <?php echo $isActive; ?>"
+                    data-tab="<?php echo $tab['id']; ?>"
+                    rel="<?php echo $tab['id']; ?>"
+                    role="tab"
+                    aria-controls="<?php echo $tab['id']; ?>">
+                <span class="ob-step-circle"><?php echo $index + 1; ?></span>
+                <span class="ob-side-info">
+                    <span class="ob-side-name"><?php echo $tab['label']; ?></span>
+                    <span class="ob-side-status"></span>
+                </span>
+            </button>
+        <?php endforeach; ?>
+    </div>
+    <div class="ob-side-footer">
+        <div class="ob-progress-label" id="ob-progress-label">0% complete</div>
+        <div class="ob-progress-bar"><div class="ob-progress-fill" id="ob-progress-fill"></div></div>
+    </div>
+</aside>
+
+<!-- Desktop topbar (shown only on >=1024px) -->
+<div id="ob-desktop-topbar">
+    <div>
+        <div class="ob-page-title" id="ob-page-title">Personal Details</div>
+        <div class="ob-page-sub" id="ob-page-sub">Tell us about yourself</div>
+    </div>
+    <div class="ob-save-indicator"><span class="ob-save-dot"></span> Draft saved</div>
+</div>
+
 <script>
     // Onboarding tab navigation config (driven by HR "Onboarding Form Customize" settings)
     var ONBOARDING_FLOW_ORDER = ['personalDetails','emergencyDetails','bankDetails','taxDetails','policeClearance','superAnnuation','privacyPolicy'];
     var ONBOARDING_ENABLED_TABS = <?php echo json_encode(array_map(function($t){ return $t['id']; }, $tabs)); ?>;
     var ONBOARDING_TAB_LABELS = <?php echo json_encode(array_reduce($tabs, function($carry, $t){ $carry[$t['id']] = $t['label']; return $carry; }, [])); ?>;
     var ONBOARDING_EMP_ID = '<?php echo $employee['emp_id']; ?>';
+
+    // Desktop topbar copy per step (page title + helper subtitle)
+    var ONBOARDING_TAB_TITLES = {
+        personalDetails: 'Personal Details',
+        emergencyDetails: 'Emergency Details',
+        bankDetails: 'Bank Account Details',
+        policeClearance: 'Police Clearance',
+        taxDetails: 'Tax Details',
+        superAnnuation: 'Superannuation',
+        privacyPolicy: 'Company Policies'
+    };
+    var ONBOARDING_TAB_SUBTITLES = {
+        personalDetails: 'Tell us about yourself',
+        emergencyDetails: 'Who we should contact in an emergency',
+        bankDetails: 'Add your bank account(s) for payroll deposits',
+        policeClearance: 'Upload your police clearance certificate',
+        taxDetails: 'Provide your tax file information',
+        superAnnuation: 'Choose your superannuation fund',
+        privacyPolicy: 'Review and accept company policies'
+    };
 
     // Update the topbar subtitle and step-circle / connector states for the active step
     function updateOnboardingProgress(activeTabId){
@@ -248,6 +384,20 @@
             } else {
                 $circle.html(i + 1);
             }
+
+            // Desktop sidebar status label (Completed / In progress / Not started)
+            var $sideName = $("#ob-desktop-sidebar .tab-btn[data-tab='" + id + "'] .ob-side-name");
+            var $sideStatus = $("#ob-desktop-sidebar .tab-btn[data-tab='" + id + "'] .ob-side-status");
+            $sideName.removeClass('ob-name-pending');
+            $sideStatus.removeClass('ob-st-done ob-st-active ob-st-pending');
+            if(i < activeIdx){
+                $sideStatus.text('Completed').addClass('ob-st-done');
+            } else if(i === activeIdx){
+                $sideStatus.text('In progress').addClass('ob-st-active');
+            } else {
+                $sideStatus.text('Not started').addClass('ob-st-pending');
+                $sideName.addClass('ob-name-pending');
+            }
         });
 
         $('.ob-step-line').each(function(i){
@@ -255,8 +405,16 @@
             else { $(this).removeClass('ob-done'); }
         });
 
+        // Desktop progress bar
+        var pct = Math.round((activeIdx / order.length) * 100);
+        $('#ob-progress-fill').css('width', pct + '%');
+        $('#ob-progress-label').text(pct + '% complete');
+
+        // Topbar subtitle (mobile) + page title/subtitle (desktop)
         var label = ONBOARDING_TAB_LABELS[activeTabId] || '';
         $('#onboardingStepSub').text('Step ' + (activeIdx + 1) + ' of ' + order.length + ' \u00B7 ' + label);
+        $('#ob-page-title').text(ONBOARDING_TAB_TITLES[activeTabId] || label);
+        $('#ob-page-sub').text(ONBOARDING_TAB_SUBTITLES[activeTabId] || '');
     }
 
     function getNextEnabledTab(currentId){
