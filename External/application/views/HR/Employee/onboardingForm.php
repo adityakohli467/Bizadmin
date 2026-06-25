@@ -646,6 +646,7 @@
                         </div>
 
                         <!-- Face Verification -->
+                        <?php if(!empty($faceVerificationEnabled)): ?>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Face Verification
@@ -699,6 +700,7 @@
                             <img id="capturedImagePreview" src="" width="320" height="240"
                                  class="hidden rounded-lg mt-3" />
                         </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Address Section Header -->

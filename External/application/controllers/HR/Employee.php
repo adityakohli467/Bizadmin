@@ -43,6 +43,13 @@ class Employee extends CI_Controller {
         $tabsCfg = (isset($onboardingTabsCfg[0]['data']) && $onboardingTabsCfg[0]['data'] != '') ? json_decode($onboardingTabsCfg[0]['data'], true) : [];
         $data['onboardingTabsConfig'] = is_array($tabsCfg) ? $tabsCfg : [];
 
+        // Face verification reuses the "Enable face verification for timesheet clockIn"
+        // toggle (HR > Settings > General Settings). When it is off, the onboarding
+        // form must not show the Face Verification step.
+        $faceVerifyCfg = $this->common_model->fetchRecordsDynamically('HR_configuration', ['data'], array('location' => $location_id, 'configureFor' => 'feature_toggle'));
+        $faceVerifyVal = (isset($faceVerifyCfg[0]['data']) && $faceVerifyCfg[0]['data'] != '') ? json_decode($faceVerifyCfg[0]['data'], true) : [];
+        $data['faceVerificationEnabled'] = (isset($faceVerifyVal['value']) && $faceVerifyVal['value'] === '1');
+
         if(isset($employeeData[0]['onboarding_status']) && $employeeData[0]['onboarding_status'] == 4){
          echo "Onboarding has been already completed,Please check your email for the login credentials";  exit; 
         }
