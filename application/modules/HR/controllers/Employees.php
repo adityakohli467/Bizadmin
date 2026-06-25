@@ -395,15 +395,24 @@ class Employees extends MY_Controller {
     // Send list of locations to email template
     $Maildata['locationNamesList'] = $locationNamesList;  
 
+    // Company (organisation) name + a readable location label for the email
+    // subject and greeting.
+    $Maildata['orgName'] = $dataToEncrypt['orz_name'];
+    $locationLabel = !empty($locationNamesList) ? implode(', ', $locationNamesList) : '';
+    $Maildata['locationLabel'] = $locationLabel;
+
    
     $mailContent = $this->load->view('emails/onboardingEmail', $Maildata, TRUE);
 
   
     $emailSendTo = $this->input->post('email');
 
+    $onboardingSubject = 'Complete Your Employee Onboarding - ' . $Maildata['orgName']
+        . ($locationLabel !== '' ? ' ' . $locationLabel : '');
+
    $mailStatus = $this->sendEmail(
     $emailSendTo,
-    'BizAdmin - Welcome to HR management',
+    $onboardingSubject,
     $mailContent,
     $this->session->userdata('mail_from')
 );

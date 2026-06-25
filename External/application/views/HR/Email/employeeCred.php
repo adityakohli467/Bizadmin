@@ -2,6 +2,10 @@
     // Branding fallbacks so the template is safe if a variable is not supplied.
     $orgName  = isset($orgName) && $orgName !== '' ? $orgName : 'Bizadmin';
     $resetUrl = isset($resetUrl) && $resetUrl !== '' ? $resetUrl : (isset($portalUrl) ? $portalUrl : '#');
+    // Portal link: href uses the full URL, the visible label drops the https:// prefix.
+    $portalUrl   = isset($portalUrl) ? $portalUrl : '#';
+    $portalLabel = isset($portalLabel) && $portalLabel !== '' ? $portalLabel : preg_replace('#^https?://#', '', $portalUrl);
+    $empPin      = isset($empPin) ? $empPin : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -63,16 +67,25 @@
                                     <p style="margin:0;">
                                         <strong>Portal Link:</strong><br>
                                         <a href="<?php echo $portalUrl; ?>" style="color:#2563eb; text-decoration:none;">
-                                            <?php echo $portalUrl; ?>
+                                            <?php echo htmlspecialchars($portalLabel); ?>
                                         </a>
                                     </p>
                                     <p style="margin:10px 0 0;">
                                         <strong>Username:</strong> <?php echo htmlspecialchars($empEmail); ?>
                                     </p>
+                                    <?php if ($empPin !== '') : ?>
+                                    <p style="margin:10px 0 0;">
+                                        <strong>Your Employee PIN:</strong>
+                                        <span style="display:inline-block; font-size:18px; font-weight:bold; color:#1a2332; letter-spacing:2px;"><?php echo htmlspecialchars($empPin); ?></span>
+                                    </p>
+                                    <p style="margin:4px 0 0; font-size:12px; color:#6b7280;">
+                                        Use this PIN to clock in/out. Keep it secure and do not share it.
+                                    </p>
+                                    <?php endif; ?>
                                     <p style="margin:10px 0 0;">
                                         <strong>Password:</strong>
                                         <a href="<?php echo $resetUrl; ?>" style="color:#2563eb; text-decoration:none;">
-                                            Reset your password here
+                                            Set your password here
                                         </a>
                                     </p>
                                 </td>

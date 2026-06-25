@@ -142,36 +142,58 @@ class Employee extends CI_Controller {
      	         $fields = array('first_name','email','pin');
                  $empData = $this->common_model->fetchRecordsDynamically('HR_employee',$fields,$conditions);   
 			     
-			     // Try to send the PIN + welcome emails, but never let a mail/SMTP failure
-			     // crash the request or block the employee from completing onboarding.
+			     // Try to send the combined welcome email (PIN + direct password reset
+			     // link in ONE message), but never let a mail/SMTP failure crash the
+			     // request or block the employee from completing onboarding.
 			     try {
 			         // Set up SMTP
 			         $this->setSmtpSettings($this->session->userdata('decryptedData'));   
 			        
-			         // Prepare PIN email data
-			         $mailData['empName'] =  $empData[0]['first_name'];
-			         $mailData['empEmail'] =  $empData[0]['email'];
-			         $mailData['empPin'] = $pin; // Use the plain text PIN for email
-			         $mailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
-			         
-			         // Load PIN email template
-			         $pinEmailContent = $this->load->view('HR/Email/employeePin',$mailData,TRUE); 
-			         
-			         // Send PIN email
 			         $mail_from = $this->session->userdata('mail_from');
 			         $mail_protocol = $this->session->userdata('mail_protocol');
-			         $this->sendEmail($empData[0]['email'],'Your Employee PIN - Bizadmin',$pinEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
-			         
-			         // Also send the original welcome email
-			         $welcomeMailData['empName'] =  $empData[0]['first_name'];
-			         $welcomeMailData['empEmail'] =  $empData[0]['email'];
-			         $welcomeMailData['portalUrl'] = base_url().''.$this->session->userdata('tenantIdentifier');
+			         $tenantIdentifier = $this->session->userdata('tenantIdentifier');
+
+			         // Generate a one-time password reset token (the same selector/validator
+			         // scheme Ion_auth uses) and store it against the employee's login
+			         // account so the email can link STRAIGHT to the set-password page
+			         // (auth/reset_password/{code}) instead of asking the employee to
+			         // request yet another reset email. password_verify() reads the cost
+			         // from the hash, so the main app validates it regardless of bcrypt cost.
+			         // This does NOT touch the normal "forgot password" flow, which keeps
+			         // generating its own token on demand.
+			         $resetUrl = '';
+			         try {
+			             $selector  = bin2hex(random_bytes(10));   // 20 hex chars
+			             $validator = bin2hex(random_bytes(40));   // 80 hex chars
+			             $validatorHashed = password_hash($validator, PASSWORD_BCRYPT);
+			             $this->common_model->commonRecordUpdate('Global_users', 'email', $empData[0]['email'], array(
+			                 'forgotten_password_selector' => $selector,
+			                 'forgotten_password_code'     => $validatorHashed,
+			                 'forgotten_password_time'     => time(),
+			             ));
+			             $userCode = $selector . '.' . $validator;
+			             $resetUrl = base_url('auth/reset_password/' . $userCode) . '?tenant=' . urlencode($tenantIdentifier);
+			         } catch (\Exception $tokenErr) {
+			             // Fall back to the request-a-reset page if token generation fails.
+			             $resetUrl = base_url('auth/forgot_password') . '?tenant=' . urlencode($tenantIdentifier);
+			             log_message('error', 'Onboarding reset-token generation failed for emp_id '.$empId.': '.$tokenErr->getMessage());
+			         }
+
 			         // Branding: use the actual organisation name (falls back to Bizadmin).
 			         $decryptedForOrg = $this->session->userdata('decryptedData');
-			         $welcomeMailData['orgName'] = (!empty($decryptedForOrg['orz_name'])) ? $decryptedForOrg['orz_name'] : 'Bizadmin';
-			         // Password reset link must carry the tenant so the session/DB is set
-			         // even if the user never visited https://bizadmin.com.au/{tenant_id}.
-			         $welcomeMailData['resetUrl'] = base_url('auth/forgot_password').'?tenant='.urlencode($this->session->userdata('tenantIdentifier'));
+
+			         // Combined welcome email data (PIN + reset link in ONE email).
+			         $welcomeMailData = array();
+			         $welcomeMailData['empName']     = $empData[0]['first_name'];
+			         $welcomeMailData['empEmail']    = $empData[0]['email'];
+			         $welcomeMailData['empPin']      = $pin;
+			         $welcomeMailData['orgName']     = (!empty($decryptedForOrg['orz_name'])) ? $decryptedForOrg['orz_name'] : 'Bizadmin';
+			         // Portal link: href keeps the full URL, label is shown WITHOUT the
+			         // "https://" prefix (e.g. bizadmin.com.au/xs).
+			         $welcomeMailData['portalUrl']   = base_url() . $tenantIdentifier;
+			         $welcomeMailData['portalLabel'] = preg_replace('#^https?://#', '', base_url() . $tenantIdentifier);
+			         $welcomeMailData['resetUrl']    = $resetUrl;
+
 			         $welcomeEmailContent = $this->load->view('HR/Email/employeeCred',$welcomeMailData,TRUE); 
 			         $this->sendEmail($empData[0]['email'],'BizAdmin - Welcome to HR management',$welcomeEmailContent,$mail_from,'','Bizadmin HR Team',$mail_protocol);
 			     } catch (\Exception $e) {
