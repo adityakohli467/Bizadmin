@@ -38,32 +38,140 @@
         document.addEventListener("DOMContentLoaded", initAutocomplete);
     </script>
 
+    <!-- Mobile-first onboarding theme (matches BizAdmin mobile onboarding UX mockup) -->
+    <style id="obMobileTheme">
+        :root { --ob-navy: #1a2f52; --ob-green: #22c55e; }
 
+        body.bg-gray-50 { background: #f4f5f7 !important; }
+
+        /* ===== Topbar ===== */
+        #header {
+            background: var(--ob-navy) !important;
+            padding: 16px 20px 14px !important;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.12) !important;
+        }
+        #header .ob-topbar-title {
+            color: #fff; font-size: 16px; font-weight: 600;
+            text-align: center; letter-spacing: 0.3px; margin: 0;
+        }
+        #header .ob-topbar-sub {
+            color: rgba(255, 255, 255, 0.6); font-size: 12px;
+            text-align: center; margin-top: 3px;
+        }
+
+        /* ===== Step progress ===== */
+        #tab-navigation {
+            background: var(--ob-navy) !important;
+            border: none !important; box-shadow: none !important;
+        }
+        #tab-navigation .ob-steps {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 0; padding: 2px 14px 16px; max-width: 720px; margin: 0 auto;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+        }
+        #tab-navigation .tab-btn {
+            background: transparent !important; border: none !important;
+            padding: 0 !important; margin: 0 !important; box-shadow: none !important;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            flex: 0 0 auto; min-width: 46px; cursor: pointer;
+        }
+        #tab-navigation .tab-btn:hover { background: transparent !important; }
+        .ob-step-circle {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600;
+            background: rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.55);
+            transition: all 0.2s ease;
+        }
+        .tab-btn.ob-done .ob-step-circle { background: var(--ob-green); color: #fff; }
+        .tab-btn.active .ob-step-circle { background: #fff; color: var(--ob-navy); }
+        .ob-step-label {
+            font-size: 10px; color: rgba(255, 255, 255, 0.55);
+            text-align: center; line-height: 1.2; max-width: 62px;
+        }
+        .tab-btn.active .ob-step-label { color: rgba(255, 255, 255, 0.95); font-weight: 600; }
+        .ob-step-line {
+            flex: 1 1 auto; height: 2px; min-width: 8px; align-self: flex-start;
+            margin: 14px 3px 0; background: rgba(255, 255, 255, 0.15);
+        }
+        .ob-step-line.ob-done { background: var(--ob-green); }
+
+        /* ===== Content shell ===== */
+        #main-content {
+            max-width: 720px !important; margin: 0 auto !important;
+            padding: 14px 16px 110px !important;
+        }
+        #main-content > small {
+            display: block; font-size: 11px; color: #64748b;
+            margin-bottom: 12px; line-height: 1.5;
+        }
+        /* Neutralise the old outer card so each tab-pane becomes its own card */
+        #main-content > .bg-white {
+            background: transparent !important; box-shadow: none !important;
+            border: none !important; padding: 0 !important;
+        }
+        .tab-content .tab-pane {
+            background: #fff; border-radius: 14px; padding: 16px;
+            border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+
+        /* ===== Inputs ===== */
+        .tab-content input[type="text"],
+        .tab-content input[type="email"],
+        .tab-content input[type="tel"],
+        .tab-content input[type="number"],
+        .tab-content input[type="date"],
+        .tab-content input[type="password"],
+        .tab-content input[type="search"],
+        .tab-content input[type="url"],
+        .tab-content input[type="file"],
+        .tab-content select,
+        .tab-content textarea {
+            width: 100% !important; background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important; border-radius: 8px !important;
+            padding: 10px 12px !important; font-size: 14px !important;
+            color: #1e293b !important; box-shadow: none !important;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .tab-content input:focus,
+        .tab-content select:focus,
+        .tab-content textarea:focus {
+            border-color: #3b82f6 !important; background: #fff !important;
+            outline: none !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        }
+        .tab-content label:not(:has(input)):not(:has(.form-check-input)) {
+            font-size: 12px !important; color: #64748b !important; font-weight: 500 !important;
+        }
+        .tab-content .fieldError { color: #ef4444 !important; font-size: 11px; display: block; margin-top: 4px; }
+
+        /* ===== Save / continue buttons ===== */
+        #save_continue_personal, #save_continue_emergency, #save_continue_bank,
+        #save_continue_tax, #save_continue_police, #save_continue_annuation,
+        #save_continue_privacy {
+            width: 100% !important; background: var(--ob-navy) !important; color: #fff !important;
+            border: none !important; border-radius: 10px !important; padding: 13px !important;
+            font-size: 14px !important; font-weight: 600 !important; margin-top: 10px !important;
+            cursor: pointer; box-shadow: 0 3px 8px rgba(26, 47, 82, 0.25) !important;
+            transition: background 0.15s ease;
+        }
+        #save_continue_personal:hover, #save_continue_emergency:hover, #save_continue_bank:hover,
+        #save_continue_tax:hover, #save_continue_police:hover, #save_continue_annuation:hover,
+        #save_continue_privacy:hover { background: #16243f !important; }
+
+        /* ===== Add-account button (bank tab) ===== */
+        #addBankAccountBtn {
+            background: #f0f9ff !important; border: 1px dashed #93c5fd !important;
+            color: #2563eb !important; border-radius: 10px !important; font-weight: 500 !important;
+        }
+    </style>
 
 </head>
 
 <body class="bg-gray-50 font-sans">
 
-<header id="header" class="bg-navy text-white py-5 px-6 shadow-xl">
-    <div class="max-w-7xl mx-auto">
-
-        <!-- Mobile & Tablet: 2 lines | Desktop: 1 line -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-
-            <!-- Logo - Always top-left -->
-            <div class="text-2xl md:text-3xl font-extrabold tracking-wider">
-                BizAdmin
-            </div>
-
-            <!-- Title - Centered on mobile, middle on desktop -->
-            <h1 class="text-xl md:text-2xl font-bold text-center sm:text-left order-first sm:order-none">
-                Onboarding Form
-            </h1>
-
-            <!-- Empty spacer to balance layout on desktop -->
-            <div class="hidden sm:block w-32"></div>
-        </div>
-    </div>
+<header id="header" class="bg-navy text-white shadow-xl">
+    <p class="ob-topbar-title">Onboarding</p>
+    <p class="ob-topbar-sub" id="onboardingStepSub">Step 1 · Personal Details</p>
 </header>
 
 
@@ -74,66 +182,82 @@
     </div>
 <?php } ?>
 <nav id="tab-navigation" class="bg-white border-b border-gray-200 shadow-sm">
-    <div class="max-w-12xl mx-auto px-6">
-        <div class="flex space-x-1 overflow-x-auto">
-            <?php
-            $tabs = [
-                ['id' => 'personalDetails', 'label' => 'Personal Details', 'step' => 0],
-                ['id' => 'emergencyDetails', 'label' => 'Emergency Details', 'step' => 1],
-                ['id' => 'bankDetails', 'label' => 'Bank Details', 'step' => 2],
-                ['id' => 'policeClearance', 'label' => 'Police Clearance', 'step' => 3],
-                ['id' => 'taxDetails', 'label' => 'Tax Details', 'step' => 4],
-                ['id' => 'superAnnuation', 'label' => 'Super Annuation', 'step' => 5],
-                ['id' => 'privacyPolicy', 'label' => 'Policies', 'step' => 6]
-            ];
+    <div class="ob-steps">
+        <?php
+        $tabs = [
+            ['id' => 'personalDetails', 'label' => 'Personal Details', 'short' => 'Personal', 'step' => 0],
+            ['id' => 'emergencyDetails', 'label' => 'Emergency Details', 'short' => 'Emergency', 'step' => 1],
+            ['id' => 'bankDetails', 'label' => 'Bank Details', 'short' => 'Bank', 'step' => 2],
+            ['id' => 'policeClearance', 'label' => 'Police Clearance', 'short' => 'Police', 'step' => 3],
+            ['id' => 'taxDetails', 'label' => 'Tax Details', 'short' => 'Tax', 'step' => 4],
+            ['id' => 'superAnnuation', 'label' => 'Super Annuation', 'short' => 'Super', 'step' => 5],
+            ['id' => 'privacyPolicy', 'label' => 'Policies', 'short' => 'Policies', 'step' => 6]
+        ];
 
-            // Show/hide tabs based on the "Onboarding Form Customize" settings (per location)
-            $tabConfig = isset($onboardingTabsConfig) && is_array($onboardingTabsConfig) ? $onboardingTabsConfig : [];
-            $isTabEnabled = function($id) use ($tabConfig) {
-                return !isset($tabConfig[$id]) || $tabConfig[$id] == '1' || $tabConfig[$id] === 1;
-            };
-            $tabs = array_values(array_filter($tabs, function($t) use ($isTabEnabled) {
-                return $isTabEnabled($t['id']);
-            }));
+        // Show/hide tabs based on the "Onboarding Form Customize" settings (per location)
+        $tabConfig = isset($onboardingTabsConfig) && is_array($onboardingTabsConfig) ? $onboardingTabsConfig : [];
+        $isTabEnabled = function($id) use ($tabConfig) {
+            return !isset($tabConfig[$id]) || $tabConfig[$id] == '1' || $tabConfig[$id] === 1;
+        };
+        $tabs = array_values(array_filter($tabs, function($t) use ($isTabEnabled) {
+            return $isTabEnabled($t['id']);
+        }));
 
-            $stepsCompleted = isset($employee['stepsCompleted']) ? $employee['stepsCompleted'] : 0;
+        $stepsCompleted = isset($employee['stepsCompleted']) ? $employee['stepsCompleted'] : 0;
+        $tabCount = count($tabs);
 
-            foreach ($tabs as $index => $tab) {
-                $isActive = $index === 0 ? 'active' : '';
-                $isCompleted = $stepsCompleted > $tab['step'];
-
-                $activeClasses = 'border-navy text-navy bg-blue-50';
-                $inactiveClasses = 'text-gray-600 hover:text-navy hover:bg-gray-50 border-transparent';
-
-                $buttonClasses = $isActive
-                    ? "tab-btn {$isActive} px-6 py-4 text-sm font-medium whitespace-nowrap border-b-3 {$activeClasses}"
-                    : "tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-3 {$inactiveClasses}";
-                ?>
-                <button
-                        class="<?php echo $buttonClasses; ?>"
-                        data-tab="<?php echo $tab['id']; ?>"
-                        rel="<?php echo $tab['id']; ?>"
-                        role="tab"
-                        aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
-                        aria-controls="<?php echo $tab['id']; ?>">
-                    <span class="inline-flex items-center gap-2">
-                        <?php echo $tab['label']; ?>
-                        <?php if ($isCompleted): ?>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                done
-                            </span>
-                        <?php endif; ?>
-                    </span>
-                </button>
-            <?php } ?>
-        </div>
+        foreach ($tabs as $index => $tab) {
+            $isActive = $index === 0 ? 'active' : '';
+            ?>
+            <button
+                    class="tab-btn <?php echo $isActive; ?>"
+                    data-tab="<?php echo $tab['id']; ?>"
+                    rel="<?php echo $tab['id']; ?>"
+                    role="tab"
+                    aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
+                    aria-controls="<?php echo $tab['id']; ?>">
+                <span class="ob-step-circle"><?php echo $index + 1; ?></span>
+                <span class="ob-step-label"><?php echo $tab['short']; ?></span>
+            </button>
+            <?php if ($index < $tabCount - 1): ?>
+                <span class="ob-step-line" aria-hidden="true"></span>
+            <?php endif; ?>
+        <?php } ?>
     </div>
 </nav>
 <script>
     // Onboarding tab navigation config (driven by HR "Onboarding Form Customize" settings)
     var ONBOARDING_FLOW_ORDER = ['personalDetails','emergencyDetails','bankDetails','taxDetails','policeClearance','superAnnuation','privacyPolicy'];
     var ONBOARDING_ENABLED_TABS = <?php echo json_encode(array_map(function($t){ return $t['id']; }, $tabs)); ?>;
+    var ONBOARDING_TAB_LABELS = <?php echo json_encode(array_reduce($tabs, function($carry, $t){ $carry[$t['id']] = $t['label']; return $carry; }, [])); ?>;
     var ONBOARDING_EMP_ID = '<?php echo $employee['emp_id']; ?>';
+
+    // Update the topbar subtitle and step-circle / connector states for the active step
+    function updateOnboardingProgress(activeTabId){
+        var order = ONBOARDING_ENABLED_TABS;
+        var activeIdx = order.indexOf(activeTabId);
+        if(activeIdx === -1){ return; }
+
+        order.forEach(function(id, i){
+            var $btn = $(".tab-btn[data-tab='" + id + "']");
+            var $circle = $btn.find('.ob-step-circle');
+            $btn.removeClass('ob-done');
+            if(i < activeIdx){
+                $btn.addClass('ob-done');
+                $circle.html('<i class="fas fa-check"></i>');
+            } else {
+                $circle.html(i + 1);
+            }
+        });
+
+        $('.ob-step-line').each(function(i){
+            if(i < activeIdx){ $(this).addClass('ob-done'); }
+            else { $(this).removeClass('ob-done'); }
+        });
+
+        var label = ONBOARDING_TAB_LABELS[activeTabId] || '';
+        $('#onboardingStepSub').text('Step ' + (activeIdx + 1) + ' of ' + order.length + ' \u00B7 ' + label);
+    }
 
     function getNextEnabledTab(currentId){
         var startIdx = ONBOARDING_FLOW_ORDER.indexOf(currentId);
@@ -1845,17 +1969,31 @@
         // 	annuation
         $('#save_continue_annuation').click(function(e){
 
-            if ($(".check_super_type").val() === 'yes') {
-                let hasError = false;
+            // Determine the selected option from the CURRENTLY VISIBLE sub-tab
+            // (YesSuper = existing fund, NoSuper = employer-nominated fund).
+            // The hidden check_super_type / nominatedByEmployer fields can be out of
+            // sync with what is displayed, so we sync them here to the visible tab.
+            var isYesSuper = $('#YesSuper').is(':visible');
+            if (isYesSuper) {
+                $('.check_super_type').val('yes');
+                $('#nominatedByEmployer').val(0);
+            } else {
+                $('.check_super_type').val('no');
+                $('#nominatedByEmployer').val(1);
+            }
 
-                // Loop through all inputs with class "required" inside the form
-                $("#annuationDetailsForm .required").each(function() {
-                    if ($(this).attr("id") == "select_nominatedByEmployer") {
-                        return; // continues to next iteration
-                    }
+            $('.fieldError').html('');
+            let err = 0;
+
+            if (isYesSuper) {
+                let hasError = false;
+                // Only validate the visible "Yes" (existing fund) section
+                $("#YesSuper .required").each(function() {
                     if ($(this).val() === '' || $(this).val() === null) {
-                        $(this).addClass('border-red-500'); // optional: highlight empty fields
+                        $(this).addClass('border-red-500'); // highlight empty fields
                         hasError = true;
+                    } else {
+                        $(this).removeClass('border-red-500');
                     }
                 });
 
@@ -1863,12 +2001,12 @@
                     alert("Please fill in all required superannuation fund details.");
                     return false; // stop form submission
                 }
-            }
-
-            $('.fieldError').html('');
-            let err=0;
-            if($(".check_super_type").val() == 'no'){
-                if($('#select_nominatedByEmployer').is(":checked")){}else{ $('#nominatedByEmployer_error').html('Please check the checkbox'); err=1; }
+            } else {
+                // "No" tab: must agree to use the employer-nominated fund
+                if (!$('#select_nominatedByEmployer').is(":checked")) {
+                    $('#nominatedByEmployer_error').html('Please check the checkbox');
+                    err = 1;
+                }
             }
 
             if(err == '0'){
@@ -2028,6 +2166,9 @@
             activateTab(tabId);
         });
 
+        // Initialise the step progress indicator for the first active tab
+        updateOnboardingProgress($('.tab-btn.active').data('tab') || ONBOARDING_ENABLED_TABS[0]);
+
     });
 
 
@@ -2044,6 +2185,10 @@
         // Switch tab panes
         $(".tab-pane").hide();
         $("#" + tabId).show();
+
+        // Update step circles, connectors and topbar subtitle, then scroll to top
+        if (typeof updateOnboardingProgress === 'function') { updateOnboardingProgress(tabId); }
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
     }
 </script>
 
