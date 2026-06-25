@@ -69,6 +69,13 @@ class Auth extends MY_Controller
 			}
 
 // 			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'index', $this->data);
+          // role id 4 belongs to employee, send them to their own dashboard (HR/104)
+          // instead of the generic dashboard/checklist flow. Admin/manager are unchanged.
+          $groups = $this->ion_auth->get_users_groups()->result();
+          $role_id = !empty($groups) ? $groups[0]->id : null;
+          if($role_id == 4){
+              redirect('auth/dashboardEmployee', 'refresh');
+          }
           redirect('auth/dashboard', 'refresh');
 		}
 	}
