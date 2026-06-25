@@ -164,6 +164,18 @@
             color: #2563eb !important; border-radius: 10px !important; font-weight: 500 !important;
         }
 
+        /* ===== Percentage chip selector (bank tab) ===== */
+        .ob-chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+        .ob-chip {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px;
+            padding: 7px 16px; font-size: 13px; color: #475569; cursor: pointer;
+            user-select: none; transition: all 0.15s ease; line-height: 1.2;
+        }
+        .ob-chip:hover { border-color: #cbd5e1; }
+        .ob-chip.active { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; font-weight: 600; }
+        .ob-chip-custom-wrap { margin-top: 10px; max-width: 220px; }
+        .ob-chip-custom-wrap.hidden { display: none; }
+
         /* ===== Desktop-only chrome is hidden on mobile (mobile-first) ===== */
         #ob-desktop-sidebar, #ob-desktop-topbar { display: none; }
 
@@ -817,7 +829,7 @@
                     <div id="bankAccount1" class="mb-8 p-6 bg-gray-50 rounded-lg border">
                         <h5 class="text-lg font-bold text-gray-800 mb-4">Bank Account Details</h5>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <!-- Bank Name -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -877,21 +889,29 @@
                                   focus:outline-none focus:ring-2 focus:ring-navy">
                                 <span class="fieldError text-red-500 text-sm" id="account_no_1_error"></span>
                             </div>
+                        </div>
 
-                            <!-- % to Deposit -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    % to Deposit <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text"
-                                       id="percentage_1"
-                                       name="percentage_1"
-                                       value="<?php echo !empty($employee['percentage_1']) ? $employee['percentage_1'] : '100'; ?>"
-                                       autocomplete="off"
-                                       class="form-control required w-full px-3 py-2 border border-gray-300 rounded-lg
-                                  focus:outline-none focus:ring-2 focus:ring-navy">
-                                <span class="fieldError text-red-500 text-sm" id="percentage_1_error"></span>
+                        <!-- % of wages to deposit (chip selector) -->
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                % of wages to deposit <span class="text-red-500">*</span>
+                            </label>
+                            <input type="hidden" id="percentage_1" name="percentage_1" class="required"
+                                   value="<?php echo !empty($employee['percentage_1']) ? $employee['percentage_1'] : '100'; ?>">
+                            <div class="ob-chip-row" id="percentage_1_chips" data-target="percentage_1">
+                                <span class="ob-chip" data-value="25">25%</span>
+                                <span class="ob-chip" data-value="50">50%</span>
+                                <span class="ob-chip" data-value="75">75%</span>
+                                <span class="ob-chip" data-value="100">100%</span>
+                                <span class="ob-chip" data-value="custom">Custom amount</span>
                             </div>
+                            <div class="ob-chip-custom-wrap hidden" id="percentage_1_custom_wrap">
+                                <input type="number" min="1" max="100" id="percentage_1_custom"
+                                       placeholder="Enter %"
+                                       class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg
+                                  focus:outline-none focus:ring-2 focus:ring-navy">
+                            </div>
+                            <span class="fieldError text-red-500 text-sm" id="percentage_1_error"></span>
                         </div>
                     </div>
 
@@ -2327,7 +2347,59 @@
         // Initialise the step progress indicator for the first active tab
         updateOnboardingProgress($('.tab-btn.active').data('tab') || ONBOARDING_ENABLED_TABS[0]);
 
+        // Initialise the bank "% of wages to deposit" chip selector
+        initPercentageChips('percentage_1_chips');
+
     });
+
+    // Chip-style selector that writes the chosen value into a hidden input so
+    // existing validation/serialisation keep working. "Custom amount" reveals a
+    // numeric input whose value is mirrored into the hidden field.
+    function initPercentageChips(chipRowId){
+        var $row = $('#' + chipRowId);
+        if(!$row.length){ return; }
+        var targetId = $row.data('target');
+        var $hidden = $('#' + targetId);
+        var $customWrap = $('#' + targetId + '_custom_wrap');
+        var $customInput = $('#' + targetId + '_custom');
+        var presets = ['25', '50', '75', '100'];
+
+        function activateChip($chip){
+            $row.find('.ob-chip').removeClass('active');
+            $chip.addClass('active');
+        }
+
+        var val = ($hidden.val() || '').toString().replace('%', '').trim();
+        if(presets.indexOf(val) !== -1){
+            activateChip($row.find('.ob-chip[data-value="' + val + '"]'));
+            $customWrap.addClass('hidden');
+        } else if(val !== ''){
+            activateChip($row.find('.ob-chip[data-value="custom"]'));
+            $customWrap.removeClass('hidden');
+            $customInput.val(val);
+        } else {
+            activateChip($row.find('.ob-chip[data-value="100"]'));
+            $hidden.val('100');
+        }
+
+        $row.on('click', '.ob-chip', function(){
+            var v = $(this).data('value').toString();
+            activateChip($(this));
+            if(v === 'custom'){
+                $customWrap.removeClass('hidden');
+                $hidden.val(($customInput.val() || '').toString());
+                $customInput.focus();
+            } else {
+                $customWrap.addClass('hidden');
+                $hidden.val(v);
+            }
+            $('#' + targetId + '_error').html('');
+        });
+
+        $customInput.on('input', function(){
+            $hidden.val($(this).val());
+        });
+    }
 
 
 
