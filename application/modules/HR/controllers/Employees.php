@@ -218,6 +218,16 @@ class Employees extends MY_Controller {
     // ---------- Final Assignments ----------
     $data['employee']   = $employee;
     $data['leaveTypes'] = $leaveData;
+
+    // ---------- Onboarding form tab visibility ----------
+    // Controlled per location from HR > Settings > Onboarding Form Customize
+    // (configureFor = 'onboarding_tabs'). Same config the External onboarding
+    // form uses, so the edit-employee and employee-profile pages stay in sync.
+    $onboardingTabsCfg = $this->common_model
+        ->fetchRecordsDynamically('HR_configuration', ['data'], ['location' => $locationId, 'configureFor' => 'onboarding_tabs']) ?? [];
+    $onbTabsDecoded = (isset($onboardingTabsCfg[0]['data']) && $onboardingTabsCfg[0]['data'] != '')
+        ? json_decode($onboardingTabsCfg[0]['data'], true) : [];
+    $data['onboardingTabsConfig'] = is_array($onbTabsDecoded) ? $onbTabsDecoded : [];
     
     // echo "<pre>"; print_r($employee); exit;
 

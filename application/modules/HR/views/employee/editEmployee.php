@@ -560,66 +560,90 @@
                                         }
                                     </style>
 
+                                    <?php
+                                    // Show/hide onboarding tabs based on the per-location
+                                    // "Onboarding Form Customize" settings (configureFor = 'onboarding_tabs').
+                                    $onbTabConfig = isset($onboardingTabsConfig) && is_array($onboardingTabsConfig) ? $onboardingTabsConfig : [];
+                                    $isOnbTabEnabled = function($id) use ($onbTabConfig) {
+                                        return !isset($onbTabConfig[$id]) || $onbTabConfig[$id] == '1' || $onbTabConfig[$id] === 1;
+                                    };
+                                    $onbTabOrder = ['emergencyDetails', 'bankDetails', 'policeClearance', 'taxDetails', 'superAnnuation', 'privacyPolicy'];
+                                    $onbEnabledTabs = array_values(array_filter($onbTabOrder, $isOnbTabEnabled));
+                                    $onbFirstTab = !empty($onbEnabledTabs) ? $onbEnabledTabs[0] : '';
+                                    ?>
+
                                     <ul class="nav nav-tabs nav-justified mb-4 d-flex custom-tabs gap-2" role="tablist">
 
+                                        <?php if($isOnbTabEnabled('emergencyDetails')): ?>
                                         <li class="nav-item" rel="emergencyDetails">
-                                            <a class="nav-link active" data-bs-toggle="tab" href="#emergencyDetails" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'emergencyDetails' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#emergencyDetails" role="tab">
                                                 <span>Emergency Details</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 1){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
+                                        <?php if($isOnbTabEnabled('bankDetails')): ?>
                                         <li class="nav-item" rel="bankDetails">
-                                            <a class="nav-link" data-bs-toggle="tab" href="#bankDetails" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'bankDetails' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#bankDetails" role="tab">
                                                 <span>Bank Details</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 2){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
+                                        <?php if($isOnbTabEnabled('policeClearance')): ?>
                                         <li class="nav-item" rel="policeClearance">
-                                            <a class="nav-link" data-bs-toggle="tab" href="#policeClearance" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'policeClearance' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#policeClearance" role="tab">
                                                 <span>Police Clearance</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 3){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
+                                        <?php if($isOnbTabEnabled('taxDetails')): ?>
                                         <li class="nav-item" rel="taxDetails">
-                                            <a class="nav-link" data-bs-toggle="tab" href="#taxDetails" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'taxDetails' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#taxDetails" role="tab">
                                                 <span>Tax Details</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 4){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
+                                        <?php if($isOnbTabEnabled('superAnnuation')): ?>
                                         <li class="nav-item" rel="superAnnuation">
-                                            <a class="nav-link" data-bs-toggle="tab" href="#superAnnuation" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'superAnnuation' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#superAnnuation" role="tab">
                                                 <span>Super Annuation</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 5){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
+                                        <?php if($isOnbTabEnabled('privacyPolicy')): ?>
                                         <li class="nav-item" rel="privacyPolicy">
-                                            <a class="nav-link" data-bs-toggle="tab" href="#privacyPolicy" role="tab">
+                                            <a class="nav-link <?php echo $onbFirstTab === 'privacyPolicy' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#privacyPolicy" role="tab">
                                                 <span>Policies</span>
                                                 <?php if(isset($employee['stepsCompleted']) && $employee['stepsCompleted'] > 6){ ?>
                                                     <i class="ri-check-double-line text-success"></i>
                                                 <?php } ?>
                                             </a>
                                         </li>
+                                        <?php endif; ?>
 
                                     </ul>
 
                                     <div class="tab-content text-black">
-                                        <div class="tab-pane active" id="emergencyDetails" role="emergencyDetails">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'emergencyDetails' ? 'active' : ''; ?>" id="emergencyDetails" role="emergencyDetails">
                                             <!-- Emergency Details content remains the same -->
                                             <form role="form" id="emergencyDetailsForm" method="post" action="" enctype="multipart/form-data">
                                                 <div class="alert alert-success border-0 shadow d-none" role="alert">Details have been saved successfully</div>
@@ -699,7 +723,7 @@
                                             </form>
                                         </div>
 
-                                        <div class="tab-pane" id="bankDetails">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'bankDetails' ? 'active' : ''; ?>" id="bankDetails">
                                             <!-- Bank Details content remains the same -->
                                             <div class="card shadow-sm">
                                                 <div class="card-body p-5">
@@ -800,7 +824,7 @@
                                         </div>
 
                                         <!-- Police Clearance moved here (before Tax Details) -->
-                                        <div class="tab-pane" id="policeClearance">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'policeClearance' ? 'active' : ''; ?>" id="policeClearance">
                                             <div class="card shadow-sm">
                                                 <div class="card-body p-5 text-center">
                                                     <h4 class="card-title mb-4 mb-4 fw-bold text-black">Police Clearance Certificate <span class="text-danger">*</span></h4>
@@ -889,7 +913,7 @@
                                         </div>
 
                                         <!-- Tax Details moved after Police Clearance -->
-                                        <div class="tab-pane" id="taxDetails" role="taxDetails">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'taxDetails' ? 'active' : ''; ?>" id="taxDetails" role="taxDetails">
                                             <!-- Tax Details content remains the same -->
                                             <form role="form" id="taxDetailsForm" method="post" action="" enctype="multipart/form-data">
                                                 <div class="alert alert-success border-0 shadow d-none" role="alert">Details have been saved successfully</div>
@@ -1100,7 +1124,7 @@
                                         </div>
 
                                         <!-- Super Annuation section remains the same -->
-                                        <div class="tab-pane" id="superAnnuation" role="superAnnuation">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'superAnnuation' ? 'active' : ''; ?>" id="superAnnuation" role="superAnnuation">
                                             <!-- Super Annuation content remains the same -->
                                             <form role="form" id="annuationDetailsForm" method="post" action="" enctype="multipart/form-data">
                                                 <div class="alert alert-success border-0 shadow d-none" role="alert">Details have been saved successfully</div>
@@ -1194,7 +1218,7 @@
                                         </div>
 
                                         <!-- Updated Policies section -->
-                                        <div class="tab-pane" id="privacyPolicy" role="privacyPolicy">
+                                        <div class="tab-pane <?php echo $onbFirstTab === 'privacyPolicy' ? 'active' : ''; ?>" id="privacyPolicy" role="privacyPolicy">
                                             <p class="fw-bold mb-4">
                                                 You must read and agree to the company policies, staff induction and job description before submitting this form.
                                             </p>
