@@ -6,464 +6,355 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
     <?php $this->load->view('general/tailwind_common_assets'); ?>
+    <style>
+    .empv3{font-family:'Inter',system-ui,sans-serif;}
+    .empv3 *{box-sizing:border-box;}
+    .empv3 .db{background:#f1f5f9;border-radius:16px;overflow:hidden;border:.5px solid #e2e8f0;}
+    .empv3 .layout{display:flex;min-height:700px;}
+    .empv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:20px;display:flex;flex-direction:column;gap:18px;}
+    .empv3 .profile-block{text-align:center;padding-bottom:16px;border-bottom:.5px solid #f1f5f9;}
+    .empv3 .av-wrap{position:relative;width:64px;height:64px;margin:0 auto 10px;}
+    .empv3 .av-circle{width:64px;height:64px;border-radius:50%;border:2.5px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;}
+    .empv3 .online-dot{width:12px;height:12px;background:#22c55e;border-radius:50%;border:2.5px solid #fff;position:absolute;bottom:2px;right:2px;}
+    .empv3 .online-dot.off{background:#cbd5e1;}
+    .empv3 .p-name{font-size:15px;font-weight:600;color:#1e293b;}
+    .empv3 .p-sub{font-size:12px;color:#94a3b8;margin-top:3px;}
+    .empv3 .present-pill{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:.5px solid #bbf7d0;border-radius:20px;padding:4px 12px;font-size:11px;color:#15803d;margin-top:8px;font-weight:600;}
+    .empv3 .present-pill.absent{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
+    .empv3 .g-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
+    .empv3 .present-pill.absent .g-dot{background:#ef4444;}
+    .empv3 .block-title{font-size:12px;font-weight:600;color:#1e293b;margin-bottom:8px;}
+    .empv3 .sched-card{background:#f8fafc;border-radius:10px;padding:12px 14px;border:.5px solid #e2e8f0;}
+    .empv3 .sched-time{font-size:14px;font-weight:600;color:#1e293b;}
+    .empv3 .sched-sub{font-size:12px;color:#64748b;margin-top:3px;}
+    .empv3 .clocked{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:.5px solid #bbf7d0;border-radius:20px;padding:5px 10px;font-size:11px;color:#15803d;margin-top:8px;font-weight:600;}
+    .empv3 .c-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;}
+    .empv3 .qs-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid #f1f5f9;}
+    .empv3 .qs-row:last-child{border-bottom:none;}
+    .empv3 .qs-label{font-size:12px;color:#64748b;}
+    .empv3 .qs-val{font-size:13px;font-weight:600;color:#1e293b;}
+    .empv3 .qs-val.teal{color:#0F6E56;}
+    .empv3 .leave-card{background:#0F6E56;border-radius:12px;padding:16px;}
+    .empv3 .lc-title{color:#9FE1CB;font-size:12px;font-weight:600;margin-bottom:12px;}
+    .empv3 .lc-row{margin-bottom:10px;}
+    .empv3 .lc-row:last-of-type{margin-bottom:0;}
+    .empv3 .lc-hdr{display:flex;justify-content:space-between;margin-bottom:5px;}
+    .empv3 .lc-name{font-size:12px;color:#E1F5EE;}
+    .empv3 .lc-val{font-size:12px;color:#fff;font-weight:600;}
+    .empv3 .lc-bar{height:5px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
+    .empv3 .lc-fill{height:100%;background:#5DCAA5;border-radius:10px;}
+    .empv3 .apply-btn{display:block;width:100%;background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.25);border-radius:8px;padding:9px;font-size:12px;color:#E1F5EE;font-weight:600;margin-top:12px;text-align:center;cursor:pointer;}
+    .empv3 .apply-btn:hover{background:rgba(255,255,255,.18);}
+    .empv3 .cal-wrap{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:18px 20px;}
+    .empv3 .cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+    .empv3 .cal-month{font-size:13px;font-weight:600;color:#1e293b;}
+    .empv3 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+    .empv3 .cal-dh{font-size:10px;color:#94a3b8;padding:3px 0;font-weight:600;}
+    .empv3 .cal-d{font-size:12px;color:#64748b;padding:5px 3px;border-radius:6px;}
+    .empv3 .cal-d.today{background:#1D9E75;color:#fff;font-weight:600;border-radius:50%;}
+    .empv3 .cal-d.leave{color:#1D9E75;font-weight:600;}
+    .empv3 .cal-d.empty{opacity:0;}
+    .empv3 .cal-legend{display:flex;gap:14px;margin-top:10px;}
+    .empv3 .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;}
+    .empv3 .leg-d{width:8px;height:8px;border-radius:50%;}
+    .empv3 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .empv3 .stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .empv3 .stat-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:16px 18px;}
+    .empv3 .stat-num{font-size:28px;font-weight:600;color:#1a2f52;}
+    .empv3 .stat-label{font-size:12px;color:#64748b;margin-top:3px;}
+    .empv3 .stat-present{font-size:18px;font-weight:600;color:#0F6E56;}
+    .empv3 .stat-present.absent{color:#b91c1c;}
+    .empv3 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .empv3 .card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:18px 20px;}
+    .empv3 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .empv3 .card-title{font-size:13px;font-weight:600;color:#1e293b;}
+    .empv3 .card-link{font-size:12px;color:#1D9E75;font-weight:600;cursor:pointer;background:none;border:none;padding:0;}
+    .empv3 .tl-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+    .empv3 .tl-col{text-align:center;}
+    .empv3 .tl-lbl{font-size:11px;color:#94a3b8;}
+    .empv3 .tl-v{font-size:13px;font-weight:600;color:#1D9E75;margin-top:3px;}
+    .empv3 .tl-v.dim{color:#94a3b8;}
+    .empv3 .tl-v.orange{color:#F29A6E;}
+    .empv3 .prog-track{height:7px;background:#f1f5f9;border-radius:10px;overflow:hidden;margin-bottom:8px;}
+    .empv3 .prog-fill{height:100%;background:#1D9E75;border-radius:10px;}
+    .empv3 .tl-foot{display:flex;justify-content:space-between;}
+    .empv3 .ts-tbl{width:100%;table-layout:fixed;border-collapse:collapse;}
+    .empv3 .ts-tbl th{font-size:11px;color:#94a3b8;font-weight:600;text-align:left;padding:0 0 10px;text-transform:uppercase;letter-spacing:.4px;}
+    .empv3 .ts-tbl td{font-size:12px;color:#1e293b;padding:9px 0;border-bottom:.5px solid #f1f5f9;vertical-align:middle;}
+    .empv3 .ts-tbl tr:last-child td{border-bottom:none;}
+    .empv3 .view-btn{background:#E1F5EE;color:#0F6E56;border:none;border-radius:7px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+    .empv3 .avail-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:20px 22px;}
+    .empv3 .avail-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;}
+    .empv3 .avail-sub{font-size:12px;color:#94a3b8;margin-top:4px;}
+    .empv3 .save-btn{background:#1D9E75;border:none;border-radius:9px;padding:9px 22px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .empv3 .save-btn:hover{background:#0F6E56;}
+    .empv3 .days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+    .empv3 .day-col{display:flex;flex-direction:column;gap:8px;}
+    .empv3 .day-name{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;}
+    .empv3 .time-label{font-size:11px;color:#94a3b8;margin-bottom:2px;}
+    .empv3 .time-sel{width:100%;background:#f8fafc;border:.5px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:13px;color:#1e293b;cursor:pointer;appearance:none;-webkit-appearance:none;}
+    .empv3 .time-sel:focus{outline:none;border-color:#1D9E75;background:#fff;}
+    .empv3 .to-divider{text-align:center;font-size:12px;color:#94a3b8;padding:2px 0;}
+    @media(max-width:1100px){.empv3 .layout{flex-direction:column;}.empv3 .sidebar{width:100%;border-right:none;border-bottom:.5px solid #e2e8f0;}.empv3 .two-col{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:560px){.empv3 .stat-row{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:1fr;}}
+    </style>
 </head>
 <body class="bg-[#F4F6F9] font-inter">
 
 
 <main class="max-w-[1920px] mx-auto px-6 py-8 mt-5">
-    <div class="grid grid-cols-12 gap-6">
-        
-      <?php
-$w = $employeeProfileWidgetData ?? [];
+    <?php
+    $w = $employeeProfileWidgetData ?? [];
+    $employee_name     = ucfirst($w['employee_name'] ?? 'User');
+    $employee_position = $w['employee_position'] ?? '';
+    $today_shift       = $w['today_shift'] ?? null;
+    $shift_started     = $w['shift_started'] ?? false;
+    $shift_clockin     = $w['shift_clockin_display'] ?? '--:-- --';
+    $hours_this_week   = $w['hours_this_week'] ?? '0h';
+    $attendance_rate   = $w['attendance_rate'] ?? 0;
 
-// Extract values safely
-$employee_name       = ucfirst($w['employee_name']) ?? ' User';
-$employee_position   = $w['employee_position'] ?? '';
-$today_shift         = $w['today_shift'] ?? null;
-$shift_started       = $w['shift_started'] ?? false;
-$shift_clockin       = $w['shift_clockin_display'] ?? '--:-- --';
-$hours_this_week     = $w['hours_this_week'] ?? '0h';
-$tasks_completed     = $w['tasks_completed'] ?? 0;
-$tasks_total         = $w['tasks_total'] ?? 0;
-$attendance_rate     = $w['attendance_rate'] ?? 0;
-?>
-<aside id="profile-section" class="col-span-12 lg:col-span-3">
-    <div class="bg-white rounded-[20px] p-6 shadow-lg">
-        <div class="flex flex-col items-center mb-6">
-            <div class="relative mb-4">
-                <img src="https://bizadmin.com.au/theme-assets/images/users/avatar-1.jpg"
-                     alt="Profile"
-                     class="w-20 h-20 rounded-full border-2 border-teal">
-                     <?php if($shift_started) {  ?>
-                <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
-                <?php } else{ ?>
-                <div class="absolute bottom-0 right-0 w-5 h-5 bg-gray-300 rounded-full border-2 border-white"></div>
-                <?php } ?>
-            </div>
+    $nameParts = preg_split('/\s+/', trim($employee_name));
+    $initials  = strtoupper(substr($nameParts[0] ?? 'U', 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
 
-            <h2 class="text-xl font-bold text-primary mb-1"><?= htmlspecialchars($employee_name) ?></h2>
-            <p class="text-sm text-gray-500 mb-4"><?= htmlspecialchars($employee_position) ?></p>
+    $taskDays = $taskDays ?? [];
+    $today    = $today ?? (int) date('d');
+    $year     = $year ?? date('Y');
+    $month    = $month ?? date('m');
+    $sbFirstDow = date('w', strtotime("$year-$month-01"));
+    $sbTotal    = date('t', strtotime("$year-$month-01"));
+    $calWeeks = []; $calWeek = [];
+    for ($i = 0; $i < $sbFirstDow; $i++) { $calWeek[] = ''; }
+    for ($d = 1; $d <= $sbTotal; $d++) { $calWeek[] = $d; if (count($calWeek) == 7) { $calWeeks[] = $calWeek; $calWeek = []; } }
+    if (!empty($calWeek)) { while (count($calWeek) < 7) $calWeek[] = ''; $calWeeks[] = $calWeek; }
+    ?>
 
-            <!-- TODAY'S SCHEDULE -->
-            <div class="w-full bg-neutralgray rounded-xl p-4 mb-2">
-                <p class="text-sm text-gray-600 font-medium mb-2">Today's Schedule</p>
+    <div class="empv3">
+     <div class="db">
+      <div class="layout">
 
-                <?php if (!empty($today_shift) && !empty($today_shift['roster_start_time'])): ?>
+       <aside class="sidebar">
 
-                    <p class="text-sm text-gray-700">
-                        <?= date('h:i A', strtotime($today_shift['roster_start_time'])) ?>
-                         &mdash; 
-                        <?= !empty($today_shift['roster_end_time'])
-                              ? date('h:i A', strtotime($today_shift['roster_end_time']))
-                              : '--:-- --' ?>
-                    </p>
-
-                    <?php if ($shift_started): ?>
-                        <p class="text-xs text-green-600 mt-1">
-                            Shift started at <?= htmlspecialchars($shift_clockin) ?>
-                        </p>
-                    <?php else: ?>
-                        <p class="text-xs text-gray-500 mt-1">Shift not started</p>
-                    <?php endif; ?>
-
-                <?php else: ?>
-                    <p class="text-xs text-gray-500"></p>
-                <?php endif; ?>
-            </div>
+        <div class="profile-block">
+         <div class="av-wrap">
+          <div class="av-circle"><?= htmlspecialchars($initials) ?></div>
+          <div class="online-dot <?= $shift_started ? '' : 'off' ?>"></div>
+         </div>
+         <div class="p-name"><?= htmlspecialchars($employee_name) ?></div>
+         <div class="p-sub"><?= $employee_position !== '' ? htmlspecialchars($employee_position) : 'Welcome to portal !!' ?></div>
+         <?php if ($shift_started): ?>
+          <div class="present-pill"><span class="g-dot"></span>Present</div>
+         <?php else: ?>
+          <div class="present-pill absent"><span class="g-dot"></span>Absent</div>
+         <?php endif; ?>
         </div>
 
-        <!-- QUICK STATS -->
-        <div class="border-t border-gray-200 pt-6">
-            <h3 class="text-sm font-semibold text-primary mb-4">Quick Stats</h3>
-            <div class="space-y-3">
-
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-600">Hours This Week</span>
-                    <span class="text-sm font-bold text-primary"><?= htmlspecialchars($hours_this_week) ?></span>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-600">Tasks Completed</span>
-                    <span class="text-sm font-bold text-teal">
-                        <?= $tasks_completed ?>/<?= $tasks_total ?>
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-600">Attendance Rate</span>
-                    <span class="text-sm font-bold text-green-600"><?= $attendance_rate ?>%</span>
-                </div>
-
-            </div>
+        <div>
+         <div class="block-title">Today's schedule</div>
+         <div class="sched-card">
+          <?php if (!empty($today_shift) && !empty($today_shift['roster_start_time'])): ?>
+           <div class="sched-time">
+            <?= date('h:i A', strtotime($today_shift['roster_start_time'])) ?> &rarr;
+            <?= !empty($today_shift['roster_end_time']) ? date('h:i A', strtotime($today_shift['roster_end_time'])) : '--:-- --' ?>
+           </div>
+           <?php if ($shift_started): ?>
+            <div class="sched-sub">Shift started at <?= htmlspecialchars($shift_clockin) ?></div>
+            <div class="clocked"><span class="c-dot"></span>Clocked in <?= htmlspecialchars($shift_clockin) ?></div>
+           <?php else: ?>
+            <div class="sched-sub">Shift not started</div>
+           <?php endif; ?>
+          <?php else: ?>
+           <div class="sched-sub">No shift scheduled today</div>
+          <?php endif; ?>
+         </div>
         </div>
-    </div>
 
-    <!-- LEAVE BALANCE -->
-    <div id="leave-balance-widget"
-         class="bg-gradient-to-br from-teal to-primary rounded-[20px] p-6 shadow-lg mt-6 text-white">
-        <h3 class="text-lg font-bold mb-1">Leave Balance</h3>
-        <p class="text-xs text-white/70 mb-4">Your current leave entitlements</p>
-
-        <div class="space-y-4">
-            <?php
-            $leaveBalances = $leaveBalances ?? [];
-            ?>
-            <?php if (!empty($leaveBalances)): ?>
-                <?php foreach ($leaveBalances as $lb):
-                    $entitlement = (float) ($lb['entitlements'] ?? 0);
-                    $used        = (float) ($lb['used_days'] ?? 0);
-                    $percent     = $entitlement > 0 ? min(100, round(($used / $entitlement) * 100)) : 0;
-                ?>
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm"><?= htmlspecialchars($lb['leaveTypeName']) ?></span>
-                        <span class="text-sm font-bold"><?= $used ?>/<?= $entitlement ?> days</span>
-                    </div>
-                    <div class="w-full bg-white/20 rounded-full h-2">
-                        <div class="bg-white rounded-full h-2" style="width: <?= $percent ?>%"></div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-sm text-white/70">No leave types configured.</p>
-            <?php endif; ?>
-
-            <button class="w-full bg-white text-teal hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg transition-all mt-4" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#requestLeaveModal">
-                Apply Leave
-            </button>
+        <div>
+         <div class="block-title">Quick stats</div>
+         <div class="qs-row"><span class="qs-label">Hours this week</span><span class="qs-val"><?= htmlspecialchars($hours_this_week) ?></span></div>
+         <div class="qs-row"><span class="qs-label">Attendance rate</span><span class="qs-val teal"><?= htmlspecialchars($attendance_rate) ?>%</span></div>
         </div>
-    </div>
-</aside>
+
+        <?php $leaveBalances = $leaveBalances ?? []; ?>
+        <div class="leave-card" id="leave-balance-widget">
+         <div class="lc-title">Leave balance</div>
+         <?php if (!empty($leaveBalances)): ?>
+          <?php foreach ($leaveBalances as $lb):
+              $entitlement = (float) ($lb['entitlements'] ?? 0);
+              $used        = (float) ($lb['used_days'] ?? 0);
+              $percent     = $entitlement > 0 ? min(100, round(($used / $entitlement) * 100)) : 0;
+          ?>
+          <div class="lc-row">
+           <div class="lc-hdr"><span class="lc-name"><?= htmlspecialchars($lb['leaveTypeName']) ?></span><span class="lc-val"><?= $used ?> / <?= $entitlement ?> days</span></div>
+           <div class="lc-bar"><div class="lc-fill" style="width:<?= $percent ?>%"></div></div>
+          </div>
+          <?php endforeach; ?>
+         <?php else: ?>
+          <div class="lc-name">No leave types configured.</div>
+         <?php endif; ?>
+         <button type="button" class="apply-btn" data-bs-toggle="modal" data-bs-target="#requestLeaveModal">Apply for leave</button>
+        </div>
+
+        <div class="cal-wrap">
+         <div class="cal-hdr">
+          <div class="cal-month"><?= date('F Y', strtotime("$year-$month-01")) ?></div>
+         </div>
+         <div class="cal-grid">
+          <?php foreach (['Su','Mo','Tu','We','Th','Fr','Sa'] as $dh): ?>
+           <div class="cal-dh"><?= $dh ?></div>
+          <?php endforeach; ?>
+          <?php foreach ($calWeeks as $cw): foreach ($cw as $cd): ?>
+           <?php if ($cd === ''): ?>
+            <div class="cal-d empty"></div>
+           <?php else: $isToday = ($cd == $today); $hasTask = isset($taskDays[$cd]); ?>
+            <div class="cal-d <?= $isToday ? 'today' : ($hasTask ? 'leave' : '') ?>"><?= $cd ?></div>
+           <?php endif; ?>
+          <?php endforeach; endforeach; ?>
+         </div>
+         <div class="cal-legend">
+          <div class="leg"><span class="leg-d" style="background:#1D9E75;"></span>Leave / Today</div>
+         </div>
+        </div>
+
+       </aside>
 
 
 
-        <div class="col-span-12 lg:col-span-9">
-            
-            <div id="insights-row" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-3xl font-bold text-primary"><?= (int)($leaveRequestCount ?? 0) ?></span>
-                    </div>
-                    <p class="text-sm text-gray-600 font-medium">Leave Requests</p>
-                </div>
-                <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-3xl font-bold text-primary"><?= (int)($upcomingShiftsCount ?? 0) ?></span>
-                    </div>
-                    <p class="text-sm text-gray-600 font-medium">Upcoming Shifts</p>
-                </div>
-                <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <?php if($shift_started) {  ?>
-                         <span class="text-3xl font-bold text-green-600">Present</span>
-                         <?php } else{ ?>
-                         <span class="text-3xl font-bold text-red-600">Absent</span>
-                         <?php }  ?>
-                    </div>
-                    <p class="text-sm text-gray-600 font-medium">Attendance Today</p>
-                </div>
-            </div>
+       <div class="main">
+
+        <div class="stat-row">
+         <div class="stat-card"><div class="stat-num"><?= (int) ($leaveRequestCount ?? 0) ?></div><div class="stat-label">Leave requests</div></div>
+         <div class="stat-card"><div class="stat-num"><?= (int) ($upcomingShiftsCount ?? 0) ?></div><div class="stat-label">Upcoming shifts</div></div>
+         <div class="stat-card"><div class="stat-present <?= $shift_started ? '' : 'absent' ?>"><?= $shift_started ? 'Present' : 'Absent' ?></div><div class="stat-label">Attendance today</div></div>
+        </div>
 
          
     
-            <!-- ROW 1: My Timesheets (50%) + My Availability (50%) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                
-                <!-- MY TIMESHEETS -->
-                <div id="latest-timesheet-section" class="bg-white rounded-[20px] p-6 shadow-lg">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-primary">
-                            My Timesheets
-                        </h3>
-                        <button class="text-teal hover:text-primary text-sm font-medium transition-colors">View All</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                   
-                                    <th class="text-left py-3 px-4 text-xs font-semibold text-black uppercase">Start Date</th>
-                                    <th class="text-left py-3 px-4 text-xs font-semibold text-black uppercase">End Date</th>
-                                    <th class="text-center py-3 px-4 text-xs font-semibold text-black uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <?php $timesheets = $employeeTimesheets ?? []; ?>
+        <div class="two-col">
 
-                            <tbody>
-                            <?php if (!empty($timesheets)): ?>
-                                
-                                <?php foreach ($timesheets as $t): ?>
-                                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+         <?php
+         if (!isset($attendance) || !is_array($attendance)) {
+             $attendance = ['clock_in'=>'--:-- --','break_start'=>'--:-- --','resume'=>'--:-- --','clock_out'=>'--:-- --','worked_label'=>'0m','target_label'=>'8h 00m','progress_percent'=>0];
+         }
+         $clockIn = $attendance['clock_in'] ?? '--:-- --';
+         $breakStart = $attendance['break_start'] ?? '--:-- --';
+         $resume = $attendance['resume'] ?? '--:-- --';
+         $clockOut = $attendance['clock_out'] ?? '--:-- --';
+         $workedLabel = $attendance['worked_label'] ?? '0m';
+         $targetLabel = $attendance['target_label'] ?? '8h 00m';
+         $progressPercent = max(0, min(100, (int) ($attendance['progress_percent'] ?? 0)));
+         ?>
+         <div class="card" id="attendance-timeline">
+          <div class="card-hdr"><div class="card-title">Today's attendance</div></div>
+          <div class="tl-row">
+           <div class="tl-col"><div class="tl-lbl">Clock in</div><div class="tl-v <?= ($clockIn==='--:-- --')?'dim':'' ?>"><?= htmlspecialchars($clockIn) ?></div></div>
+           <div class="tl-col"><div class="tl-lbl">Break</div><div class="tl-v <?= ($breakStart==='--:-- --')?'dim':'orange' ?>"><?= htmlspecialchars($breakStart) ?></div></div>
+           <div class="tl-col"><div class="tl-lbl">Resume</div><div class="tl-v <?= ($resume==='--:-- --')?'dim':'orange' ?>"><?= htmlspecialchars($resume) ?></div></div>
+           <div class="tl-col"><div class="tl-lbl">Clock out</div><div class="tl-v <?= ($clockOut==='--:-- --')?'dim':'' ?>"><?= htmlspecialchars($clockOut) ?></div></div>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:<?= $progressPercent ?>%"></div></div>
+          <div class="tl-foot"><span style="font-size:12px;font-weight:600;color:#1e293b;"><?= htmlspecialchars($workedLabel) ?> worked</span><span style="font-size:12px;color:#94a3b8;">Target: <?= htmlspecialchars($targetLabel) ?></span></div>
+         </div>
 
-                                        <td class="py-4 px-4 text-sm text-gray-600">
-                                            <?= date("F d, Y", strtotime($t['date_from'])) ?>
-                                        </td>
-
-                                        <td class="py-4 px-4 text-sm text-gray-600">
-                                            <?= date("F d, Y", strtotime($t['date_to'])) ?>
-                                        </td>
-
-                                        <td class="py-4 px-4 text-center">
-                                            <button type="button"
-                                                    data-week-start="<?= $t['date_from'] ?>"
-                                                    data-week-end="<?= $t['date_to'] ?>"
-                                                    data-emp-id="<?= $empId ?>"
-                                                    class="view-timesheet-details bg-teal hover:bg-primary text-white px-4 py-2 rounded-[10px] text-xs font-medium transition-colors inline-flex items-center gap-2">
-                                                <span class="btn-text">View</span>
-                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                            </button>
-                                        </td>
-
-                                    </tr>
-                                <?php endforeach; ?>
-
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="3" class="text-center py-4 text-gray-400 text-sm">
-                                        No timesheets found.
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                            </tbody>
-
-                        </table>
-                    </div>
-                </div>
-               
-                <!-- MY AVAILABILITY -->
-                <?php
-                $availWeekly = [];
-                if (!empty($availability) && isset($availability[0]['weekly_json'])) {
-                    $availWeekly = json_decode($availability[0]['weekly_json'], true) ?: [];
-                }
-                $availDays = [
-                    "mon" => "Monday",
-                    "tue" => "Tuesday",
-                    "wed" => "Wednesday",
-                    "thu" => "Thursday",
-                    "fri" => "Friday",
-                    "sat" => "Saturday",
-                    "sun" => "Sunday",
-                ];
-                ?>
-
-                <div id="availability-widget" class="bg-white rounded-[20px] p-6 shadow-lg">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-primary">My Availability</h3>
-                            <p class="text-xs text-gray-500 mt-1">Set your weekly availability</p>
-                        </div>
-                        <button type="submit" form="dashboardAvailabilityForm"
-                                class="bg-teal hover:bg-primary text-white px-4 py-2 rounded-[12px] text-sm font-medium transition-colors">
-                            <span class="dash-avail-text">Save Availability</span>
-                            <span class="spinner-border spinner-border-sm d-none" id="dashAvailLoader" role="status" aria-hidden="true"></span>
-                        </button>
-                    </div>
-
-                    <form id="dashboardAvailabilityForm">
-                        <input type="hidden" name="emp_id" value="<?= htmlspecialchars($empId ?? '') ?>">
-                        <input type="hidden" name="same_hours" value="0">
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <?php foreach ($availDays as $key => $label): ?>
-                                <div class="bg-gray-50 rounded-[12px] p-3">
-                                    <p class="text-xs font-semibold text-gray-700 mb-2"><?= $label ?></p>
-                                    <div class="flex items-center gap-2">
-                                        <input type="time"
-                                               name="weekly[<?= $key ?>][start]"
-                                               value="<?= htmlspecialchars($availWeekly[$key]['start'] ?? '') ?>"
-                                               class="w-full text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal">
-                                        <span class="text-xs text-gray-400">to</span>
-                                        <input type="time"
-                                               name="weekly[<?= $key ?>][end]"
-                                               value="<?= htmlspecialchars($availWeekly[$key]['end'] ?? '') ?>"
-                                               class="w-full text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <div id="dashAvailMsg" class="text-xs mt-3 d-none"></div>
-                    </form>
-                </div>
-
-            </div>
-            
-            <!-- ROW 2: Today's Attendance Timeline (50%) + Upcoming Schedule (50%) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                
-                <!-- TODAY'S ATTENDANCE TIMELINE -->
-                <?php
-                // $attendance should be provided by controller (array). Example shown in your message.
-                if (!isset($attendance) || !is_array($attendance)) {
-                    // safe default when attendance not available
-                    $attendance = [
-                        'date' => date('Y-m-d'),
-                        'clock_in' => '--:-- --',
-                        'break_start' => '--:-- --',
-                        'resume' => '--:-- --',
-                        'clock_out' => '--:-- --',
-                        'worked_seconds' => 0,
-                        'worked_label' => '0m',
-                        'target_label' => '8h 00m',
-                        'progress_percent' => 0
-                    ];
-                }
-
-                $clockIn = $attendance['clock_in'] ?? '--:-- --';
-                $breakStart = $attendance['break_start'] ?? '--:-- --';
-                $resume = $attendance['resume'] ?? '--:-- --';
-                $clockOut = $attendance['clock_out'] ?? '--:-- --';
-                $workedLabel = $attendance['worked_label'] ?? '0m';
-                $targetLabel = $attendance['target_label'] ?? '8h 00m';
-                $progressPercent = (int) ($attendance['progress_percent'] ?? 0);
-
-                // keep percent inside 0-100
-                $progressPercent = max(0, min(100, $progressPercent));
-                ?>
-
-                <div id="attendance-timeline" class="bg-white rounded-[20px] p-6 shadow-lg">
-                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-clock text-teal"></i>
-                        Today's Attendance Timeline
-                    </h3>
-
-                    <div class="relative">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500 mb-1">Clock In</p>
-                                <p class="text-sm font-bold text-green-600"><?= htmlspecialchars($clockIn) ?></p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500 mb-1">Break</p>
-                                <p class="text-sm font-bold text-orange-500"><?= htmlspecialchars($breakStart) ?></p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500 mb-1">Resume</p>
-                                <p class="text-sm font-bold text-orange-500"><?= htmlspecialchars($resume) ?></p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500 mb-1">Clock Out</p>
-                                <p class="text-sm font-bold text-gray-400"><?= htmlspecialchars($clockOut) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="relative w-full h-3 bg-neutralgray rounded-full overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-teal rounded-full"
-                                 style="width: <?= $progressPercent ?>%"></div>
-                        </div>
-
-                        <div class="flex justify-between items-center mt-3">
-                            <p class="text-sm text-gray-600">Total Hours: <span class="font-bold text-primary"><?= htmlspecialchars($workedLabel) ?></span></p>
-                            <p class="text-sm text-gray-600">Target: <span class="font-bold text-primary"><?= htmlspecialchars($targetLabel) ?></span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- UPCOMING SCHEDULE (CALENDAR) -->
-                <?php
-                // calender widget related code
-                $taskDays = $taskDays ?? [];
-                $today    = $today ?? (int) date("d");
-                $year     = $year ?? date("Y");
-                $month    = $month ?? date("m");
-
-                // Calculate calendar structure
-                $firstDayOfMonth = date("w", strtotime("$year-$month-01")); // 0=Sun
-                $totalDays       = date("t", strtotime("$year-$month-01"));
-
-                $weeks = [];
-                $week  = [];
-
-                // Fill initial blanks for first week
-                for ($i = 0; $i < $firstDayOfMonth; $i++) {
-                    $week[] = "";
-                }
-
-                // Fill days
-                for ($d = 1; $d <= $totalDays; $d++) {
-                    $week[] = $d;
-
-                    if (count($week) == 7) {
-                        $weeks[] = $week;
-                        $week = [];
-                    }
-                }
-
-                // Last week padding
-                if (!empty($week)) {
-                    while (count($week) < 7) $week[] = "";
-                    $weeks[] = $week;
-                }
-                ?>
-
-                <div id="calendar-widget" class="bg-white rounded-[20px] p-6 shadow-lg">
-
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-alt text-teal"></i>
-                            Upcoming Schedule
-                        </h3>
-                        <a class="text-sm text-teal hover:text-primary font-medium" href="#tasks-widget">View Tasks</a>
-                    </div>
-
-                    <!-- WEEKDAYS -->
-                    <div class="grid grid-cols-7 gap-2 mb-4">
-                        <?php foreach (['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $day): ?>
-                            <div class="text-center text-xs font-semibold text-gray-500 py-2"><?= $day ?></div>
-                        <?php endforeach; ?>
-
-                        <!-- DAYS -->
-                        <?php foreach ($weeks as $week): ?>
-                            <?php foreach ($week as $day): ?>
-                                
-                                <?php if ($day === ""): ?>
-                                    <div class="text-center text-xs text-gray-400 py-2"></div>
-                                    <?php continue; ?>
-                                <?php endif; ?>
-
-                                <?php
-                                $isToday = ($day == $today);
-                                $hasTask = isset($taskDays[$day]);
-                                ?>
-
-                                <div class="text-center text-xs py-2 relative
-                                    <?= $isToday ? 'bg-teal text-white rounded-full font-bold' : 'text-gray-700' ?>
-                                ">
-                                    <?= $day ?>
-
-                                    <?php if ($hasTask): ?>
-                                        <div class="w-1 h-1 bg-orange rounded-full absolute bottom-0 left-1/2 transform -translate-x-1/2"></div>
-                                    <?php endif; ?>
-                                </div>
-
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <!-- Legend -->
-                    <div class="flex items-center gap-4 text-xs">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-orange rounded-full"></div>
-                            <span class="text-gray-600">Tasks</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <span class="text-gray-600">Leave</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-teal rounded-full"></div>
-                            <span class="text-gray-600">Today</span>
-                        </div>
-                    </div>
-
-                </div>      
-                 
-            </div>
+         <?php $timesheets = $employeeTimesheets ?? []; $tsTodayTs = strtotime(date('Y-m-d')); ?>
+         <div class="card" id="latest-timesheet-section">
+          <div class="card-hdr"><div class="card-title">My timesheets</div><button type="button" class="card-link">View all</button></div>
+          <table class="ts-tbl">
+           <thead><tr><th style="width:64%;">Period</th><th></th></tr></thead>
+           <tbody>
+           <?php if (!empty($timesheets)): ?>
+            <?php foreach ($timesheets as $t):
+                $fromTs = strtotime($t['date_from']);
+                $diffDays = floor(($tsTodayTs - $fromTs) / 86400);
+                if ($diffDays < 0)      $wkLabel = 'Upcoming';
+                elseif ($diffDays < 7)  $wkLabel = 'Current week';
+                elseif ($diffDays < 14) $wkLabel = 'Last week';
+                else                    $wkLabel = floor($diffDays / 7) . ' weeks ago';
+            ?>
+            <tr>
+             <td>
+              <div style="font-size:12px;color:#1e293b;"><?= date('M d', $fromTs) ?> &ndash; <?= date('M d, Y', strtotime($t['date_to'])) ?></div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:2px;"><?= $wkLabel ?></div>
+             </td>
+             <td style="text-align:right;">
+              <button type="button" class="view-btn view-timesheet-details"
+                      data-week-start="<?= $t['date_from'] ?>" data-week-end="<?= $t['date_to'] ?>" data-emp-id="<?= $empId ?>">
+               <span class="btn-text">View</span>
+               <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+             </td>
+            </tr>
+            <?php endforeach; ?>
+           <?php else: ?>
+            <tr><td colspan="2" style="text-align:center;color:#94a3b8;padding:14px 0;">No timesheets found.</td></tr>
+           <?php endif; ?>
+           </tbody>
+          </table>
+         </div>
 
         </div>
+            
+        <?php
+        $availWeekly = [];
+        if (!empty($availability) && isset($availability[0]['weekly_json'])) {
+            $availWeekly = json_decode($availability[0]['weekly_json'], true) ?: [];
+        }
+        $availVisible = ['mon'=>'Monday','tue'=>'Tuesday','wed'=>'Wednesday','thu'=>'Thursday','fri'=>'Friday'];
+        $renderTimeSelect = function ($name, $value) {
+            $value = trim((string) $value);
+            $display = $value;
+            if ($value !== '' && ($ts = strtotime($value)) !== false) { $display = date('h:i A', $ts); }
+            $opts = [];
+            for ($h = 0; $h < 24; $h++) { foreach ([0, 30] as $m) { $opts[] = date('h:i A', mktime($h, $m, 0)); } }
+            $html = '<select class="time-sel" name="' . htmlspecialchars($name) . '"><option value="">--</option>';
+            $matched = false;
+            foreach ($opts as $o) {
+                $sel = ($o === $display) ? ' selected' : '';
+                if ($sel) $matched = true;
+                $html .= '<option value="' . htmlspecialchars($o) . '"' . $sel . '>' . htmlspecialchars($o) . '</option>';
+            }
+            if (!$matched && $display !== '') {
+                $html .= '<option value="' . htmlspecialchars($display) . '" selected>' . htmlspecialchars($display) . '</option>';
+            }
+            return $html . '</select>';
+        };
+        ?>
+        <div class="avail-card" id="availability-widget">
+         <div class="avail-hdr">
+          <div>
+           <div class="card-title" style="font-size:14px;">My availability</div>
+           <div class="avail-sub">Set your weekly availability</div>
+          </div>
+          <button type="submit" form="dashboardAvailabilityForm" class="save-btn">
+           <span class="dash-avail-text">Update availability</span>
+           <span class="spinner-border spinner-border-sm d-none" id="dashAvailLoader" role="status" aria-hidden="true"></span>
+          </button>
+         </div>
+         <form id="dashboardAvailabilityForm">
+          <input type="hidden" name="emp_id" value="<?= htmlspecialchars($empId ?? '') ?>">
+          <input type="hidden" name="same_hours" value="0">
+          <?php foreach (['sat','sun'] as $hk): ?>
+           <input type="hidden" name="weekly[<?= $hk ?>][start]" value="<?= htmlspecialchars($availWeekly[$hk]['start'] ?? '') ?>">
+           <input type="hidden" name="weekly[<?= $hk ?>][end]" value="<?= htmlspecialchars($availWeekly[$hk]['end'] ?? '') ?>">
+          <?php endforeach; ?>
+          <div class="days-grid">
+           <?php foreach ($availVisible as $key => $label): ?>
+            <div class="day-col">
+             <div class="day-name"><?= $label ?></div>
+             <div class="time-label">From</div>
+             <?= $renderTimeSelect("weekly[$key][start]", $availWeekly[$key]['start'] ?? '') ?>
+             <div class="to-divider">to</div>
+             <div class="time-label">Until</div>
+             <?= $renderTimeSelect("weekly[$key][end]", $availWeekly[$key]['end'] ?? '') ?>
+            </div>
+           <?php endforeach; ?>
+          </div>
+          <div id="dashAvailMsg" class="text-xs mt-3 d-none"></div>
+         </form>
+        </div>
+
+        </div>
+       </div>
+      </div>
     </div>
     
      <?php $this->load->view('unavailabilityCanvas'); ?>
@@ -892,7 +783,7 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
                  },
                  complete: function() {
                      loader.addClass('d-none');
-                     label.text('Save Availability');
+                     label.text('Update availability');
                  }
              });
          });

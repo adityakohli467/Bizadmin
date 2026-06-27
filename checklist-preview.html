@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist — Redesign Preview</title>
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',-apple-system,sans-serif;background:#f6f7fb;color:#212529}
+  .row{display:flex;flex-wrap:wrap;margin:0 -8px}
+  [class*=col-]{padding:0 8px}
+  .g-3 > [class*=col-]{margin-bottom:1rem}
+  .container-fluid{width:100%;padding:0 16px}
+
+  /* ---- Navbar (matches BizAdmin top bar) ---- */
+  .topbar{background:#172153;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:fixed;top:0;left:0;right:0;z-index:50}
+  .topbar .brand{font-weight:700;font-size:1.35rem;color:#fff;letter-spacing:-.02em;display:flex;align-items:center;gap:.4rem}
+  .topbar .brand .tm{font-size:.55rem;vertical-align:super;opacity:.6}
+  .topbar-right{display:flex;align-items:center;gap:1.1rem}
+  .topbar-right .ico{color:#fff;font-size:1.3rem;position:relative;cursor:pointer}
+  .topbar-right .ico .dot{position:absolute;top:-4px;right:-6px;background:#f7654b;color:#fff;font-size:.6rem;border-radius:10px;padding:0 5px;font-weight:600}
+  .user{display:flex;align-items:center;gap:.55rem;cursor:pointer}
+  .user .av{width:36px;height:36px;border-radius:50%;background:#cbd2e8 url('https://www.gravatar.com/avatar/0?d=mp') center/cover}
+  .user .meta{line-height:1.2}
+  .user .meta .n{color:#fff;font-weight:600;font-size:.85rem}
+  .user .meta .l{color:rgba(255,255,255,.6);font-size:.72rem;display:flex;align-items:center;gap:3px}
+
+  /* ===== redesign CSS (copied from systemChecklist.php) ===== */
+  #checklistPage{position:relative;max-width:1320px;margin:0 auto;}
+  #checklistPage .cl-hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+  #checklistPage .cl-hero-left{display:flex;align-items:center;gap:.75rem;}
+  #checklistPage .cl-hero-icon{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#172153,#2a3a82);color:#ffd166;font-size:1.4rem;flex-shrink:0;}
+  #checklistPage .cl-hero-title{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:700;color:#172153;margin:0;letter-spacing:-.02em;line-height:1.2;}
+  #checklistPage .cl-hero-name{background:linear-gradient(135deg,#6366f1,#06b6a4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  #checklistPage .cl-hero-sub{margin:.1rem 0 0;color:#6b7280;font-size:.88rem;}
+  #checklistPage .cl-loc-chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.55rem 1rem;font-size:.85rem;font-weight:600;color:#172153;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .2s,box-shadow .2s,transform .2s;}
+  #checklistPage .cl-loc-chip:hover{border-color:#6366f1;box-shadow:0 6px 18px rgba(99,102,241,.15);transform:translateY(-1px);}
+  #checklistPage .cl-loc-chip i.bxs-map{color:#06b6a4;font-size:1.05rem;}
+  #checklistPage .cl-loc-chev{color:#9ca3af;font-size:1.1rem;}
+  #checklistPage .cl-section-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:.85rem;}
+
+  #checklistPage .card{background:#fff;}
+  #checklistPage .card.card-animate{
+      background:linear-gradient(145deg,#20254f 0%,#2c3270 100%)!important;
+      border-radius:18px!important;border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 4px 14px rgba(16,24,64,.12);
+      transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s;
+      position:relative;overflow:hidden;color:#fff;text-decoration:none;display:block;
+  }
+  #checklistPage .card.card-animate::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6366f1,#06b6a4);transform:scaleX(0);transform-origin:left;transition:transform .3s;z-index:2;}
+  #checklistPage .card.card-animate:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(16,24,64,.28);}
+  #checklistPage .card.card-animate:hover::after{transform:scaleX(1);}
+  #checklistPage .card.card-animate .card-body{padding:1.25rem 1.25rem 1.4rem;}
+  #checklistPage .card.card-animate .text-muted{color:#c7cbe6!important;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;font-weight:700;}
+  #checklistPage .card.card-animate .flex-shrink-0 h4{margin:.35rem 0 0;}
+
+  #checklistPage .card.card-height-100{
+      border-radius:18px!important;border:0!important;
+      box-shadow:0 2px 10px rgba(16,24,64,.06)!important;background:#fff!important;
+  }
+  #checklistPage .card.card-height-100 .card-header{
+      background:#fff!important;border:0!important;border-radius:18px 18px 0 0;
+      padding:1.1rem 1.3rem .4rem;display:flex;align-items:center;justify-content:space-between;
+  }
+  #checklistPage .card.card-height-100 .card-header .fw-semibold{color:#172153;font-size:1rem;}
+  #checklistPage .card.card-height-100 .card-header i.ri-file-list-fill{
+      color:#6366f1;background:#eef0ff;width:32px;height:32px;border-radius:9px;
+      display:inline-grid;place-items:center;font-size:1rem;margin-right:.45rem;
+  }
+  #checklistPage .card.card-height-100 .card-body{padding:.5rem 1.3rem 1.3rem;}
+
+  #checklistPage .btn-primary{
+      background:linear-gradient(135deg,#6366f1,#8b5cf6)!important;border:0!important;color:#fff;
+      border-radius:10px!important;font-weight:600;padding:.5rem .95rem;cursor:pointer;
+      box-shadow:0 6px 16px -6px rgba(99,102,241,.6);transition:transform .2s,box-shadow .2s;
+      display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;text-decoration:none;
+  }
+  #checklistPage .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 22px -6px rgba(99,102,241,.7);}
+
+  #checklistPage .accordion-item{border:1px solid #eef0f4!important;border-radius:14px!important;overflow:hidden;background:#fff;transition:box-shadow .2s,border-color .2s;margin-bottom:.6rem;display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;}
+  #checklistPage .accordion-item:hover{box-shadow:0 4px 14px rgba(16,24,64,.07);border-color:#e0e3ee!important;}
+  #checklistPage .accordion-item h6{font-weight:600;margin:0;color:#212529;font-size:.92rem;}
+  #checklistPage .accordion-item .time{color:#6366f1;font-weight:700;}
+  #checklistPage .accordion-item .acts{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+  #checklistPage .accordion-item .acts i{font-size:1.05rem;cursor:pointer}
+
+  /* toggle */
+  .switch{position:relative;display:inline-block;width:42px;height:20px;flex-shrink:0}
+  .switch input{display:none}
+  .slider{position:absolute;cursor:pointer;inset:0;background:#ccc;transition:.4s;border-radius:34px}
+  .slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;transition:.4s;border-radius:50%}
+  input.success:checked + .slider{background:#06b6a4}
+  input:checked + .slider:before{transform:translateX(20px)}
+
+  #checklistPage .task-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:12px;transition:background .15s}
+  #checklistPage .task-row:hover{background:#f8f9ff}
+  #checklistPage .task-row h6{margin:0;font-size:.92rem;color:#212529}
+
+  #checklistPage .cl-empty{text-align:center;padding:2.5rem 1rem;color:#94a3b8;}
+  #checklistPage .cl-empty i{font-size:2.6rem;display:block;margin-bottom:.4rem;color:#cbd5e1;}
+  #checklistPage .cl-empty p{margin:0;font-size:.9rem;}
+
+  .col-xl-5{flex:0 0 41.66%;max-width:41.66%}
+  .col-xl-7{flex:0 0 58.33%;max-width:58.33%}
+  .col-6{flex:0 0 50%;max-width:50%}
+  .mb-4{margin-bottom:1.5rem}.mb-3{margin-bottom:1rem}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="brand">BizAdmin<span class="tm">TM</span></div>
+  <div class="topbar-right">
+    <i class="bx bxs-map ico"></i>
+    <span class="ico"><i class="bx bx-bell"></i><span class="dot">0</span></span>
+    <div class="user">
+      <span class="av"></span>
+      <span class="meta"><span class="n">xs</span><br><span class="l"><i class="bx bx-map"></i> Castlehill</span></span>
+    </div>
+  </div>
+</div>
+
+<div id="checklistPage" class="container-fluid" style="margin-top:90px;padding-bottom:3rem">
+
+  <!-- Hero -->
+  <div class="cl-hero mb-4">
+    <div class="cl-hero-left">
+      <span class="cl-hero-icon"><i class="bx bxs-moon"></i></span>
+      <div>
+        <h1 class="cl-hero-title">Good Evening, <span class="cl-hero-name">xs</span></h1>
+        <p class="cl-hero-sub">Here's what's happening today</p>
+      </div>
+    </div>
+    <a href="#" class="cl-loc-chip"><i class="bx bxs-map"></i><span>Castlehill</span><i class="bx bx-chevron-right cl-loc-chev"></i></a>
+  </div>
+
+  <div class="row">
+    <!-- Left: app tiles -->
+    <div class="col-xl-5">
+      <div class="cl-section-label">Your Apps</div>
+      <div class="row g-3">
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Recipe Management</p><div class="flex-shrink-0"><h4><i class="bx bx-book-open" style="font-size:42px;color:#f7654b"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">HR Admin</p><div class="flex-shrink-0"><h4><i class="bx bx-book-content" style="font-size:42px;color:#30a473"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Shifts</p><div class="flex-shrink-0"><h4><i class="bx bx-time" style="font-size:42px;color:#fff"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Compliance</p><div class="flex-shrink-0"><h4><i class="bx bxs-shield-alt-2" style="font-size:42px;color:#e0506a"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Suppliers</p><div class="flex-shrink-0"><h4><i class="bx bxs-store" style="font-size:42px;color:#30a473"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Temperature / Calibration</p><div class="flex-shrink-0"><h4><i class="bx bx-fridge" style="font-size:42px;color:#30a473"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Cleaning</p><div class="flex-shrink-0"><h4><i class="bx bx-laptop" style="font-size:42px;color:#fff"></i></h4></div></div></a></div>
+        <div class="col-6"><a class="card card-animate"><div class="card-body"><p class="text-muted">Document Mgmt</p><div class="flex-shrink-0"><h4><i class="bx bxs-file" style="font-size:42px;color:#f7654b"></i></h4></div></div></a></div>
+      </div>
+    </div>
+
+    <!-- Right: Today's Checklist -->
+    <div class="col-xl-7">
+      <div class="card card-height-100" style="margin-bottom:1.5rem">
+        <div class="card-header">
+          <span><i class="ri-file-list-fill"></i><span class="fw-semibold">Today's Checklist</span></span>
+          <a class="btn-primary"><i class="ri-add-line"></i> Create Task</a>
+        </div>
+        <div class="card-body">
+          <div class="accordion-item"><label class="switch"><input type="checkbox" class="success" checked><span class="slider"></span></label><h6><span class="time">[9:00 AM]</span> Opening fridge temperature check</h6><span class="acts"><i class="ri-eye-fill" style="color:#0440B0"></i><i class="ri-attachment-2" style="color:red"></i></span></div>
+          <div class="accordion-item"><label class="switch"><input type="checkbox" class="success"><span class="slider"></span></label><h6><span class="time">[11:30 AM]</span> Sanitise prep benches &amp; equipment</h6><span class="acts"><i class="ri-attachment-2" style="color:red"></i></span></div>
+          <div class="accordion-item"><label class="switch"><input type="checkbox" class="success"><span class="slider"></span></label><h6><span class="time">[2:00 PM]</span> Stock rotation &amp; date-label review</h6><span class="acts"><i class="ri-eye-fill" style="color:#0440B0"></i><i class="ri-attachment-2" style="color:red"></i></span></div>
+          <div class="accordion-item"><label class="switch"><input type="checkbox" class="success" checked><span class="slider"></span></label><h6><span class="time">[5:30 PM]</span> Closing clean-down checklist</h6><span class="acts"><i class="ri-attachment-2" style="color:red"></i></span></div>
+        </div>
+      </div>
+
+      <!-- My Tasks -->
+      <div class="card card-height-100">
+        <div class="card-header">
+          <span><i class="ri-file-list-fill"></i><span class="fw-semibold">My Tasks</span></span>
+          <a class="btn-primary"><i class="ri-add-line"></i> Add Task</a>
+        </div>
+        <div class="card-body">
+          <div class="task-row"><label class="switch"><input type="checkbox" class="success"><span class="slider"></span></label><h6>Call supplier about Friday delivery window</h6></div>
+          <div class="task-row"><label class="switch"><input type="checkbox" class="success" checked><span class="slider"></span></label><h6>Approve new staff timesheet</h6></div>
+          <div class="task-row"><label class="switch"><input type="checkbox" class="success"><span class="slider"></span></label><h6>Update allergen matrix for new menu</h6></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

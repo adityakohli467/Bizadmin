@@ -16,6 +16,23 @@
     width: 116px !important;
     margin-left: 100px !important;
 }
+    /* Brand header background */
+    #page-topbar {
+        background-color: #1a2f52 !important;
+    }
+    #page-topbar .navbar-header {
+        background-color: transparent !important;
+    }
+    #page-topbar .user-name-text {
+        color: #ffffff !important;
+    }
+    #page-topbar .user-name-sub-text,
+    #page-topbar .user-name-sub-text i {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    #page-topbar .hamburger-icon span {
+        background-color: #ffffff !important;
+    }
 </style>
 <header id="page-topbar">
     <div class="layout-width">
