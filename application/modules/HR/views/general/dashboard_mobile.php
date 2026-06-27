@@ -189,6 +189,31 @@ $empId = $empId ?? '';
         .offcanvas-nav .offcanvas-header{background:#1a2f52;color:#fff;}
         .offcanvas-nav .nav-link{color:#1e293b;font-size:14px;padding:12px 4px;border-bottom:.5px solid #f1f5f9;display:flex;align-items:center;gap:10px;}
         .offcanvas-nav .nav-link i{color:#1D9E75;width:18px;text-align:center;}
+
+        /* Timesheet details modal - matched to dashboard UI */
+        #timesheetDetailsModal .modal-content{border:none;border-radius:16px;overflow:hidden;font-family:'Inter',sans-serif;}
+        #timesheetDetailsModal .modal-header{background:#1a2f52;color:#fff;border-bottom:none;padding:14px 18px;}
+        #timesheetDetailsModal .modal-title{font-size:15px;font-weight:600;}
+        #timesheetDetailsModal .modal-body{padding:16px 18px;background:#f8fafc;}
+        #timesheetDetailsModal .modal-footer{border-top:.5px solid #e2e8f0;padding:10px 18px;background:#fff;}
+        .ts-loading{text-align:center;padding:40px 0;}
+        .ts-loading .spinner-border{color:#1D9E75;}
+        .ts-loading p{margin-top:12px;font-size:12px;color:#94a3b8;}
+        .ts-week-banner{background:#E1F5EE;border:.5px solid #9FE1CB;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0F6E56;}
+        .ts-week-banner span{font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:11px;margin-right:4px;}
+        .ts-week-banner strong{color:#0F6E56;font-weight:600;}
+        .ts-table-wrap{background:#fff;border:.5px solid #e2e8f0;border-radius:12px;overflow:hidden;}
+        .ts-detail-tbl{width:100%;border-collapse:collapse;}
+        .ts-detail-tbl thead th{background:#f8fafc;color:#64748b;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:10px 12px;border-bottom:.5px solid #e2e8f0;}
+        .ts-detail-tbl tbody td{font-size:12px;color:#1e293b;padding:10px 12px;border-bottom:.5px solid #f1f5f9;}
+        .ts-detail-tbl tbody tr:last-child td{border-bottom:none;}
+        .ts-detail-tbl tbody td.ts-nobreak{color:#94a3b8;}
+        .ts-detail-tbl tfoot td{font-size:12px;font-weight:600;color:#1a2f52;padding:11px 12px;background:#f8fafc;border-top:.5px solid #e2e8f0;}
+        .ts-detail-tbl tfoot td:first-child{text-align:right;}
+        .ts-note{background:#fffbeb;border:.5px solid #fde68a;border-radius:10px;padding:10px 14px;font-size:12px;color:#92400e;margin-top:12px;}
+        .ts-error{background:#fef2f2;border:.5px solid #fecaca;border-radius:10px;padding:10px 14px;font-size:12px;color:#b91c1c;}
+        .btn-close-soft{background:#f1f5f9;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:500;color:#475569;cursor:pointer;}
+        .btn-close-soft:hover{background:#e2e8f0;}
     </style>
 </head>
 <body>
@@ -231,7 +256,7 @@ $empId = $empId ?? '';
         </div>
 
         <div class="card">
-            <div class="card-hdr"><div class="card-title">Today's schedule</div><a class="card-link" href="<?= base_url('HR/Roster') ?>">View roster</a></div>
+            <div class="card-hdr"><div class="card-title">Today's schedule</div><a class="card-link" href="<?= base_url('HR/roster') ?>">View roster</a></div>
             <?php if ($schedTime !== ''): ?>
                 <div class="sched-time"><?= $schedTime ?></div>
                 <?php if ($schedSub !== ''): ?><div class="sched-sub"><?= $schedSub ?></div><?php endif; ?>
@@ -301,7 +326,7 @@ $empId = $empId ?? '';
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
-                <span class="add-unavail" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">+ Add unavailable time</span>
+                <span class="add-unavail" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">+ Add availability</span>
                 <div class="avail-msg" id="mobileAvailMsg"></div>
                 <button type="submit" class="save-avail-btn">Save availability</button>
             </form>
@@ -343,7 +368,7 @@ $empId = $empId ?? '';
     </div>
     <div class="offcanvas-body">
         <a class="nav-link" href="<?= base_url('HR/' . $this->session->userdata('system_id')) ?>"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a class="nav-link" href="<?= base_url('HR/Roster') ?>"><i class="fa-solid fa-calendar-days"></i> Roster</a>
+        <a class="nav-link" href="<?= base_url('HR/roster') ?>"><i class="fa-solid fa-calendar-days"></i> Roster</a>
         <a class="nav-link" href="#" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#requestLeaveModal"><i class="fa-solid fa-calendar-plus"></i> Apply for leave</a>
         <a class="nav-link" href="<?= base_url('auth/logout') ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
@@ -407,36 +432,36 @@ $empId = $empId ?? '';
 
 <!-- TIMESHEET DETAILS MODAL -->
 <div class="modal fade" id="timesheetDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header" style="background:#1a2f52;color:#fff;">
-                <h5 class="modal-title">Timesheet Details</h5>
+            <div class="modal-header">
+                <h5 class="modal-title">Timesheet details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="timesheet-loading" class="text-center py-5">
-                    <div class="spinner-border" style="color:#1D9E75;" role="status"></div>
-                    <p class="mt-3 text-muted">Loading timesheet data...</p>
+                <div id="timesheet-loading" class="ts-loading">
+                    <div class="spinner-border" role="status"></div>
+                    <p>Loading timesheet data...</p>
                 </div>
                 <div id="timesheet-content" class="d-none">
-                    <div class="alert alert-info mb-3"><strong>Week:</strong> <span id="modal-date-range"></span></div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover">
-                            <thead class="table-light">
+                    <div class="ts-week-banner"><span>Week</span><strong id="modal-date-range"></strong></div>
+                    <div class="ts-table-wrap">
+                        <table class="ts-detail-tbl">
+                            <thead>
                                 <tr><th>Date</th><th>In</th><th>Out</th><th>Break</th><th>Hours</th></tr>
                             </thead>
                             <tbody id="timesheet-table-body"></tbody>
-                            <tfoot class="table-light fw-bold">
-                                <tr><td colspan="4" class="text-end">Total:</td><td id="total-hours-worked">0h 0m</td></tr>
+                            <tfoot>
+                                <tr><td colspan="4">Total</td><td id="total-hours-worked">0h 0m</td></tr>
                             </tfoot>
                         </table>
                     </div>
-                    <div id="no-timesheet-data" class="alert alert-warning d-none">No timesheet records found for this week.</div>
+                    <div id="no-timesheet-data" class="ts-note d-none">No timesheet records found for this week.</div>
                 </div>
-                <div id="timesheet-error" class="alert alert-danger d-none"><span id="error-message"></span></div>
+                <div id="timesheet-error" class="ts-error d-none"><span id="error-message"></span></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn-close-soft" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -508,9 +533,10 @@ $(function () {
                     if (response.data && response.data.length > 0) {
                         var totalMinutes = 0;
                         response.data.forEach(function (record) {
+                            var breakCls = /no break/i.test(record.break_info) ? ' class="ts-nobreak"' : '';
                             tbody.append(
                                 '<tr><td>' + record.date + '</td><td>' + record.clock_in + '</td><td>' +
-                                record.clock_out + '</td><td>' + record.break_info + '</td><td>' + record.total_hours + '</td></tr>'
+                                record.clock_out + '</td><td' + breakCls + '>' + record.break_info + '</td><td>' + record.total_hours + '</td></tr>'
                             );
                             var parts = record.total_hours.match(/(\d+)h\s*(\d+)m/);
                             if (parts) { totalMinutes += parseInt(parts[1]) * 60 + parseInt(parts[2]); }
