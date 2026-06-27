@@ -88,21 +88,54 @@
     .empv3 .avail-sub{font-size:12px;color:#94a3b8;margin-top:4px;}
     .empv3 .save-btn{background:#1D9E75;border:none;border-radius:9px;padding:9px 22px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;}
     .empv3 .save-btn:hover{background:#0F6E56;}
-    .empv3 .days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+    .empv3 .days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;}
     .empv3 .day-col{display:flex;flex-direction:column;gap:8px;}
     .empv3 .day-name{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;}
     .empv3 .time-label{font-size:11px;color:#94a3b8;margin-bottom:2px;}
     .empv3 .time-sel{width:100%;background:#f8fafc;border:.5px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:13px;color:#1e293b;cursor:pointer;appearance:none;-webkit-appearance:none;}
     .empv3 .time-sel:focus{outline:none;border-color:#1D9E75;background:#fff;}
     .empv3 .to-divider{text-align:center;font-size:12px;color:#94a3b8;padding:2px 0;}
-    @media(max-width:1100px){.empv3 .layout{flex-direction:column;}.empv3 .sidebar{width:100%;border-right:none;border-bottom:.5px solid #e2e8f0;}.empv3 .two-col{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:560px){.empv3 .stat-row{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:1fr;}}
+    .empv3 .same-all-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+    .empv3 .same-all-toggle input{display:none;}
+    .empv3 .same-all-toggle .sat-slider{width:36px;height:20px;background:#cbd5e1;border-radius:20px;position:relative;transition:background .2s;flex-shrink:0;}
+    .empv3 .same-all-toggle .sat-slider::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .empv3 .same-all-toggle input:checked + .sat-slider{background:#1D9E75;}
+    .empv3 .same-all-toggle input:checked + .sat-slider::after{transform:translateX(16px);}
+    .empv3 .same-all-toggle .sat-txt{font-size:12px;color:#64748b;font-weight:500;white-space:nowrap;}
+    @media(max-width:1100px){.empv3 .layout{flex-direction:column;}.empv3 .sidebar{width:100%;border-right:none;border-bottom:.5px solid #e2e8f0;}.empv3 .two-col{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:repeat(4,1fr);}}
+    @media(max-width:560px){.empv3 .stat-row{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:repeat(2,1fr);}}
+    /* Common system loader overlay */
+    #ts-loader-overlay{display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;}
+    #ts-loader-overlay.show{display:flex;}
+    #ts-loader-overlay .ts-spinner{width:130px;height:130px;border:3px solid #f3f3f3;border-top:3px solid #172153;border-radius:50%;animation:tsspin 1s linear infinite;}
+    @keyframes tsspin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    /* Timesheet details modal - matched to dashboard UI */
+    #timesheetDetailsModal .modal-content{border:none;border-radius:16px;overflow:hidden;font-family:'Inter',sans-serif;}
+    #timesheetDetailsModal .modal-header{background:#1a2f52;color:#fff;border-bottom:none;padding:16px 22px;}
+    #timesheetDetailsModal .modal-title{font-size:16px;font-weight:600;}
+    #timesheetDetailsModal .modal-body{padding:20px 22px;background:#f8fafc;}
+    #timesheetDetailsModal .modal-footer{border-top:.5px solid #e2e8f0;padding:12px 22px;background:#fff;}
+    #timesheetDetailsModal .ts-week-banner{background:#E1F5EE;border:.5px solid #9FE1CB;border-radius:10px;padding:11px 16px;margin-bottom:16px;font-size:13px;color:#0F6E56;}
+    #timesheetDetailsModal .ts-week-banner span{font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:11px;margin-right:6px;}
+    #timesheetDetailsModal .ts-week-banner strong{color:#0F6E56;font-weight:600;}
+    #timesheetDetailsModal .ts-table-wrap{background:#fff;border:.5px solid #e2e8f0;border-radius:12px;overflow:hidden;}
+    #timesheetDetailsModal table{width:100%;border-collapse:collapse;margin:0;}
+    #timesheetDetailsModal thead th{background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:12px 14px;border-bottom:.5px solid #e2e8f0;}
+    #timesheetDetailsModal tbody td{font-size:13px;color:#1e293b;padding:12px 14px;border-bottom:.5px solid #f1f5f9;vertical-align:middle;}
+    #timesheetDetailsModal tbody tr:last-child td{border-bottom:none;}
+    #timesheetDetailsModal tbody small{color:#94a3b8;font-size:11px;}
+    #timesheetDetailsModal tfoot td{font-size:13px;font-weight:600;color:#1a2f52;padding:13px 14px;background:#f8fafc;border-top:.5px solid #e2e8f0;}
+    #timesheetDetailsModal .badge{font-weight:600;font-size:11px;padding:5px 10px;border-radius:20px;}
+    #timesheetDetailsModal .ts-note{background:#fffbeb;border:.5px solid #fde68a;border-radius:10px;padding:11px 16px;font-size:13px;color:#92400e;margin-top:14px;}
+    #timesheetDetailsModal .ts-error{background:#fef2f2;border:.5px solid #fecaca;border-radius:10px;padding:11px 16px;font-size:13px;color:#b91c1c;}
+    #timesheetDetailsModal .btn-close-soft{background:#f1f5f9;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:500;color:#475569;cursor:pointer;}
+    #timesheetDetailsModal .btn-close-soft:hover{background:#e2e8f0;}
     </style>
 </head>
 <body class="bg-[#F4F6F9] font-inter">
 
 
-<main class="max-w-[1920px] mx-auto px-6 py-8 mt-5">
+<main class="max-w-[1920px] mx-auto px-6 pb-8 pt-2">
     <?php
     $w = $employeeProfileWidgetData ?? [];
     $employee_name     = ucfirst($w['employee_name'] ?? 'User');
@@ -157,7 +190,6 @@
             <?= !empty($today_shift['roster_end_time']) ? date('h:i A', strtotime($today_shift['roster_end_time'])) : '--:-- --' ?>
            </div>
            <?php if ($shift_started): ?>
-            <div class="sched-sub">Shift started at <?= htmlspecialchars($shift_clockin) ?></div>
             <div class="clocked"><span class="c-dot"></span>Clocked in <?= htmlspecialchars($shift_clockin) ?></div>
            <?php else: ?>
             <div class="sched-sub">Shift not started</div>
@@ -298,7 +330,7 @@
         if (!empty($availability) && isset($availability[0]['weekly_json'])) {
             $availWeekly = json_decode($availability[0]['weekly_json'], true) ?: [];
         }
-        $availVisible = ['mon'=>'Monday','tue'=>'Tuesday','wed'=>'Wednesday','thu'=>'Thursday','fri'=>'Friday'];
+        $availVisible = ['mon'=>'Monday','tue'=>'Tuesday','wed'=>'Wednesday','thu'=>'Thursday','fri'=>'Friday','sat'=>'Saturday','sun'=>'Sunday'];
         $renderTimeSelect = function ($name, $value) {
             $value = trim((string) $value);
             $display = $value;
@@ -324,18 +356,21 @@
            <div class="card-title" style="font-size:14px;">My availability</div>
            <div class="avail-sub">Set your weekly availability</div>
           </div>
-          <button type="submit" form="dashboardAvailabilityForm" class="save-btn">
-           <span class="dash-avail-text">Update availability</span>
-           <span class="spinner-border spinner-border-sm d-none" id="dashAvailLoader" role="status" aria-hidden="true"></span>
-          </button>
+          <div style="display:flex;align-items:center;gap:18px;">
+           <label class="same-all-toggle">
+            <input type="checkbox" id="sameAllDays">
+            <span class="sat-slider"></span>
+            <span class="sat-txt">Same for all days</span>
+           </label>
+           <button type="submit" form="dashboardAvailabilityForm" class="save-btn">
+            <span class="dash-avail-text">Update availability</span>
+            <span class="spinner-border spinner-border-sm d-none" id="dashAvailLoader" role="status" aria-hidden="true"></span>
+           </button>
+          </div>
          </div>
          <form id="dashboardAvailabilityForm">
           <input type="hidden" name="emp_id" value="<?= htmlspecialchars($empId ?? '') ?>">
           <input type="hidden" name="same_hours" value="0">
-          <?php foreach (['sat','sun'] as $hk): ?>
-           <input type="hidden" name="weekly[<?= $hk ?>][start]" value="<?= htmlspecialchars($availWeekly[$hk]['start'] ?? '') ?>">
-           <input type="hidden" name="weekly[<?= $hk ?>][end]" value="<?= htmlspecialchars($availWeekly[$hk]['end'] ?? '') ?>">
-          <?php endforeach; ?>
           <div class="days-grid">
            <?php foreach ($availVisible as $key => $label): ?>
             <div class="day-col">
@@ -458,73 +493,49 @@
          </div>
      </div>
      
+     <!-- Common system loader -->
+     <div id="ts-loader-overlay"><div class="ts-spinner"></div></div>
+
      <!-- Timesheet Details Modal -->
      <div class="modal fade" id="timesheetDetailsModal" tabindex="-1" aria-labelledby="timesheetDetailsModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-xl modal-dialog-scrollable">
+         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
              <div class="modal-content">
-                 <div class="modal-header bg-teal text-white">
-                     <h5 class="modal-title" id="timesheetDetailsModalLabel">
-                         <i class="fa-solid fa-clock-rotate-left me-2"></i>
-                         Timesheet Details
-                     </h5>
+                 <div class="modal-header">
+                     <h5 class="modal-title" id="timesheetDetailsModalLabel">Timesheet details</h5>
                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                  </div>
                  <div class="modal-body">
-                     <div id="timesheet-loading" class="text-center py-5">
-                         <div class="spinner-border text-teal" role="status">
-                             <span class="visually-hidden">Loading...</span>
-                         </div>
-                         <p class="mt-3 text-gray-600">Loading timesheet data...</p>
-                     </div>
-                     
-                     <div id="timesheet-content" class="d-none">
-                         <!-- Date Range Header -->
-                         <div class="alert alert-info mb-4">
-                             <i class="fa-solid fa-calendar-days me-2"></i>
-                             <strong>Week:</strong> <span id="modal-date-range"></span>
-                         </div>
-                         
-                         <!-- Timesheet Table -->
-                         <div class="table-responsive">
-                             <table class="table table-hover">
-                                 <thead class="table-light">
+                     <div id="timesheet-content">
+                         <div class="ts-week-banner"><span>Week</span><strong id="modal-date-range"></strong></div>
+                         <div class="ts-table-wrap">
+                             <table>
+                                 <thead>
                                      <tr>
                                          <th>Date</th>
                                          <th>Clock In</th>
                                          <th>Clock Out</th>
-                                         <th>Break Duration</th>
-                                         <th>Hours Worked</th>
+                                         <th>Break</th>
+                                         <th>Hours</th>
                                          <th>Location</th>
                                          <th>Status</th>
                                      </tr>
                                  </thead>
-                                 <tbody id="timesheet-table-body">
-                                     <!-- Data will be populated via AJAX -->
-                                 </tbody>
-                                 <tfoot class="table-light fw-bold">
+                                 <tbody id="timesheet-table-body"></tbody>
+                                 <tfoot>
                                      <tr>
-                                         <td colspan="4" class="text-end">Total Hours:</td>
+                                         <td colspan="4" style="text-align:right;">Total hours</td>
                                          <td id="total-hours-worked">0h 0m</td>
                                          <td colspan="2"></td>
                                      </tr>
                                  </tfoot>
                              </table>
                          </div>
-                         
-                         <!-- No Data Message -->
-                         <div id="no-timesheet-data" class="alert alert-warning d-none">
-                             <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                             No timesheet records found for this week.
-                         </div>
+                         <div id="no-timesheet-data" class="ts-note d-none">No timesheet records found for this week.</div>
                      </div>
-                     
-                     <div id="timesheet-error" class="alert alert-danger d-none">
-                         <i class="fa-solid fa-exclamation-circle me-2"></i>
-                         <span id="error-message"></span>
-                     </div>
+                     <div id="timesheet-error" class="ts-error d-none"><span id="error-message"></span></div>
                  </div>
                  <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" class="btn-close-soft" data-bs-dismiss="modal">Close</button>
                  </div>
              </div>
          </div>
@@ -544,14 +555,13 @@
              btn.find('.btn-text').text('Loading...');
              btn.find('.spinner-border').removeClass('d-none');
              
-             // Reset modal state
-             $('#timesheet-loading').removeClass('d-none');
-             $('#timesheet-content').addClass('d-none');
+             // Reset modal content state
+             $('#timesheet-content').removeClass('d-none');
              $('#timesheet-error').addClass('d-none');
+             $('#no-timesheet-data').addClass('d-none');
              
-             // Show modal
-             const modal = new bootstrap.Modal(document.getElementById('timesheetDetailsModal'));
-             modal.show();
+             // Show common system loader before modal opens
+             $('#ts-loader-overlay').addClass('show');
              
              // Fetch timesheet data
              $.ajax({
@@ -619,27 +629,48 @@
                              $('#no-timesheet-data').removeClass('d-none');
                          }
                          
-                         $('#timesheet-loading').addClass('d-none');
                          $('#timesheet-content').removeClass('d-none');
+                         $('#timesheet-error').addClass('d-none');
                      } else {
-                         $('#timesheet-loading').addClass('d-none');
+                         $('#timesheet-content').addClass('d-none');
                          $('#timesheet-error').removeClass('d-none');
                          $('#error-message').text(response.message || 'Failed to load timesheet data');
                      }
+                     // Open modal now that content is ready
+                     (new bootstrap.Modal(document.getElementById('timesheetDetailsModal'))).show();
                  },
                  error: function(xhr, status, error) {
-                     $('#timesheet-loading').addClass('d-none');
+                     $('#timesheet-content').addClass('d-none');
                      $('#timesheet-error').removeClass('d-none');
                      $('#error-message').text('An error occurred while loading timesheet data. Please try again.');
+                     (new bootstrap.Modal(document.getElementById('timesheetDetailsModal'))).show();
                      console.error('Error:', error);
                  },
                  complete: function() {
-                     // Hide button loader
+                     // Hide common loader + reset button
+                     $('#ts-loader-overlay').removeClass('show');
                      btn.prop('disabled', false);
                      btn.find('.btn-text').text('View');
                      btn.find('.spinner-border').addClass('d-none');
                  }
              });
+         });
+         
+         // Same-for-all-days availability toggle
+         function applySameForAllDays() {
+             var $f = $('#dashboardAvailabilityForm');
+             var ms = $f.find('select[name="weekly[mon][start]"]').val();
+             var me = $f.find('select[name="weekly[mon][end]"]').val();
+             ['tue','wed','thu','fri','sat','sun'].forEach(function(d) {
+                 $f.find('select[name="weekly[' + d + '][start]"]').val(ms);
+                 $f.find('select[name="weekly[' + d + '][end]"]').val(me);
+             });
+         }
+         $('#sameAllDays').on('change', function() {
+             if ($(this).is(':checked')) { applySameForAllDays(); }
+         });
+         $('#dashboardAvailabilityForm').on('change', 'select[name="weekly[mon][start]"], select[name="weekly[mon][end]"]', function() {
+             if ($('#sameAllDays').is(':checked')) { applySameForAllDays(); }
          });
          
          // Leave Request Modal Functionality

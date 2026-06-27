@@ -71,13 +71,17 @@ $renderTimeSelect = function ($name, $value) {
         }
     }
     $value = trim((string) $value);
-    $html  = '<select class="time-sel" name="' . $name . '">';
-    if ($value !== '' && !in_array($value, $opts, true)) {
-        $html .= '<option selected value="' . htmlspecialchars($value) . '">' . htmlspecialchars($value) . '</option>';
-    }
+    $display = $value;
+    if ($value !== '' && ($ts = strtotime($value)) !== false) { $display = date('h:i A', $ts); }
+    $html  = '<select class="time-sel" name="' . htmlspecialchars($name) . '"><option value="">--</option>';
+    $matched = false;
     foreach ($opts as $o) {
-        $sel  = ($o === $value) ? ' selected' : '';
+        $sel  = ($o === $display) ? ' selected' : '';
+        if ($sel) $matched = true;
         $html .= '<option' . $sel . ' value="' . htmlspecialchars($o) . '">' . htmlspecialchars($o) . '</option>';
+    }
+    if (!$matched && $display !== '') {
+        $html .= '<option value="' . htmlspecialchars($display) . '" selected>' . htmlspecialchars($display) . '</option>';
     }
     return $html . '</select>';
 };
@@ -168,6 +172,13 @@ $empId = $empId ?? '';
         .save-avail-btn{width:100%;background:#1D9E75;border:none;border-radius:8px;padding:9px;font-size:12px;color:#fff;font-weight:500;margin-top:10px;cursor:pointer;}
         .add-unavail{font-size:11px;color:#1D9E75;font-weight:500;margin-top:6px;display:block;cursor:pointer;}
         .avail-msg{font-size:11px;margin-top:8px;display:none;}
+        .same-all-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+        .same-all-toggle input{display:none;}
+        .same-all-toggle .sat-slider{width:32px;height:18px;background:#cbd5e1;border-radius:20px;position:relative;transition:background .2s;flex-shrink:0;}
+        .same-all-toggle .sat-slider::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s;}
+        .same-all-toggle input:checked + .sat-slider{background:#1D9E75;}
+        .same-all-toggle input:checked + .sat-slider::after{transform:translateX(14px);}
+        .same-all-toggle .sat-txt{font-size:10px;color:#64748b;font-weight:500;white-space:nowrap;}
 
         .qs-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #f8fafc;}
         .qs-row:last-child{border-bottom:none;}
@@ -305,7 +316,14 @@ $empId = $empId ?? '';
         </div>
 
         <div class="card">
-            <div class="card-hdr"><div class="card-title">My availability</div></div>
+            <div class="card-hdr">
+                <div class="card-title">My availability</div>
+                <label class="same-all-toggle">
+                    <input type="checkbox" id="mSameAllDays">
+                    <span class="sat-slider"></span>
+                    <span class="sat-txt">Same for all days</span>
+                </label>
+            </div>
             <div class="avail-sub">Set your weekly availability</div>
             <form id="mobileAvailabilityForm">
                 <input type="hidden" name="emp_id" value="<?= htmlspecialchars($empId) ?>">
@@ -313,17 +331,12 @@ $empId = $empId ?? '';
                 <?php foreach ($availDays as $key => $label):
                     $start = trim((string) ($availWeekly[$key]['start'] ?? ''));
                     $end   = trim((string) ($availWeekly[$key]['end'] ?? ''));
-                    $hasTimes = ($start !== '' && $end !== '');
                 ?>
                 <div class="avail-day-row">
                     <div class="day-name"><?= $label ?></div>
-                    <?php if ($hasTimes): ?>
-                        <?= $renderTimeSelect("weekly[$key][start]", $start) ?>
-                        <div class="to-txt">to</div>
-                        <?= $renderTimeSelect("weekly[$key][end]", $end) ?>
-                    <?php else: ?>
-                        <div class="off-tag">Day off</div>
-                    <?php endif; ?>
+                    <?= $renderTimeSelect("weekly[$key][start]", $start) ?>
+                    <div class="to-txt">to</div>
+                    <?= $renderTimeSelect("weekly[$key][end]", $end) ?>
                 </div>
                 <?php endforeach; ?>
                 <span class="add-unavail" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">+ Add availability</span>
@@ -500,6 +513,23 @@ $(function () {
                 btn.prop('disabled', false).text('Save availability');
             }
         });
+    });
+
+    // ---------- Same-for-all-days availability toggle ----------
+    function applyMobileSameForAll() {
+        var $f = $('#mobileAvailabilityForm');
+        var ms = $f.find('select[name="weekly[mon][start]"]').val();
+        var me = $f.find('select[name="weekly[mon][end]"]').val();
+        ['tue','wed','thu','fri','sat','sun'].forEach(function(d) {
+            $f.find('select[name="weekly[' + d + '][start]"]').val(ms);
+            $f.find('select[name="weekly[' + d + '][end]"]').val(me);
+        });
+    }
+    $('#mSameAllDays').on('change', function() {
+        if ($(this).is(':checked')) { applyMobileSameForAll(); }
+    });
+    $('#mobileAvailabilityForm').on('change', 'select[name="weekly[mon][start]"], select[name="weekly[mon][end]"]', function() {
+        if ($('#mSameAllDays').is(':checked')) { applyMobileSameForAll(); }
     });
 
     // ---------- Timesheet details ----------
