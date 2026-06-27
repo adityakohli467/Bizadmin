@@ -681,6 +681,28 @@ public function getEmployeeTimesheets($empId)
 }
 
 /**
+ * Count distinct future roster dates the employee has been assigned to.
+ * Upcoming Shifts = all roster dates greater than today.
+ */
+public function getUpcomingShiftsCount($empId)
+{
+    if (!$empId) return 0;
+
+    $q = $this->tenantDb
+        ->select('COUNT(DISTINCT roster_date) AS shifts', false)
+        ->from('HR_timesheet_details')
+        ->where('employee_id', $empId)
+        ->where('is_deleted', 0)
+        ->where('roster_date >', date('Y-m-d'))
+        ->get();
+
+    if ($q === false) return 0;
+
+    $row = $q->row_array();
+    return (int)($row['shifts'] ?? 0);
+}
+
+/**
  * Get detailed timesheet records for an employee within a date range
  * Including clock in/out times, locations, break durations, and calculated hours
  * 

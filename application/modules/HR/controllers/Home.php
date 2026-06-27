@@ -124,6 +124,21 @@ public function index($system_id = '')
             $leaveTypeConditions,
             'leaveTypeName ASC'
         ) ?? [];
+
+        // Dynamic leave balance per configured leave type
+        $this->load->model('Leave_model');
+        $data['leaveBalances'] = $this->Leave_model->get_employee_leave_balance($empId) ?? [];
+
+        // Top insight box counts (dynamic)
+        $leaveRequests = $this->common_model->fetchRecordsDynamically(
+            'HR_leave_management',
+            ['id'],
+            ['emp_id' => $empId, 'leave_status !=' => 0]
+        ) ?? [];
+        $data['leaveRequestCount'] = count($leaveRequests);
+
+        // Upcoming Shifts = all future roster dates the employee has been added to
+        $data['upcomingShiftsCount'] = $this->timesheet_model->getUpcomingShiftsCount($empId) ?? 0;
     }
 
     // ---------- Manager Dashboard ----------
@@ -139,9 +154,24 @@ public function index($system_id = '')
     $data['total_team_hours'] = $this->dashboard_model->get_total_team_hours() ?? 0;
 
     // ---------- Views ----------
+    $isManager = $this->ion_auth->in_group('admin') || $this->ion_auth->in_group('manager');
+
+    // Device detection for the employee dashboard.
+    // Phones get a dedicated, self-contained mobile UI. Optional ?view=mobile|web override for testing.
+    $this->load->library('user_agent');
+    $viewOverride = $this->input->get('view');
+    $isMobile = ($viewOverride === 'mobile')
+        || ($viewOverride !== 'web' && $this->agent->is_mobile());
+
+    if (!$isManager && $isMobile) {
+        // Self-contained mobile employee dashboard (renders its own header/footer)
+        $this->load->view('general/dashboard_mobile', $data);
+        return;
+    }
+
     $this->load->view('general/header');
 
-    if ($this->ion_auth->in_group('admin') || $this->ion_auth->in_group('manager')) {
+    if ($isManager) {
         $this->load->view('general/dashboard_manager', $data);
     } else {
         $this->load->view('general/dashboard', $data);

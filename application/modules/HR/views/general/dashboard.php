@@ -33,11 +33,11 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
             <div class="relative mb-4">
                 <img src="https://bizadmin.com.au/theme-assets/images/users/avatar-1.jpg"
                      alt="Profile"
-                     class="w-32 h-32 rounded-full border-4 border-teal">
+                     class="w-20 h-20 rounded-full border-2 border-teal">
                      <?php if($shift_started) {  ?>
-                <div class="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full border-4 border-white"></div>
+                <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
                 <?php } else{ ?>
-                <div class="absolute bottom-0 right-0 w-8 h-8 bg-gray-300 rounded-full border-4 border-white"></div>
+                <div class="absolute bottom-0 right-0 w-5 h-5 bg-gray-300 rounded-full border-2 border-white"></div>
                 <?php } ?>
             </div>
 
@@ -45,17 +45,14 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
             <p class="text-sm text-gray-500 mb-4"><?= htmlspecialchars($employee_position) ?></p>
 
             <!-- TODAY'S SCHEDULE -->
-            <div class="w-full bg-neutralgray rounded-xl p-4 mb-4">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="fa-regular fa-calendar text-teal"></i>
-                    <p class="text-sm text-gray-600 font-medium">Today's Schedule</p>
-                </div>
+            <div class="w-full bg-neutralgray rounded-xl p-4 mb-2">
+                <p class="text-sm text-gray-600 font-medium mb-2">Today's Schedule</p>
 
                 <?php if (!empty($today_shift) && !empty($today_shift['roster_start_time'])): ?>
 
                     <p class="text-sm text-gray-700">
                         <?= date('h:i A', strtotime($today_shift['roster_start_time'])) ?>
-                         � 
+                         &mdash; 
                         <?= !empty($today_shift['roster_end_time'])
                               ? date('h:i A', strtotime($today_shift['roster_end_time']))
                               : '--:-- --' ?>
@@ -73,18 +70,6 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
                     <p class="text-xs text-gray-500"></p>
                 <?php endif; ?>
             </div>
-
-            <!-- START SHIFT BUTTON -->
-            <button class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-[14px] mb-3 transition-all shadow-md hover:shadow-lg">
-                <i class="fa-solid fa-play mr-2"></i>
-                <?= $shift_started ? 'Shift Started' : ' Shift not started' ?>
-            </button>
-
-            <!-- CLOCK IN BUTTON -->
-            <button class="w-full bg-green-100 hover:bg-green-200 text-green-700 font-semibold py-3 rounded-[14px] transition-all">
-                <i class="fa-regular fa-clock mr-2"></i>
-                <?= $shift_started ? 'Clocked In ' . htmlspecialchars($shift_clockin) : 'Clock In' ?>
-            </button>
         </div>
 
         <!-- QUICK STATS -->
@@ -116,35 +101,36 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
     <!-- LEAVE BALANCE -->
     <div id="leave-balance-widget"
          class="bg-gradient-to-br from-teal to-primary rounded-[20px] p-6 shadow-lg mt-6 text-white">
-        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-umbrella-beach"></i>
-            Leave Balance
-        </h3>
-        <div class="space-y-4">
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm">Annual Leave</span>
-                    <span class="text-sm font-bold">12/20 days</span>
-                </div>
-                <div class="w-full bg-white/20 rounded-full h-2">
-                    <div class="bg-white rounded-full h-2" style="width: 60%"></div>
-                </div>
-            </div>
+        <h3 class="text-lg font-bold mb-1">Leave Balance</h3>
+        <p class="text-xs text-white/70 mb-4">Your current leave entitlements</p>
 
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm">Sick Leave</span>
-                    <span class="text-sm font-bold">8/10 days</span>
+        <div class="space-y-4">
+            <?php
+            $leaveBalances = $leaveBalances ?? [];
+            ?>
+            <?php if (!empty($leaveBalances)): ?>
+                <?php foreach ($leaveBalances as $lb):
+                    $entitlement = (float) ($lb['entitlements'] ?? 0);
+                    $used        = (float) ($lb['used_days'] ?? 0);
+                    $percent     = $entitlement > 0 ? min(100, round(($used / $entitlement) * 100)) : 0;
+                ?>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm"><?= htmlspecialchars($lb['leaveTypeName']) ?></span>
+                        <span class="text-sm font-bold"><?= $used ?>/<?= $entitlement ?> days</span>
+                    </div>
+                    <div class="w-full bg-white/20 rounded-full h-2">
+                        <div class="bg-white rounded-full h-2" style="width: <?= $percent ?>%"></div>
+                    </div>
                 </div>
-                <div class="w-full bg-white/20 rounded-full h-2">
-                    <div class="bg-white rounded-full h-2" style="width: 80%"></div>
-                </div>
-            </div>
-            
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-sm text-white/70">No leave types configured.</p>
+            <?php endif; ?>
+
             <button class="w-full bg-white text-teal hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg transition-all mt-4" 
                     data-bs-toggle="modal" 
                     data-bs-target="#requestLeaveModal">
-                <i class="fa-solid fa-calendar-plus mr-2"></i>
                 Apply Leave
             </button>
         </div>
@@ -155,50 +141,26 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
 
         <div class="col-span-12 lg:col-span-9">
             
-            <div id="insights-row" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div id="insights-row" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-calendar-days text-blue-600 text-xl"></i>
-                        </div>
-                        <span class="text-3xl font-bold text-primary">5</span>
-                    </div>
-                    <p class="text-sm text-gray-600 font-medium">Tasks Today</p>
-                </div>
-                
-                <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-file-lines text-purple-600 text-xl"></i>
-                        </div>
-                        <span class="text-3xl font-bold text-primary">4</span>
+                        <span class="text-3xl font-bold text-primary"><?= (int)($leaveRequestCount ?? 0) ?></span>
                     </div>
                     <p class="text-sm text-gray-600 font-medium">Leave Requests</p>
                 </div>
                 <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-teal/20 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-clock text-teal text-xl"></i>
-                        </div>
-                        <span class="text-3xl font-bold text-primary">8</span>
+                        <span class="text-3xl font-bold text-primary"><?= (int)($upcomingShiftsCount ?? 0) ?></span>
                     </div>
                     <p class="text-sm text-gray-600 font-medium">Upcoming Shifts</p>
                 </div>
                 <div class="bg-white rounded-[16px] p-5 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
                     <div class="flex items-center justify-between mb-3">
                         <?php if($shift_started) {  ?>
-                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-user-check text-green-600 text-xl"></i>
-                        </div>
                          <span class="text-3xl font-bold text-green-600">Present</span>
                          <?php } else{ ?>
-                           <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-user-check text-red-600 text-xl"></i>
-                        </div>
                          <span class="text-3xl font-bold text-red-600">Absent</span>
                          <?php }  ?>
-                        
-                        
                     </div>
                     <p class="text-sm text-gray-600 font-medium">Attendance Today</p>
                 </div>
@@ -206,14 +168,13 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
 
          
     
-            <!-- ROW 1: My Timesheets (50%) + My Tasks (50%) -->
+            <!-- ROW 1: My Timesheets (50%) + My Availability (50%) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 
                 <!-- MY TIMESHEETS -->
                 <div id="latest-timesheet-section" class="bg-white rounded-[20px] p-6 shadow-lg">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-teal"></i>
+                        <h3 class="text-lg font-bold text-primary">
                             My Timesheets
                         </h3>
                         <button class="text-teal hover:text-primary text-sm font-medium transition-colors">View All</button>
@@ -271,66 +232,61 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
                     </div>
                 </div>
                
-                <!-- MY TASKS -->
-                <?php $tasks = $todayTasks ?? [];?>
-                
-                <div id="tasks-widget" class="bg-white rounded-[20px] p-6 shadow-lg">
+                <!-- MY AVAILABILITY -->
+                <?php
+                $availWeekly = [];
+                if (!empty($availability) && isset($availability[0]['weekly_json'])) {
+                    $availWeekly = json_decode($availability[0]['weekly_json'], true) ?: [];
+                }
+                $availDays = [
+                    "mon" => "Monday",
+                    "tue" => "Tuesday",
+                    "wed" => "Wednesday",
+                    "thu" => "Thursday",
+                    "fri" => "Friday",
+                    "sat" => "Saturday",
+                    "sun" => "Sunday",
+                ];
+                ?>
+
+                <div id="availability-widget" class="bg-white rounded-[20px] p-6 shadow-lg">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <i class="fa-solid fa-tasks text-orange"></i>
-                            My Tasks
-                        </h3>
-                         <a class="bg-teal hover:bg-primary text-white px-4 py-2 rounded-[12px] text-sm font-medium transition-colors" href="Employee/employeeprofile">
-                                            Update Availability
-                                        </a>
+                        <div>
+                            <h3 class="text-lg font-bold text-primary">My Availability</h3>
+                            <p class="text-xs text-gray-500 mt-1">Set your weekly availability</p>
+                        </div>
+                        <button type="submit" form="dashboardAvailabilityForm"
+                                class="bg-teal hover:bg-primary text-white px-4 py-2 rounded-[12px] text-sm font-medium transition-colors">
+                            <span class="dash-avail-text">Save Availability</span>
+                            <span class="spinner-border spinner-border-sm d-none" id="dashAvailLoader" role="status" aria-hidden="true"></span>
+                        </button>
                     </div>
 
-                    <div class="space-y-3">
+                    <form id="dashboardAvailabilityForm">
+                        <input type="hidden" name="emp_id" value="<?= htmlspecialchars($empId ?? '') ?>">
+                        <input type="hidden" name="same_hours" value="0">
 
-                        <?php if (empty($tasks)) : ?>
-                            <p class="text-gray-500 text-sm italic text-center py-4">
-                                No tasks assigned for today.
-                            </p>
-                        <?php else : ?>
-
-                            <?php foreach ($tasks as $t) : 
-                                $taskText   = $t['task'];
-                                $dueDate    = date("M d, Y", strtotime($t['due']));
-                                $isDone     = $t['status'] == 1;
-
-                                // Badge color logic
-                                $badgeText  = $isDone ? "Done" : "Pending";
-                                $badgeClass = $isDone 
-                                    ? "bg-green-100 text-green-600"
-                                    : "bg-yellow-100 text-yellow-600";
-                            ?>
-                            
-                            <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-[14px] hover:bg-gray-100 transition-colors">
-                                
-                                <input type="checkbox" 
-                                       class="w-5 h-5 rounded border-gray-300 text-teal focus:ring-teal"
-                                       <?= $isDone ? "checked" : "" ?>
-                                >
-
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium <?= $isDone ? 'text-gray-400 line-through' : 'text-gray-700' ?>">
-                                        <?= htmlspecialchars($taskText) ?>
-                                    </p>
-
-                                    <p class="text-xs <?= $isDone ? 'text-gray-400' : 'text-gray-500' ?> mt-1">
-                                        <?= $isDone ? 'Completed' : 'Due: ' . $dueDate ?>
-                                    </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <?php foreach ($availDays as $key => $label): ?>
+                                <div class="bg-gray-50 rounded-[12px] p-3">
+                                    <p class="text-xs font-semibold text-gray-700 mb-2"><?= $label ?></p>
+                                    <div class="flex items-center gap-2">
+                                        <input type="time"
+                                               name="weekly[<?= $key ?>][start]"
+                                               value="<?= htmlspecialchars($availWeekly[$key]['start'] ?? '') ?>"
+                                               class="w-full text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal">
+                                        <span class="text-xs text-gray-400">to</span>
+                                        <input type="time"
+                                               name="weekly[<?= $key ?>][end]"
+                                               value="<?= htmlspecialchars($availWeekly[$key]['end'] ?? '') ?>"
+                                               class="w-full text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal">
+                                    </div>
                                 </div>
-
-                                <span class="px-3 py-1 rounded-full text-xs font-medium <?= $badgeClass ?>">
-                                    <?= $badgeText ?>
-                                </span>
-                            </div>
-
                             <?php endforeach; ?>
+                        </div>
 
-                        <?php endif; ?>
-                    </div>
+                        <div id="dashAvailMsg" class="text-xs mt-3 d-none"></div>
+                    </form>
                 </div>
 
             </div>
@@ -901,6 +857,44 @@ $attendance_rate     = $w['attendance_rate'] ?? 0;
              $('#leaveSuccessAlert, #leaveErrorAlert').addClass('d-none');
              $('#medicalCertificateField').addClass('d-none');
              $('#medical_certificate').attr('required', false);
+         });
+
+         // Save My Availability (dashboard widget)
+         $('#dashboardAvailabilityForm').on('submit', function(e) {
+             e.preventDefault();
+
+             const form = $(this);
+             const loader = $('#dashAvailLoader');
+             const label = $('.dash-avail-text');
+             const msg = $('#dashAvailMsg');
+
+             loader.removeClass('d-none');
+             label.text('Saving...');
+             msg.addClass('d-none');
+
+             $.ajax({
+                 url: '<?= base_url("HR/Employees/save_availability") ?>',
+                 type: 'POST',
+                 data: form.serialize(),
+                 dataType: 'json',
+                 success: function(res) {
+                     if (res.status === 'success') {
+                         msg.removeClass('d-none text-red-600').addClass('text-green-600')
+                            .text(res.message || 'Availability updated successfully');
+                     } else {
+                         msg.removeClass('d-none text-green-600').addClass('text-red-600')
+                            .text(res.message || 'Failed to update availability');
+                     }
+                 },
+                 error: function() {
+                     msg.removeClass('d-none text-green-600').addClass('text-red-600')
+                        .text('Something went wrong. Please try again.');
+                 },
+                 complete: function() {
+                     loader.addClass('d-none');
+                     label.text('Save Availability');
+                 }
+             });
          });
      });
      </script>

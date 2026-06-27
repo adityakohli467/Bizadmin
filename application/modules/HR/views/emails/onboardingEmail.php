@@ -59,7 +59,7 @@
                 display: inline-block;
                 width: 250px;
                 height: 45px;
-                background: #1f3a5f;
+                background: #1a2f52;
                 padding: 4px;
                 text-align: center;
                 border-radius: 6px;

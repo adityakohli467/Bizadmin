@@ -34,7 +34,7 @@ module.exports = {
       colors: {
         // Primary blue shades (from weeklyTimesheet)
         primary: {
-          DEFAULT: "rgb(31, 58, 95)",
+          DEFAULT: "#1a2f52",
           50: "#f0f9ff",
           100: "#e0f2fe",
           200: "#bae6fd",
@@ -52,7 +52,7 @@ module.exports = {
         danger: "#EF4444",
         info: "#3B82F6",
         // Dashboard colors
-        teal: "#6EC1C2",
+        teal: "#1D9E75",
         'orange-custom': "#F29A6E",
         neutralgray: "#E7EAF0",
         // Kitchen checklist colors
@@ -60,7 +60,7 @@ module.exports = {
         light: "#f8fafc",
         // Onboarding form colors
         navy: {
-          DEFAULT: "#1e3a5f",
+          DEFAULT: "#1a2f52",
           dark: "#152a45",
           light: "#3d4a6f"
         },
@@ -90,7 +90,7 @@ module.exports = {
         background: '#F9FAFB',
         secondary: '#6B7280',
         // Dashboard manager colors
-        'teal-dark': '#00b8b8'
+        'teal-dark': '#0F6E56'
       }
     }
   },
