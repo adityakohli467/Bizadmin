@@ -233,11 +233,11 @@ $empId = $empId ?? '';
 
     <div class="topnav">
         <div class="nav-left">
-            <button class="hamburger" type="button" aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="ti ti-menu-2"></i></button>
+            <button class="hamburger" type="button" aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="fa-solid fa-bars"></i></button>
             <div class="brand">BizAdmin</div>
         </div>
         <div class="nav-right">
-            <div class="bell" aria-label="Notifications"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+            <div class="bell" aria-label="Notifications"><i class="fa-solid fa-bell"></i><div class="notif-dot"></div></div>
             <div class="av-sm"><?= htmlspecialchars($initials) ?></div>
         </div>
     </div>
