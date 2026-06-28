@@ -130,8 +130,9 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
 
             <div class="d-flex align-items-center">
                 <div class="ms-1 header-item d-none d-sm-flex">
+                    <?php $tb_homeHref = ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager'])) ? site_url('auth/dashboard') : $tb_homeUrl; ?>
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
-                        <a href="<?php echo $tb_homeUrl; ?>"><i class='bx bxs-home fs-22 text-white'></i></a>
+                        <a href="<?php echo $tb_homeHref; ?>"><i class='bx bxs-home fs-22 text-white'></i></a>
                     </button>
                 </div>
 
