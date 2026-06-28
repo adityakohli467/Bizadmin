@@ -28,6 +28,24 @@ $tb_systemId = $this->session->userdata('system_id');
 $tb_homeUrl  = '/' . $linkModule . '/' . $tb_systemId;
 $isCatering  = (strcasecmp((string)$currentModule, 'Catering') === 0 || strcasecmp((string)$currentModule, 'CateringBackup') === 0);
 
+// Per-system settings route (each module exposes its own settings controller/method).
+$tb_settingsRoutes = array(
+    'HR'         => 'HR/configuresubmit',
+    'Temp'       => 'Temp/settings',
+    'Cash'       => 'Cash/configureFloats',
+    'Catering'   => 'Catering/saveSettings',
+    'Compliance' => 'Compliance/settings',
+    'Clean'      => 'Clean/settings',
+    'Dms'        => 'Dms/settings',
+    'Shifts'     => 'Shifts/settings',
+    'Supplier'   => 'Supplier/configuresubmit',
+);
+$tb_settingsUrl = '';
+foreach ($tb_settingsRoutes as $tb_k => $tb_v) {
+    if (strcasecmp((string)$linkModule, $tb_k) === 0) { $tb_settingsUrl = $tb_v; break; }
+}
+$tb_isHr = (strcasecmp((string)$linkModule, 'HR') === 0);
+
 // Dynamic menu for the mobile offcanvas (same source as the desktop horizontal menu).
 $tb_roleId = $this->ion_auth->get_users_groups()->row()->id;
 $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id'), $tb_roleId, 'frontSites');
@@ -117,11 +135,13 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
                     </button>
                 </div>
 
+                <?php if ($tb_settingsUrl !== ''): ?>
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
-                        <a href="/auth/checklist"><i class='bx bx-laptop fs-22 text-white'></i></a>
+                        <a href="<?php echo base_url($tb_settingsUrl); ?>" title="Settings"><i class='bx bx-cog fs-22 text-white'></i></a>
                     </button>
                 </div>
+                <?php endif; ?>
 
                 <?php if ($isCatering): ?>
                 <!-- Catering notifications bell (preserved) -->
@@ -186,9 +206,13 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
                     <div class="dropdown-menu dropdown-menu-end bg-primary">
                         <h6 class="dropdown-header">Welcome <?php echo ($this->session->userdata('username') != '' ? $this->session->userdata('username') : ''); ?>!</h6>
                         <?php if ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager'])) { ?>
-                            <a class="dropdown-item" href="<?= base_url('HR/configuresubmit') ?>"><i class="mdi mdi-store-cog text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
+                            <?php if ($tb_settingsUrl !== '') { ?>
+                            <a class="dropdown-item" href="<?= base_url($tb_settingsUrl) ?>"><i class="mdi mdi-store-cog text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
+                            <?php } ?>
+                            <?php if ($tb_isHr) { ?>
                             <a class="dropdown-item" href="<?= base_url('HR/sites') ?>"><i class="mdi mdi-store-cog text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Create Sites</span></a>
                             <a class="dropdown-item" href="<?= base_url('HR/prep') ?>"><i class="mdi mdi-store-cog text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Create Prep Area</span></a>
+                            <?php } ?>
                         <?php } ?>
                         <a class="dropdown-item" href="<?= base_url('auth/logout') ?>"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
                     </div>
