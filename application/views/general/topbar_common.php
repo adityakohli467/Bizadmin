@@ -46,7 +46,13 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
     #page-topbar .user-name-sub-text,
     #page-topbar .user-name-sub-text i { color: rgba(255, 255, 255, 0.7) !important; }
     #page-topbar .hamburger-icon span { background-color: #ffffff !important; }
-    #page-topbar .logo-lg img { height: 30px !important; width: auto !important; }
+
+    /* Logo: always render the white logo regardless of Velzon's dark/light logo toggles */
+    #page-topbar .horizontal-logo { display: block !important; }
+    #page-topbar .horizontal-logo .logo-dark { display: inline-block !important; }
+    #page-topbar .horizontal-logo .logo-light { display: none !important; }
+    #page-topbar .horizontal-logo .logo-lg { display: inline-block !important; }
+    #page-topbar .logo-lg img { display: inline-block !important; height: 30px !important; width: auto !important; max-width: none !important; }
 
     /* Velzon's built-in hamburger is unused; the offcanvas toggle drives mobile/ipad nav */
     #page-topbar #topnav-hamburger-icon { display: none !important; }
