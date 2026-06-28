@@ -215,6 +215,11 @@ class Employees extends MY_Controller {
         ? fetchLocationNamesFromIds($locationIdsArray)
         : [];
 
+    // All locations the logged-in admin/manager can assign + the employee's
+    // currently assigned location ids (used to render the editable "Works At" multi-select).
+    $data['locations']           = $this->auth_model->fetchLocationsFromUserId($this->ion_auth->get_user_id());
+    $data['selectedLocationIds'] = $locationIdsArray;
+
     // ---------- Final Assignments ----------
     $data['employee']   = $employee;
     $data['leaveTypes'] = $leaveData;
@@ -525,9 +530,22 @@ $response = [
         
         // NOTE :  please add new index in below array for fiels added to employee form to execulde , if its name not matching with hr_employee table column
         
-        $excludedValues = array('rate','Saturday_rate','Sunday_rate','holiday_rate','uniform_allowance','early_start','late_night','position_id','position_unique_id','positionIdToRemove','payroll_type_id','created_at','password');
+        $excludedValues = array('rate','Saturday_rate','Sunday_rate','holiday_rate','uniform_allowance','early_start','late_night','position_id','position_unique_id','positionIdToRemove','payroll_type_id','created_at','password','locationIds');
         foreach($posted_data as $key=> $value){
         ($value !='' && !in_array($key,$excludedValues) ? $data_user[$key] = $value : '');   
+        }
+
+        // ---------- Works At : assign one or more locations to the employee (admin/manager) ----------
+        if (isset($_POST['locationIds']) && is_array($_POST['locationIds'])) {
+            $locationIdsPosted = array_values(array_filter(array_map('trim', $_POST['locationIds']), function ($v) { return $v !== ''; }));
+            if (!empty($locationIdsPosted)) {
+                $data_user['location_ids'] = serialize($locationIdsPosted);
+                // Keep the allocation table in sync (used by rosters/reports).
+                $this->common_model->commonRecordDelete('HR_empIdToLocationId', $empId, 'empId');
+                foreach ($locationIdsPosted as $locId) {
+                    $this->employee_model->allocateLocationToEmployee(array('location_id' => $locId, 'empId' => $empId));
+                }
+            }
         }
         
         

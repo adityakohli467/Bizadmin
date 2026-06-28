@@ -14383,9 +14383,6 @@ a.text-primary, .text-primary { color: #1a2f52 !important; }
 /* Horizontal top-menu bar + its submenu dropdowns -> navy.
    Scoped to the horizontal layout so the vertical dark sidebar
    used elsewhere keeps its own theme. */
-[data-layout="horizontal"] .app-menu.navbar-menu,
-[data-layout="horizontal"] .topnav.topnav-menu,
-[data-layout="horizontal"] .navbar-menu { background-color: #1a2f52 !important; }
 [data-layout="horizontal"] #navbar-nav .menu-dropdown,
 [data-layout="horizontal"] #navbar-nav .dropdown-menu,
 [data-layout="horizontal"] .navbar-menu .menu-dropdown { background-color: #1a2f52 !important; }

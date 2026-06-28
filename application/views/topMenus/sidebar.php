@@ -16,8 +16,9 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                   <?php if(!empty($allMenus)) {   ?>
-                  
+                  <?php $tb_hideProfile = ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager'])); ?>
                       <?php foreach($allMenus as $allMenu) {  ?> 
+                      <?php if($tb_hideProfile && strcasecmp(trim((string)$allMenu->menu_name), 'Profile') === 0) { continue; } ?>
                       <?php // echo "<pre>"; print_r($allMenu); exit; ?>
                       <?php if(isset($allMenu->sub_menu) && !empty($allMenu->sub_menu) && isset($allMenu->selected) && $allMenu->selected !='')  { ?>
                       

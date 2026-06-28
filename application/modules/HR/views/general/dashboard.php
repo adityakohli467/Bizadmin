@@ -9,7 +9,7 @@
     .empv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:20px;display:flex;flex-direction:column;gap:18px;}
     .empv3 .profile-block{text-align:center;padding-bottom:16px;border-bottom:.5px solid #f1f5f9;}
     .empv3 .av-wrap{position:relative;width:64px;height:64px;margin:0 auto 10px;}
-    .empv3 .av-circle{width:64px;height:64px;border-radius:50%;border:2.5px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;}
+    .empv3 .av-circle{width:64px;height:64px;border-radius:50%;border:2.5px solid #25A69A;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;}
     .empv3 .online-dot{width:12px;height:12px;background:#22c55e;border-radius:50%;border:2.5px solid #fff;position:absolute;bottom:2px;right:2px;}
     .empv3 .online-dot.off{background:#cbd5e1;}
     .empv3 .p-name{font-size:15px;font-weight:600;color:#1e293b;}
@@ -46,13 +46,13 @@
     .empv3 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
     .empv3 .cal-dh{font-size:10px;color:#94a3b8;padding:3px 0;font-weight:600;}
     .empv3 .cal-d{font-size:12px;color:#64748b;padding:5px 3px;border-radius:6px;}
-    .empv3 .cal-d.today{background:#1D9E75;color:#fff;font-weight:600;border-radius:50%;}
-    .empv3 .cal-d.leave{color:#1D9E75;font-weight:600;}
+    .empv3 .cal-d.today{background:#25A69A;color:#fff;font-weight:600;border-radius:50%;}
+    .empv3 .cal-d.leave{color:#25A69A;font-weight:600;}
     .empv3 .cal-d.empty{opacity:0;}
     .empv3 .cal-legend{display:flex;gap:14px;margin-top:10px;}
     .empv3 .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;}
     .empv3 .leg-d{width:8px;height:8px;border-radius:50%;}
-    .empv3 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .empv3 .main{flex:1;padding:0 20px 20px 20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
     .empv3 .stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
     .empv3 .stat-card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:16px 18px;}
     .empv3 .stat-num{font-size:28px;font-weight:600;color:#1a2f52;}
@@ -63,15 +63,15 @@
     .empv3 .card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:18px 20px;}
     .empv3 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
     .empv3 .card-title{font-size:13px;font-weight:600;color:#1e293b;}
-    .empv3 .card-link{font-size:12px;color:#1D9E75;font-weight:600;cursor:pointer;background:none;border:none;padding:0;}
+    .empv3 .card-link{font-size:12px;color:#25A69A;font-weight:600;cursor:pointer;background:none;border:none;padding:0;}
     .empv3 .tl-row{display:flex;justify-content:space-between;margin-bottom:10px;}
     .empv3 .tl-col{text-align:center;}
     .empv3 .tl-lbl{font-size:11px;color:#94a3b8;}
-    .empv3 .tl-v{font-size:13px;font-weight:600;color:#1D9E75;margin-top:3px;}
+    .empv3 .tl-v{font-size:13px;font-weight:600;color:#25A69A;margin-top:3px;}
     .empv3 .tl-v.dim{color:#94a3b8;}
     .empv3 .tl-v.orange{color:#F29A6E;}
     .empv3 .prog-track{height:7px;background:#f1f5f9;border-radius:10px;overflow:hidden;margin-bottom:8px;}
-    .empv3 .prog-fill{height:100%;background:#1D9E75;border-radius:10px;}
+    .empv3 .prog-fill{height:100%;background:#25A69A;border-radius:10px;}
     .empv3 .tl-foot{display:flex;justify-content:space-between;}
     .empv3 .ts-tbl{width:100%;table-layout:fixed;border-collapse:collapse;}
     .empv3 .ts-tbl th{font-size:11px;color:#94a3b8;font-weight:600;text-align:left;padding:0 0 10px;text-transform:uppercase;letter-spacing:.4px;}
@@ -81,20 +81,20 @@
     .empv3 .avail-card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:20px 22px;}
     .empv3 .avail-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;}
     .empv3 .avail-sub{font-size:12px;color:#94a3b8;margin-top:4px;}
-    .empv3 .save-btn{background:#1D9E75;border:none;border-radius:9px;padding:9px 22px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .empv3 .save-btn{background:#25A69A;border:none;border-radius:9px;padding:9px 22px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;}
     .empv3 .save-btn:hover{background:#0F6E56;}
     .empv3 .days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;}
     .empv3 .day-col{display:flex;flex-direction:column;gap:8px;}
     .empv3 .day-name{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;}
     .empv3 .time-label{font-size:11px;color:#94a3b8;margin-bottom:2px;}
     .empv3 .time-sel{width:100%;background:#f8fafc;border:.5px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:13px;color:#1e293b;cursor:pointer;appearance:none;-webkit-appearance:none;}
-    .empv3 .time-sel:focus{outline:none;border-color:#1D9E75;background:#fff;}
+    .empv3 .time-sel:focus{outline:none;border-color:#25A69A;background:#fff;}
     .empv3 .to-divider{text-align:center;font-size:12px;color:#94a3b8;padding:2px 0;}
     .empv3 .same-all-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
     .empv3 .same-all-toggle input{display:none;}
     .empv3 .same-all-toggle .sat-slider{width:36px;height:20px;background:#cbd5e1;border-radius:20px;position:relative;transition:background .2s;flex-shrink:0;}
     .empv3 .same-all-toggle .sat-slider::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;}
-    .empv3 .same-all-toggle input:checked + .sat-slider{background:#1D9E75;}
+    .empv3 .same-all-toggle input:checked + .sat-slider{background:#25A69A;}
     .empv3 .same-all-toggle input:checked + .sat-slider::after{transform:translateX(16px);}
     .empv3 .same-all-toggle .sat-txt{font-size:12px;color:#64748b;font-weight:500;white-space:nowrap;}
     @media(max-width:1100px){.empv3 .layout{flex-direction:column;}.empv3 .sidebar{width:100%;border-right:none;border-bottom:.5px solid #e2e8f0;}.empv3 .two-col{grid-template-columns:1fr;}.empv3 .days-grid{grid-template-columns:repeat(4,1fr);}}
@@ -237,7 +237,7 @@
           <?php endforeach; endforeach; ?>
          </div>
          <div class="cal-legend">
-          <div class="leg"><span class="leg-d" style="background:#1D9E75;"></span>Leave / Today</div>
+          <div class="leg"><span class="leg-d" style="background:#25A69A;"></span>Leave / Today</div>
          </div>
         </div>
 

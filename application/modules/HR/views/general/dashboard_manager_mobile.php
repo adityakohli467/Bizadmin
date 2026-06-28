@@ -49,10 +49,10 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
         .nav-right{display:flex;align-items:center;gap:10px;}
         .bell{color:rgba(255,255,255,.7);font-size:17px;position:relative;}
         .notif-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;position:absolute;top:-1px;right:-1px;border:1.5px solid #1a2f52;}
-        .av-sm{width:28px;height:28px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;}
+        .av-sm{width:28px;height:28px;border-radius:50%;background:#25A69A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;}
 
         .profile-strip{background:#1a2f52;padding:0 16px 14px;display:flex;align-items:center;gap:12px;}
-        .avatar-ring{width:44px;height:44px;border-radius:50%;border:2px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0;position:relative;}
+        .avatar-ring{width:44px;height:44px;border-radius:50%;border:2px solid #25A69A;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0;position:relative;}
         .online-dot{width:9px;height:9px;background:#22c55e;border-radius:50%;border:2px solid #1a2f52;position:absolute;bottom:1px;right:1px;}
         .p-name{color:#fff;font-size:13px;font-weight:500;}
         .p-sub{color:rgba(255,255,255,.5);font-size:10px;margin-top:2px;}
@@ -71,7 +71,7 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
         .card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:14px;}
         .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
         .card-title{font-size:12px;font-weight:600;color:#1e293b;}
-        .card-link{font-size:11px;color:#1D9E75;font-weight:500;cursor:pointer;text-decoration:none;}
+        .card-link{font-size:11px;color:#25A69A;font-weight:500;cursor:pointer;text-decoration:none;}
 
         .qs-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:.5px solid #f8fafc;}
         .qs-row:last-child{border-bottom:none;}
@@ -103,7 +103,7 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
 
         .act-btn{display:flex;align-items:center;gap:9px;width:100%;background:#f8fafc;border:.5px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:12px;font-weight:600;color:#1e293b;text-decoration:none;margin-bottom:7px;}
         .act-btn:last-child{margin-bottom:0;}
-        .act-btn i{width:18px;text-align:center;color:#1D9E75;}
+        .act-btn i{width:18px;text-align:center;color:#25A69A;}
         .act-btn.danger i{color:#ef4444;}
     </style>
 </head>

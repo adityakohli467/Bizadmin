@@ -28,7 +28,7 @@ if (!isset($navMenus)) {
     #mobileNav .biz-nav-link { display: flex; align-items: center; gap: 10px; color: #1e293b; padding: 13px 16px; text-decoration: none; font-size: 14px; border-bottom: .5px solid #f1f5f9; }
     #mobileNav .biz-nav-link:hover,
     #mobileNav .biz-nav-link:focus { background: #f4f6f9; color: #1a2f52; }
-    #mobileNav .biz-nav-link i { color: #1D9E75; width: 18px; text-align: center; font-size: 16px; flex-shrink: 0; }
+    #mobileNav .biz-nav-link i { color: #25A69A; width: 18px; text-align: center; font-size: 16px; flex-shrink: 0; }
     #mobileNav .biz-nav-group > a { justify-content: space-between; }
     #mobileNav .biz-nav-group > a .biz-caret { color: #94a3b8; margin-left: auto; transition: transform .2s; }
     #mobileNav .biz-nav-group > a[aria-expanded="true"] .biz-caret { transform: rotate(180deg); }

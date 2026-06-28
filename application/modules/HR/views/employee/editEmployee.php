@@ -261,7 +261,21 @@
                                           <?php }  ?>
                                             <div class="col-lg-3 col-md-6">
                                                 <label for="rate" class="control-label">Works At:</label>
-                                                <input readonly type="text" id="rate" class="form-control" name="rate" value="<?php echo (isset($locationNames) && !empty($locationNames)) ? htmlspecialchars(implode(', ', $locationNames)) : ''; ?>">
+                                                <?php if ($this->roleId != 4 && isset($locations) && !empty($locations)) { ?>
+                                                    <select class="js-example-basic-multiple employeeLocations form-control" name="locationIds[]" id="works_at_locations" multiple="multiple">
+                                                        <?php
+                                                        $selectedLocIds = isset($selectedLocationIds) ? array_map('strval', array_map('trim', (array) $selectedLocationIds)) : [];
+                                                        foreach ($locations as $location) {
+                                                            $locId   = trim((string) $location['location_id']);
+                                                            $isSel   = in_array($locId, $selectedLocIds, true) ? 'selected' : '';
+                                                        ?>
+                                                            <option value="<?php echo htmlspecialchars($locId); ?>" <?php echo $isSel; ?>><?php echo htmlspecialchars($location['location_name']); ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <small class="text-muted">Click the box to select one or more locations</small>
+                                                <?php } else { ?>
+                                                    <input readonly type="text" id="rate" class="form-control" name="rate" value="<?php echo (isset($locationNames) && !empty($locationNames)) ? htmlspecialchars(implode(', ', $locationNames)) : ''; ?>">
+                                                <?php } ?>
                                             </div>
 
                                             <!-- Fields visible to Manager and Admin only -->
@@ -1521,6 +1535,11 @@
                         $("#"+formId).find(".alert").removeClass('d-none');
                     };
                     $(document).ready(function() {
+
+                        // Editable "Works At" multi-select (admin/manager) – initialise Select2.
+                        if ($('#works_at_locations').length && $.fn.select2) {
+                            $('#works_at_locations').select2({ width: '100%', placeholder: 'Select location(s)' });
+                        }
 
                         $("#leaveType").on('change',function(){
 

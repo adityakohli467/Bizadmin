@@ -117,10 +117,10 @@ $empId = $empId ?? '';
         .nav-right{display:flex;align-items:center;gap:10px;}
         .bell{color:rgba(255,255,255,.7);font-size:17px;position:relative;}
         .notif-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;position:absolute;top:-1px;right:-1px;border:1.5px solid #1a2f52;}
-        .av-sm{width:28px;height:28px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;}
+        .av-sm{width:28px;height:28px;border-radius:50%;background:#25A69A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;}
 
         .profile-strip{background:#1a2f52;padding:0 16px 14px;display:flex;align-items:center;gap:12px;}
-        .avatar-ring{width:44px;height:44px;border-radius:50%;border:2px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0;position:relative;}
+        .avatar-ring{width:44px;height:44px;border-radius:50%;border:2px solid #25A69A;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0;position:relative;}
         .online-dot{width:9px;height:9px;background:#22c55e;border-radius:50%;border:2px solid #1a2f52;position:absolute;bottom:1px;right:1px;}
         .p-name{color:#fff;font-size:13px;font-weight:500;}
         .p-sub{color:rgba(255,255,255,.5);font-size:10px;margin-top:2px;}
@@ -139,7 +139,7 @@ $empId = $empId ?? '';
         .card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:14px;}
         .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
         .card-title{font-size:12px;font-weight:500;color:#1e293b;}
-        .card-link{font-size:11px;color:#1D9E75;font-weight:500;cursor:pointer;text-decoration:none;}
+        .card-link{font-size:11px;color:#25A69A;font-weight:500;cursor:pointer;text-decoration:none;}
 
         .sched-time{font-size:13px;font-weight:500;color:#1e293b;}
         .sched-sub{font-size:11px;color:#64748b;margin-top:3px;}
@@ -149,10 +149,10 @@ $empId = $empId ?? '';
         .tl-cols{display:flex;justify-content:space-between;margin-bottom:7px;}
         .tl-col{text-align:center;}
         .tl-lbl{font-size:10px;color:#94a3b8;}
-        .tl-v{font-size:12px;font-weight:500;color:#1D9E75;margin-top:2px;}
+        .tl-v{font-size:12px;font-weight:500;color:#25A69A;margin-top:2px;}
         .tl-v.dim{color:#94a3b8;}
         .prog-track{height:6px;background:#f1f5f9;border-radius:10px;overflow:hidden;margin-bottom:7px;}
-        .prog-fill{height:100%;background:#1D9E75;border-radius:10px;}
+        .prog-fill{height:100%;background:#25A69A;border-radius:10px;}
         .tl-foot{display:flex;justify-content:space-between;}
 
         .ts-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:.5px solid #f1f5f9;}
@@ -169,14 +169,14 @@ $empId = $empId ?? '';
         .time-sel{flex:1;background:#f8fafc;border:.5px solid #e2e8f0;border-radius:7px;padding:5px 7px;font-size:11px;color:#1e293b;appearance:none;-webkit-appearance:none;cursor:pointer;}
         .to-txt{font-size:10px;color:#94a3b8;flex-shrink:0;}
         .off-tag{flex:1;background:#f1f5f9;border-radius:7px;padding:5px 8px;font-size:11px;color:#94a3b8;text-align:center;}
-        .save-avail-btn{width:100%;background:#1D9E75;border:none;border-radius:8px;padding:9px;font-size:12px;color:#fff;font-weight:500;margin-top:10px;cursor:pointer;}
-        .add-unavail{font-size:11px;color:#1D9E75;font-weight:500;margin-top:6px;display:block;cursor:pointer;}
+        .save-avail-btn{width:100%;background:#25A69A;border:none;border-radius:8px;padding:9px;font-size:12px;color:#fff;font-weight:500;margin-top:10px;cursor:pointer;}
+        .add-unavail{font-size:11px;color:#25A69A;font-weight:500;margin-top:6px;display:block;cursor:pointer;}
         .avail-msg{font-size:11px;margin-top:8px;display:none;}
         .same-all-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
         .same-all-toggle input{display:none;}
         .same-all-toggle .sat-slider{width:32px;height:18px;background:#cbd5e1;border-radius:20px;position:relative;transition:background .2s;flex-shrink:0;}
         .same-all-toggle .sat-slider::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s;}
-        .same-all-toggle input:checked + .sat-slider{background:#1D9E75;}
+        .same-all-toggle input:checked + .sat-slider{background:#25A69A;}
         .same-all-toggle input:checked + .sat-slider::after{transform:translateX(14px);}
         .same-all-toggle .sat-txt{font-size:10px;color:#64748b;font-weight:500;white-space:nowrap;}
 
@@ -199,7 +199,7 @@ $empId = $empId ?? '';
 
         .offcanvas-nav .offcanvas-header{background:#1a2f52;color:#fff;}
         .offcanvas-nav .nav-link{color:#1e293b;font-size:14px;padding:12px 4px;border-bottom:.5px solid #f1f5f9;display:flex;align-items:center;gap:10px;}
-        .offcanvas-nav .nav-link i{color:#1D9E75;width:18px;text-align:center;}
+        .offcanvas-nav .nav-link i{color:#25A69A;width:18px;text-align:center;}
 
         /* Timesheet details modal - matched to dashboard UI */
         #timesheetDetailsModal .modal-content{border:none;border-radius:16px;overflow:hidden;font-family:'Inter',sans-serif;}
@@ -208,7 +208,7 @@ $empId = $empId ?? '';
         #timesheetDetailsModal .modal-body{padding:16px 18px;background:#f8fafc;}
         #timesheetDetailsModal .modal-footer{border-top:.5px solid #e2e8f0;padding:10px 18px;background:#fff;}
         .ts-loading{text-align:center;padding:40px 0;}
-        .ts-loading .spinner-border{color:#1D9E75;}
+        .ts-loading .spinner-border{color:#25A69A;}
         .ts-loading p{margin-top:12px;font-size:12px;color:#94a3b8;}
         .ts-week-banner{background:#E1F5EE;border:.5px solid #9FE1CB;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0F6E56;}
         .ts-week-banner span{font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:11px;margin-right:4px;}
@@ -434,7 +434,7 @@ $empId = $empId ?? '';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn text-white" style="background:#1D9E75;" id="submitLeaveRequest">
+                <button type="button" class="btn text-white" style="background:#25A69A;" id="submitLeaveRequest">
                     <span class="btn-text">Submit Request</span>
                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                 </button>

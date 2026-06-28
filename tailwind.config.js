@@ -52,7 +52,7 @@ module.exports = {
         danger: "#EF4444",
         info: "#3B82F6",
         // Dashboard colors
-        teal: "#1D9E75",
+        teal: "#25A69A",
         'orange-custom': "#F29A6E",
         neutralgray: "#E7EAF0",
         // Kitchen checklist colors
