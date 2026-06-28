@@ -46,6 +46,12 @@ foreach ($tb_settingsRoutes as $tb_k => $tb_v) {
 }
 $tb_isHr = (strcasecmp((string)$linkModule, 'HR') === 0);
 
+// Are we on the module's dashboard landing page itself (e.g. /HR/104)?
+// Dashboard URL pattern is /Module/{system_id} with nothing after it.
+$tb_onDashboard = ($tb_systemId !== null && $tb_systemId !== ''
+    && (string) $ci_tb->uri->segment(2) === (string) $tb_systemId
+    && ! $ci_tb->uri->segment(3));
+
 // Dynamic menu for the mobile offcanvas (same source as the desktop horizontal menu).
 $tb_roleId = $this->ion_auth->get_users_groups()->row()->id;
 $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id'), $tb_roleId, 'frontSites');
@@ -130,9 +136,22 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
 
             <div class="d-flex align-items-center">
                 <div class="ms-1 header-item d-none d-sm-flex">
-                    <?php $tb_homeHref = ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager'])) ? site_url('auth/dashboard') : $tb_homeUrl; ?>
+                    <?php
+                        $tb_isAdminMgr = ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager']));
+                        if ($tb_isAdminMgr && $tb_onDashboard) {
+                            // On the dashboard: show a location icon that opens the location selection page.
+                            $tb_homeHref  = site_url('auth/dashboard');
+                            $tb_homeIcon  = 'bx bx-map';
+                            $tb_homeTitle = 'Switch location';
+                        } else {
+                            // Any other page: home icon returns to this module's dashboard.
+                            $tb_homeHref  = $tb_homeUrl;
+                            $tb_homeIcon  = 'bx bxs-home';
+                            $tb_homeTitle = 'Home';
+                        }
+                    ?>
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
-                        <a href="<?php echo $tb_homeHref; ?>"><i class='bx bxs-home fs-22 text-white'></i></a>
+                        <a href="<?php echo $tb_homeHref; ?>" title="<?php echo $tb_homeTitle; ?>"><i class='<?php echo $tb_homeIcon; ?> fs-22 text-white'></i></a>
                     </button>
                 </div>
 
