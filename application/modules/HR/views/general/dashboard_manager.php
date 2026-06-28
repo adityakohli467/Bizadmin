@@ -1,356 +1,268 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
-    <?php $this->load->view('general/tailwind_common_assets'); ?>
-    <style>
-        /* Mobile responsive adjustments */
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .table-responsive table {
-                min-width: 800px;
-            }
-        }
-    </style>
-    <style>
-    h3, thead th{
-        color:#1f2937 !important;
-    }
-    </style>
-</head>
-<body class="bg-[#F4F6F9] font-inter">
+<?php /* Manager / Admin dashboard: rendered inside the shared Velzon layout (header > content > footer).
+        Visual language matched to the employee dashboard (.empv3). Sections & data unchanged. */ ?>
+<link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+<?php $this->load->view('general/tailwind_common_assets'); ?>
+<style>
+    .mgrv3{font-family:'Inter',system-ui,sans-serif;}
+    .mgrv3 *{box-sizing:border-box;}
+    .mgrv3 .db{background:#f1f5f9;border-radius:16px;overflow:hidden;border:.5px solid #e2e8f0;}
+    .mgrv3 .layout{display:flex;min-height:700px;}
+    .mgrv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:20px;display:flex;flex-direction:column;gap:18px;}
+    .mgrv3 .profile-block{text-align:center;padding-bottom:16px;border-bottom:.5px solid #f1f5f9;}
+    .mgrv3 .av-wrap{position:relative;width:64px;height:64px;margin:0 auto 10px;}
+    .mgrv3 .av-circle{width:64px;height:64px;border-radius:50%;border:2.5px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;}
+    .mgrv3 .online-dot{width:12px;height:12px;background:#22c55e;border-radius:50%;border:2.5px solid #fff;position:absolute;bottom:2px;right:2px;}
+    .mgrv3 .p-name{font-size:15px;font-weight:600;color:#1e293b;}
+    .mgrv3 .p-sub{font-size:12px;color:#94a3b8;margin-top:3px;}
+    .mgrv3 .role-pill{display:inline-flex;align-items:center;gap:5px;background:#E1F5EE;border:.5px solid #9FE1CB;border-radius:20px;padding:4px 12px;font-size:11px;color:#0F6E56;margin-top:8px;font-weight:600;}
+    .mgrv3 .block-title{font-size:12px;font-weight:600;color:#1e293b;margin-bottom:8px;}
+    .mgrv3 .qs-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid #f1f5f9;}
+    .mgrv3 .qs-row:last-child{border-bottom:none;}
+    .mgrv3 .qs-label{font-size:12px;color:#64748b;}
+    .mgrv3 .qs-val{font-size:13px;font-weight:600;color:#1e293b;}
+    .mgrv3 .qs-val.green{color:#0F6E56;}
+    .mgrv3 .qs-val.orange{color:#c2410c;}
+    .mgrv3 .qs-val.blue{color:#1a2f52;}
+    .mgrv3 .act-btn{display:flex;align-items:center;gap:10px;width:100%;background:#f8fafc;border:.5px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:12px;font-weight:600;color:#1e293b;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s;}
+    .mgrv3 .act-btn:hover{background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56;}
+    .mgrv3 .act-btn i{width:18px;text-align:center;color:#1D9E75;font-size:14px;}
+    .mgrv3 .act-btn.danger i{color:#ef4444;}
+    .mgrv3 .act-btn.danger:hover{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
+    .mgrv3 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .mgrv3 .stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+    .mgrv3 .stat-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:16px 18px;}
+    .mgrv3 .stat-card.alert{border:1px solid #fecaca;}
+    .mgrv3 .stat-ic{font-size:20px;margin-bottom:8px;display:block;}
+    .mgrv3 .stat-num{font-size:28px;font-weight:600;color:#1a2f52;}
+    .mgrv3 .stat-num.red{color:#dc2626;}
+    .mgrv3 .stat-label{font-size:12px;color:#64748b;margin-top:3px;}
+    .mgrv3 .two-col{display:grid;grid-template-columns:3fr 2fr;gap:14px;}
+    .mgrv3 .card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:18px 20px;}
+    .mgrv3 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;}
+    .mgrv3 .card-title{font-size:13px;font-weight:600;color:#1e293b;}
+    .mgrv3 .card-link{font-size:12px;color:#1D9E75;font-weight:600;cursor:pointer;background:none;border:none;padding:0;text-decoration:none;}
+    .mgrv3 .feed{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto;}
+    .mgrv3 .feed-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;border-left:3px solid #cbd5e1;background:#f8fafc;}
+    .mgrv3 .feed-item.red{background:#fef2f2;border-left-color:#ef4444;}
+    .mgrv3 .feed-item.orange{background:#fff7ed;border-left-color:#f97316;}
+    .mgrv3 .feed-item.purple{background:#faf5ff;border-left-color:#a855f7;}
+    .mgrv3 .feed-item i{margin-top:2px;font-size:13px;}
+    .mgrv3 .feed-item.red i{color:#ef4444;}
+    .mgrv3 .feed-item.orange i{color:#f97316;}
+    .mgrv3 .feed-item.purple i{color:#a855f7;}
+    .mgrv3 .feed-t{font-size:12px;font-weight:600;color:#1e293b;}
+    .mgrv3 .feed-s{font-size:11px;color:#94a3b8;margin-top:2px;}
+    .mgrv3 .feed-empty{font-size:12px;color:#94a3b8;text-align:center;padding:24px 0;}
+    .mgrv3 .add-btn{display:block;width:100%;background:#1D9E75;border:none;border-radius:9px;padding:9px;font-size:12px;color:#fff;font-weight:600;margin-top:12px;text-align:center;cursor:pointer;text-decoration:none;}
+    .mgrv3 .add-btn:hover{background:#0F6E56;color:#fff;}
+    .mgrv3 .ts-tbl{width:100%;border-collapse:collapse;}
+    .mgrv3 .ts-tbl th{font-size:11px;color:#94a3b8;font-weight:600;text-align:left;padding:0 12px 10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+    .mgrv3 .ts-tbl th.c,.mgrv3 .ts-tbl td.c{text-align:center;}
+    .mgrv3 .ts-tbl td{font-size:12px;color:#1e293b;padding:11px 12px;border-bottom:.5px solid #f1f5f9;vertical-align:middle;white-space:nowrap;}
+    .mgrv3 .ts-tbl tbody tr:last-child td{border-bottom:none;}
+    .mgrv3 .ts-tbl tbody tr:hover td{background:#f8fafc;}
+    .mgrv3 .badge-pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+    .mgrv3 .badge-pill.present{background:#f0fdf4;color:#15803d;}
+    .mgrv3 .badge-pill.absent{background:#fef2f2;color:#b91c1c;}
+    .mgrv3 .tbl-empty{font-size:12px;color:#94a3b8;text-align:center;padding:24px 0;}
+    @media(max-width:1100px){.mgrv3 .layout{flex-direction:column;}.mgrv3 .sidebar{width:100%;border-right:none;border-bottom:.5px solid #e2e8f0;}.mgrv3 .two-col{grid-template-columns:1fr;}.mgrv3 .stat-row{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:560px){.mgrv3 .stat-row{grid-template-columns:1fr;}}
+</style>
+<div class="bg-[#F4F6F9] font-inter">
 
+<?php
+    // ---------- Manager identity (session-backed, with safe fallbacks) ----------
+    $mgrName     = trim((string) $this->session->userdata('username')) ?: 'Manager';
+    $mgrLocation = trim((string) $this->session->userdata('location_name'));
+    $mgrRole     = $this->ion_auth->in_group('admin') ? 'Admin' : 'Manager';
+    $mgrParts    = preg_split('/\s+/', $mgrName);
+    $mgrInitials = strtoupper(substr($mgrParts[0] ?? 'M', 0, 1) . (isset($mgrParts[1]) ? substr($mgrParts[1], 0, 1) : ''));
+    if ($mgrInitials === '') { $mgrInitials = 'M'; }
 
+    // ---------- Section data (unchanged) ----------
+    $birthdays_today         = $birthdays_today ?? [];
+    $pending_leaves          = $pending_leaves ?? [];
+    $task_summary            = $task_summary ?? ['completed_today' => 0, 'in_progress' => 0];
+    $employee_on_break_count = $employee_on_break_count ?? 0;
+    $attendance_today        = $attendance_today ?? [];
+    $present_today           = $present_today ?? 0;
+    $total_employees         = $total_employees ?? 0;
+    $incident_reports        = $incident_reports ?? [];
+    $injury_reports          = $injury_reports ?? [];
+    $total_team_hours        = $total_team_hours ?? 0;
 
-<!-- Main Dashboard Content -->
-<main class="max-w-[1920px] mx-auto px-3 md:px-6 py-4 md:py-8 mt-5">
-     
-    <!-- Quick Glance Cards Row -->
-    <section id="quick-glance-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
-        
-        <!-- Today's Birthdays -->
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 hover:shadow-md transition cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fa-solid fa-cake-candles text-2xl md:text-3xl text-purple-500"></i>
-            </div>
-           <div class="text-2xl md:text-3xl font-bold text-gray-800"> <?= count($birthdays_today) ?></div>
-    
-
-            <div class="text-xs text-gray-500 mt-1">Today's Birthdays</div>
-        </div>
-
-        <!-- Tasks Completed -->
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 hover:shadow-md transition cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fa-solid fa-circle-check text-2xl md:text-3xl text-green-500"></i>
-            </div>
-            <div class="text-2xl md:text-3xl font-bold text-gray-800"><?= $task_summary['completed_today'] ?></div>
-            <div class="text-xs text-gray-500 mt-1">Tasks Completed</div>
-        </div>
-
-     
-
-        <!-- Pending Timesheets -->
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 hover:shadow-md transition cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fa-solid fa-clock text-2xl md:text-3xl text-orange-500"></i>
-            </div>
-            <div class="text-2xl md:text-3xl font-bold text-gray-800"><?= $employee_on_break_count ?> </div>
-            <div class="text-xs text-gray-500 mt-1">Employee on break</div>
-        </div>
-
-        <!-- Pending Approvals -->
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 hover:shadow-md transition cursor-pointer border-2 border-red-500">
-            <div class="flex items-center justify-between mb-2">
-                <i class="fa-solid fa-file-circle-exclamation text-2xl md:text-3xl text-red-500"></i>
-            </div>
-            <div class="text-2xl md:text-3xl font-bold text-red-600"><?= count($pending_leaves) ?></div>
-            <div class="text-xs text-gray-500 mt-1">Leaves Requests</div>
-        </div>
-
-       
-
-       
-
-    </section>
-
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-        
-        <!-- Left Column -->
-        <div id="left-column" class="lg:col-span-3 space-y-4 md:space-y-6">
-            
-            <!-- Team Overview Card -->
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6">
-                <div class="flex items-center justify-center mb-4 md:mb-6">
-                    <div class="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-teal to-blue-500 rounded-full flex items-center justify-center">
-                        <i class="fa-solid fa-users text-white text-3xl md:text-4xl"></i>
-                    </div>
-                </div>
-                <h3 class="text-base md:text-lg font-bold text-gray-800 text-center mb-4">Cafe Staff Today's Status</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Total Members</span>
-                        <span class="font-bold text-gray-800"><?= $total_employees ?></span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Present Today</span>
-                        <span class="font-bold text-green-600"><?= $present_today ?></span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">On Leave</span>
-                        <span class="font-bold text-orange-600"><?= count($pending_leaves) ?></span>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6">
-    <h3 class="text-base md:text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
-
-    <div class="space-y-3">
-
-        <!-- APPROVE LEAVES -->
-        <a href="<?= base_url('HR/leaveDashbaord') ?>"
-           class="block text-center bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-lg hover:shadow-lg transition font-medium">
-           <i class="fa-solid fa-check-double mr-2"></i>Approve Leaves
-        </a>
-
-        <!-- APPROVE TIMESHEETS -->
-        <a href="<?= base_url('HR/timesheetWithoutRoster') ?>"
-           class="block text-center bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-3 rounded-lg hover:shadow-lg transition font-medium">
-           <i class="fa-solid fa-clock-rotate-left mr-2"></i>Approve Timesheets
-        </a>
-
-        <!-- VIEW ALL EMPLOYEES -->
-        <a href="<?= base_url('HR/employees') ?>"
-           class="block text-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg hover:shadow-lg transition font-medium">
-           <i class="fa-solid fa-list-check mr-2"></i>View All Employees
-        </a>
-
-        <!-- SEND MEMO -->
-        <a href="<?= base_url('HR/memo') ?>"
-           class="block text-center bg-gradient-to-r from-teal to-teal-dark text-white py-3 rounded-lg hover:shadow-lg transition font-medium">
-           <i class="fa-solid fa-bullhorn mr-2"></i>Send Memo
-        </a>
-
-    </div>
-</div>
-
-
-        </div>
-
-        <!-- Center Column -->
-        <div id="center-column" class="lg:col-span-5 space-y-4 md:space-y-6">
-            
-            <!-- Team Feed -->
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6">
-                <h3 class="text-base md:text-lg font-bold text-gray-800 mb-4">What's Happening</h3>
-               <div class="space-y-4">
-<?php if(isset($incident_reports) && !empty($incident_reports)) {  ?>
-    <?php foreach ($incident_reports as $inc): ?>
-        <div class="flex items-start space-x-3 p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
-            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1"></i>
-            <div class="flex-1">
-                <div class="text-sm font-semibold text-gray-800">
-                   New incident Report Filed
-                </div>
-                <div class="text-xs text-gray-500">
-                    <?= $inc->first_name . ' ' . $inc->last_name ?>
-                </div>
-            </div>
-        </div>
-    <?php endforeach; ?>
-    <?php  } ?>
-    
-    <?php if(isset($injury_reports) && !empty($injury_reports)) {  ?>
-    <?php foreach ($injury_reports as $inc): ?>
-        <div class="flex items-start space-x-3 p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
-            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1"></i>
-            <div class="flex-1">
-                <div class="text-sm font-semibold text-gray-800">
-                    New injury Report Filed
-                </div>
-                <div class="text-xs text-gray-500">
-                    <?= $inc->first_name . ' ' . $inc->last_name ?>
-                </div>
-            </div>
-        </div>
-    <?php endforeach; ?>
-    <?php  } ?>
-    
-
- <?php if(isset($pending_leaves) && !empty($pending_leaves)) {  ?>
-    <?php foreach ($pending_leaves as $lv): ?>
-        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-            <i class="fa-solid fa-hourglass-half text-orange-500 mt-1"></i>
-            <div class="flex-1">
-                <div class="text-sm font-semibold text-gray-800">
-                    Leave Request: <?= $lv->start_date ?>
-                </div>
-                <div class="text-xs text-gray-500">
-                    <?= $lv->first_name . ' ' . $lv->last_name ?>
-                </div>
-            </div>
-        </div>
-    <?php endforeach; ?>
-<?php  } ?>
-
- <?php if(isset($birthdays_today) && !empty($birthdays_today)) {  ?>
-    <?php foreach ($birthdays_today as $b): ?>
-        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-            <i class="fa-solid fa-cake-candles text-purple-500 mt-1"></i>
-            <div class="flex-1">
-                <div class="text-sm font-semibold text-gray-800">
-                    Birthday Today
-                </div>
-                <div class="text-xs text-gray-500">
-                    <?= $b->first_name . ' ' . $b->last_name ?>
-                </div>
-            </div>
-        </div>
-    <?php endforeach; ?>
-<?php  } ?>
-</div>
-
-                <button onclick="window.location.href='<?= base_url('HR/memo') ?>'" class="w-full mt-4 bg-teal text-white py-2.5 rounded-lg hover:bg-teal-dark transition font-medium">
-    <i class="fa-solid fa-plus mr-2"></i>Add Memo
-</button>
-            </div>
-
-           
-
-        </div>
-
-        <!-- Right Column -->
-        <div id="right-column" class="lg:col-span-4 space-y-4 md:space-y-6">
-            
-            <!-- Team Tasks Overview -->
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6">
-               
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-2">
-            <h3 class="text-base md:text-lg font-bold text-gray-800">Team Tasks Overview</h3>
-            <div class="text-xs md:text-sm text-gray-600">
-                <a href="#attendance-timeline" class="font-bold text-green-600">View Today's Attendance</a>
-            </div>
-        </div>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Completed Today</span>
-                        <span class="font-bold text-green-600 text-lg"><?= $task_summary['completed_today'] ?></span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">In Progress</span>
-                        <span class="font-bold text-blue-600 text-lg"><?= $task_summary['in_progress'] ?></span>
-                    </div>
-                    
-
-                </div>
-            </div>
-
-            
-
-        </div>
-
-    </div>
-
-    <!-- Today's Team Attendance Timeline -->
-    <section id="attendance-timeline" class="mt-4 md:mt-6 bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-2">
-            <h3 class="text-base md:text-lg font-bold text-gray-800">Today's Team Attendance Timeline</h3>
-            <div class="text-xs md:text-sm text-gray-600">
-                Total Team Hours: <span class="font-bold text-teal"><?= $total_team_hours ?>h</span>
-            </div>
-        </div>
-        <div class="overflow-x-auto table-responsive">
-            <table class="w-full">
-                <thead>
-                    <tr class="border-b border-gray-200">
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Employee</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Prep Area</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Clock In</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Break</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Clock Out</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Total Hours</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-600">Status</th>
-                    </tr>
-                </thead>
-               <tbody>
- <?php if(isset($attendance_today) && !empty($attendance_today)) {  ?>                  
-<?php foreach ($attendance_today as $row): ?>
-    <tr class="border-b border-gray-100 hover:bg-gray-50">
-        <td class="py-3 px-4">
-            <span class="text-sm font-medium text-gray-800">
-                <?= $row->first_name . " " . $row->last_name ?>
-            </span>
-        </td>
-
-        <td class="text-center py-3 px-4 text-sm text-gray-700">
-            <?= $row->prep_name ?>
-        </td>
-
-        <td class="text-center py-3 px-4 text-sm text-gray-700">
-            <?= $row->clock_in_time ? date("h:i A", strtotime($row->clock_in_time)) : "-" ?>
-        </td>
-
-        <td class="text-center py-3 px-4 text-sm text-gray-700">
-            <?= $row->roster_break_start_time ?: "-" ?>
-        </td>
-
-        <td class="text-center py-3 px-4 text-sm text-gray-700">
-            <?= $row->clock_out_time ? date("h:i A", strtotime($row->clock_out_time)) : "-" ?>
-        </td>
-
-        <td class="text-center py-3 px-4 text-sm font-semibold text-gray-800">
-            <?php 
-            if ($row->clock_in_time && $row->clock_out_time) {
-                $clockInTs = strtotime($row->clock_in_time);
-                $clockOutTs = strtotime($row->clock_out_time);
-                // Handle overnight shift (clock_out appears earlier than clock_in)
-                if ($clockOutTs <= $clockInTs) {
-                    $clockOutTs += 86400; // Add 24 hours
-                }
-                echo round(($clockOutTs - $clockInTs) / 3600, 2) . "h";
-            } else {
-                echo "-";
-            }
-            ?>
-        </td>
-
-      <?php 
-$status      = ($row->clock_in_time != '' ? 'Present' : 'Absent');
-$badge_class = ($row->clock_in_time != '' 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700');
+    $feedCount = count($incident_reports) + count($injury_reports) + count($pending_leaves) + count($birthdays_today);
 ?>
 
-<td class="text-center py-3 px-4">
-    <span class="<?= $badge_class ?> px-3 py-1 rounded-full text-xs font-medium">
-        <?= $status ?>
-    </span>
-</td>
+<main class="max-w-[1920px] mx-auto px-6 pb-8 pt-2">
+ <div class="mgrv3">
+  <div class="db">
+   <div class="layout">
 
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
 
-    </tr>
-<?php endforeach; ?>
-<?php  } ?>
-</tbody>
+     <div class="profile-block">
+      <div class="av-wrap">
+       <div class="av-circle"><?= htmlspecialchars($mgrInitials) ?></div>
+       <div class="online-dot"></div>
+      </div>
+      <div class="p-name"><?= htmlspecialchars(ucfirst($mgrName)) ?></div>
+      <div class="p-sub"><?= $mgrLocation !== '' ? htmlspecialchars($mgrLocation) : date('D, d F Y') ?></div>
+      <div class="role-pill"><i class="fa-solid fa-user-shield"></i><?= $mgrRole ?></div>
+     </div>
 
-            </table>
-        </div>
-    </section>
+     <div>
+      <div class="block-title">Cafe Staff Today's Status</div>
+      <div class="qs-row"><span class="qs-label">Total Members</span><span class="qs-val blue"><?= (int) $total_employees ?></span></div>
+      <div class="qs-row"><span class="qs-label">Present Today</span><span class="qs-val green"><?= (int) $present_today ?></span></div>
+      <div class="qs-row"><span class="qs-label">On Leave</span><span class="qs-val orange"><?= count($pending_leaves) ?></span></div>
+     </div>
 
+     <div>
+      <div class="block-title">Quick Actions</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+       <a class="act-btn danger" href="<?= base_url('HR/leaveDashbaord') ?>"><i class="fa-solid fa-check-double"></i> Approve Leaves</a>
+       <a class="act-btn" href="<?= base_url('HR/timesheetWithoutRoster') ?>"><i class="fa-solid fa-clock-rotate-left"></i> Approve Timesheets</a>
+       <a class="act-btn" href="<?= base_url('HR/employees') ?>"><i class="fa-solid fa-list-check"></i> View All Employees</a>
+       <a class="act-btn" href="<?= base_url('HR/memo') ?>"><i class="fa-solid fa-bullhorn"></i> Send Memo</a>
+      </div>
+     </div>
+
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <div class="main">
+
+     <!-- Quick glance stat cards -->
+     <div class="stat-row">
+      <div class="stat-card">
+       <i class="fa-solid fa-cake-candles stat-ic" style="color:#a855f7;"></i>
+       <div class="stat-num"><?= count($birthdays_today) ?></div>
+       <div class="stat-label">Today's Birthdays</div>
+      </div>
+      <div class="stat-card">
+       <i class="fa-solid fa-circle-check stat-ic" style="color:#22c55e;"></i>
+       <div class="stat-num"><?= (int) ($task_summary['completed_today'] ?? 0) ?></div>
+       <div class="stat-label">Tasks Completed</div>
+      </div>
+      <div class="stat-card">
+       <i class="fa-solid fa-mug-hot stat-ic" style="color:#f97316;"></i>
+       <div class="stat-num"><?= (int) $employee_on_break_count ?></div>
+       <div class="stat-label">Employee on Break</div>
+      </div>
+      <div class="stat-card alert">
+       <i class="fa-solid fa-file-circle-exclamation stat-ic" style="color:#ef4444;"></i>
+       <div class="stat-num red"><?= count($pending_leaves) ?></div>
+       <div class="stat-label">Leave Requests</div>
+      </div>
+     </div>
+
+     <!-- What's Happening + Team Tasks -->
+     <div class="two-col">
+
+      <div class="card">
+       <div class="card-hdr"><div class="card-title">What's Happening</div></div>
+       <div class="feed">
+        <?php if ($feedCount > 0): ?>
+         <?php foreach ($incident_reports as $inc): ?>
+          <div class="feed-item red">
+           <i class="fa-solid fa-triangle-exclamation"></i>
+           <div><div class="feed-t">New incident report filed</div><div class="feed-s"><?= htmlspecialchars(trim(($inc->first_name ?? '') . ' ' . ($inc->last_name ?? ''))) ?></div></div>
+          </div>
+         <?php endforeach; ?>
+         <?php foreach ($injury_reports as $inj): ?>
+          <div class="feed-item red">
+           <i class="fa-solid fa-triangle-exclamation"></i>
+           <div><div class="feed-t">New injury report filed</div><div class="feed-s"><?= htmlspecialchars(trim(($inj->first_name ?? '') . ' ' . ($inj->last_name ?? ''))) ?></div></div>
+          </div>
+         <?php endforeach; ?>
+         <?php foreach ($pending_leaves as $lv): ?>
+          <div class="feed-item orange">
+           <i class="fa-solid fa-hourglass-half"></i>
+           <div><div class="feed-t">Leave request: <?= htmlspecialchars($lv->start_date ?? '') ?></div><div class="feed-s"><?= htmlspecialchars(trim(($lv->first_name ?? '') . ' ' . ($lv->last_name ?? ''))) ?></div></div>
+          </div>
+         <?php endforeach; ?>
+         <?php foreach ($birthdays_today as $b): ?>
+          <div class="feed-item purple">
+           <i class="fa-solid fa-cake-candles"></i>
+           <div><div class="feed-t">Birthday today</div><div class="feed-s"><?= htmlspecialchars(trim(($b->first_name ?? '') . ' ' . ($b->last_name ?? ''))) ?></div></div>
+          </div>
+         <?php endforeach; ?>
+        <?php else: ?>
+         <div class="feed-empty">Nothing new to report today.</div>
+        <?php endif; ?>
+       </div>
+       <a class="add-btn" href="<?= base_url('HR/memo') ?>"><i class="fa-solid fa-plus me-1"></i> Add Memo</a>
+      </div>
+
+      <div class="card">
+       <div class="card-hdr">
+        <div class="card-title">Team Tasks Overview</div>
+        <a class="card-link" href="#attendance-timeline">Today's Attendance</a>
+       </div>
+       <div class="qs-row"><span class="qs-label">Completed Today</span><span class="qs-val green" style="font-size:16px;"><?= (int) ($task_summary['completed_today'] ?? 0) ?></span></div>
+       <div class="qs-row"><span class="qs-label">In Progress</span><span class="qs-val blue" style="font-size:16px;"><?= (int) ($task_summary['in_progress'] ?? 0) ?></span></div>
+       <div class="qs-row"><span class="qs-label">Total Team Hours</span><span class="qs-val green" style="font-size:16px;"><?= htmlspecialchars((string) $total_team_hours) ?>h</span></div>
+      </div>
+
+     </div>
+
+     <!-- Today's Team Attendance Timeline -->
+     <section id="attendance-timeline" class="card">
+      <div class="card-hdr">
+       <div class="card-title">Today's Team Attendance Timeline</div>
+       <div class="card-link" style="cursor:default;">Total Team Hours: <?= htmlspecialchars((string) $total_team_hours) ?>h</div>
+      </div>
+      <div style="overflow-x:auto;">
+       <table class="ts-tbl">
+        <thead>
+         <tr>
+          <th>Employee</th>
+          <th class="c">Prep Area</th>
+          <th class="c">Clock In</th>
+          <th class="c">Break</th>
+          <th class="c">Clock Out</th>
+          <th class="c">Total Hours</th>
+          <th class="c">Status</th>
+         </tr>
+        </thead>
+        <tbody>
+         <?php if (!empty($attendance_today)): ?>
+          <?php foreach ($attendance_today as $row): ?>
+           <?php
+            $status    = ($row->clock_in_time != '') ? 'Present' : 'Absent';
+            $statusCls = ($row->clock_in_time != '') ? 'present' : 'absent';
+            $totalHrs  = '-';
+            if (!empty($row->clock_in_time) && !empty($row->clock_out_time)) {
+                $inTs  = strtotime($row->clock_in_time);
+                $outTs = strtotime($row->clock_out_time);
+                if ($outTs <= $inTs) { $outTs += 86400; }
+                $totalHrs = round(($outTs - $inTs) / 3600, 2) . 'h';
+            }
+           ?>
+           <tr>
+            <td><span style="font-weight:600;color:#1e293b;"><?= htmlspecialchars(trim(($row->first_name ?? '') . ' ' . ($row->last_name ?? ''))) ?></span></td>
+            <td class="c"><?= htmlspecialchars($row->prep_name ?? '-') ?></td>
+            <td class="c"><?= $row->clock_in_time ? date('h:i A', strtotime($row->clock_in_time)) : '-' ?></td>
+            <td class="c"><?= htmlspecialchars($row->roster_break_start_time ?: '-') ?></td>
+            <td class="c"><?= $row->clock_out_time ? date('h:i A', strtotime($row->clock_out_time)) : '-' ?></td>
+            <td class="c" style="font-weight:600;"><?= $totalHrs ?></td>
+            <td class="c"><span class="badge-pill <?= $statusCls ?>"><?= $status ?></span></td>
+           </tr>
+          <?php endforeach; ?>
+         <?php else: ?>
+          <tr><td colspan="7" class="tbl-empty">No attendance records for today.</td></tr>
+         <?php endif; ?>
+        </tbody>
+       </table>
+      </div>
+     </section>
+
+    </div>
+   </div>
+  </div>
+ </div>
 </main>
 
-
-
-</body>
-</html>
+</div>

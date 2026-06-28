@@ -163,9 +163,10 @@ public function index($system_id = '')
     $isMobile = ($viewOverride === 'mobile')
         || ($viewOverride !== 'web' && $this->agent->is_mobile());
 
-    if (!$isManager && $isMobile) {
-        // Self-contained mobile employee dashboard (renders its own header/footer)
-        $this->load->view('general/dashboard_mobile', $data);
+    if ($isMobile) {
+        // Self-contained mobile dashboards (render their own header/footer)
+        $mobileView = $isManager ? 'general/dashboard_manager_mobile' : 'general/dashboard_mobile';
+        $this->load->view($mobileView, $data);
         return;
     }
 
