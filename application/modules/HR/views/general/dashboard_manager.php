@@ -28,7 +28,7 @@
     .mgrv3 .act-btn i{width:18px;text-align:center;color:#1D9E75;font-size:14px;}
     .mgrv3 .act-btn.danger i{color:#ef4444;}
     .mgrv3 .act-btn.danger:hover{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
-    .mgrv3 .main{flex:1;padding:20px 20px 20px 20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .mgrv3 .main{flex:1;padding:0 20px 20px 20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
     .mgrv3 .stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
     .mgrv3 .stat-card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:16px 18px;}
     .mgrv3 .stat-card.alert{border:.5px solid #e2e8f0;}
