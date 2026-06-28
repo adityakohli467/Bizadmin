@@ -135,7 +135,7 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
                     </button>
                 </div>
 
-                <?php if ($tb_settingsUrl !== ''): ?>
+                <?php if ($tb_settingsUrl !== '' && ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager']))): ?>
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
                         <a href="<?php echo base_url($tb_settingsUrl); ?>" title="Settings"><i class='bx bx-cog fs-22 text-white'></i></a>
