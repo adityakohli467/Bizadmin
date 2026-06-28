@@ -40,32 +40,33 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
 
     #page-topbar { background-color: #1a2f52 !important; }
     #page-topbar .navbar-header { background-color: transparent !important; }
+    /* user box must blend with the navy header (was old indigo --vz-topbar-user-bg) */
+    #page-topbar .topbar-user { background-color: transparent !important; }
     #page-topbar .user-name-text { color: #ffffff !important; }
     #page-topbar .user-name-sub-text,
     #page-topbar .user-name-sub-text i { color: rgba(255, 255, 255, 0.7) !important; }
     #page-topbar .hamburger-icon span { background-color: #ffffff !important; }
     #page-topbar .logo-lg img { height: 30px !important; width: auto !important; }
 
-    /* mobile-only menu toggle, hidden on large screens */
+    /* Velzon's built-in hamburger is unused; the offcanvas toggle drives mobile/ipad nav */
+    #page-topbar #topnav-hamburger-icon { display: none !important; }
+
+    /* Desktop / laptop: no hamburger of any kind, logo flush to the left */
+    @media (min-width: 1025px) {
+        #page-topbar .biz-mobile-toggle { display: none !important; }
+        #page-topbar .navbar-header { padding-left: 0 !important; }
+        #page-topbar .horizontal-logo { padding-left: 16px !important; }
+    }
+
+    /* mobile + ipad only: show offcanvas toggle, hide the inline horizontal menu */
     .biz-mobile-toggle { display: none; }
-    @media (max-width: 991.98px) {
-        #page-topbar #topnav-hamburger-icon { display: none !important; }
+    @media (max-width: 1024.98px) {
         .biz-mobile-toggle { display: inline-flex !important; align-items: center; justify-content: center; }
+        #page-topbar .app-menu.navbar-menu { display: none !important; }
         #page-topbar .horizontal-logo { display: block !important; }
         #page-topbar .logo-lg img { margin-left: 0 !important; margin-top: 0 !important; height: 28px !important; width: auto !important; }
         #page-topbar .navbar-header { padding-left: 8px; }
     }
-
-    /* Offcanvas menu (employee-dashboard style) */
-    #bizMobileNav { background: #1a2f52; color: #fff; max-width: 280px; }
-    #bizMobileNav .offcanvas-header { border-bottom: 1px solid rgba(255, 255, 255, .12); }
-    #bizMobileNav .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
-    #bizMobileNav .biz-nav-link { display: block; color: rgba(255, 255, 255, .85); padding: 11px 16px; text-decoration: none; font-size: 14px; border-radius: 8px; margin: 0 6px; }
-    #bizMobileNav .biz-nav-link:hover,
-    #bizMobileNav .biz-nav-link:focus { background: #142340; color: #fff; }
-    #bizMobileNav .biz-nav-group > a { display: flex; justify-content: space-between; align-items: center; }
-    #bizMobileNav .biz-subnav .biz-nav-link { font-size: 13px; color: rgba(255, 255, 255, .7); }
-    #bizMobileNav .menu-title { color: rgba(255, 255, 255, .5); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding: 14px 16px 6px; }
 </style>
 <header id="page-topbar">
     <div class="layout-width">
@@ -73,7 +74,7 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
             <div class="d-flex">
                 <!-- Mobile menu toggle (opens offcanvas) -->
                 <button type="button" class="btn btn-sm px-3 fs-22 header-item biz-mobile-toggle shadow-none text-white"
-                    data-bs-toggle="offcanvas" data-bs-target="#bizMobileNav" aria-controls="bizMobileNav">
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav">
                     <i class="bx bx-menu"></i>
                 </button>
 
@@ -191,32 +192,9 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
     </div>
 </header>
 
-<!-- ===== Mobile offcanvas navigation (dynamic role/system menu) ===== -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="bizMobileNav" aria-labelledby="bizMobileNavLabel">
-    <div class="offcanvas-header">
-        <a href="<?php echo $tb_homeUrl; ?>" class="d-flex align-items-center text-decoration-none">
-            <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" height="26">
-        </a>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body p-0">
-        <div class="menu-title">Menu</div>
-        <?php if (!empty($tb_menus)) { $tb_i = 0; foreach ($tb_menus as $tb_menu) { $tb_i++; ?>
-            <?php if (isset($tb_menu->sub_menu) && !empty($tb_menu->sub_menu) && isset($tb_menu->selected) && $tb_menu->selected != '') { ?>
-                <div class="biz-nav-group">
-                    <a class="biz-nav-link" data-bs-toggle="collapse" href="#bizSub<?php echo $tb_i; ?>" role="button" aria-expanded="false">
-                        <span><?php echo $tb_menu->menu_name; ?></span><i class="bx bx-chevron-down"></i>
-                    </a>
-                    <div class="collapse biz-subnav" id="bizSub<?php echo $tb_i; ?>">
-                        <?php foreach ($tb_menu->sub_menu as $tb_sub) { if (isset($tb_sub->selected) && $tb_sub->selected != '') { ?>
-                            <a class="biz-nav-link" href="<?php echo $tb_sub->sub_menu_url; ?>"><?php echo $tb_sub->sub_menu_name; ?></a>
-                        <?php } } ?>
-                    </div>
-                </div>
-            <?php } else { if (isset($tb_menu->selected) && $tb_menu->selected != '') { ?>
-                <a class="biz-nav-link" href="<?php echo $tb_menu->menu_url; ?>"><?php echo $tb_menu->menu_name; ?></a>
-            <?php } } ?>
-        <?php } } ?>
-        <a class="biz-nav-link" href="<?php echo base_url('auth/logout'); ?>"><i class="bx bx-log-out me-1"></i> Logout</a>
-    </div>
-</div>
+<!-- ===== Shared mobile offcanvas navigation (dynamic role/system menu) ===== -->
+<?php
+$navHomeUrl = $tb_homeUrl;
+$navMenus   = $tb_menus;
+include(APPPATH . 'views/general/mobile_nav_offcanvas.php');
+?>

@@ -35,6 +35,7 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
     <title>BizAdmin</title>
     <link rel="shortcut icon" href="<?= base_url(); ?>login-assets/img/favicon.jpeg" />
     <link href="<?= base_url('theme-assets/css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?= base_url('theme-assets/css/icons.min.css'); ?>" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -104,10 +105,6 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
         .act-btn:last-child{margin-bottom:0;}
         .act-btn i{width:18px;text-align:center;color:#1D9E75;}
         .act-btn.danger i{color:#ef4444;}
-
-        .offcanvas-nav .offcanvas-header{background:#1a2f52;color:#fff;}
-        .offcanvas-nav .nav-link{color:#1e293b;font-size:14px;padding:12px 4px;border-bottom:.5px solid #f1f5f9;display:flex;align-items:center;gap:10px;}
-        .offcanvas-nav .nav-link i{color:#1D9E75;width:18px;text-align:center;}
     </style>
 </head>
 <body>
@@ -151,7 +148,7 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
                 <div><div class="stat-num"><?= (int) $employee_on_break_count ?></div><div class="stat-label">Employee on break</div></div>
             </div>
             <div class="stat-card alert">
-                <i class="fa-solid fa-file-circle-exclamation stat-ic" style="color:#ef4444;"></i>
+                <i class="fa-solid fa-calendar-minus stat-ic" style="color:#ef4444;"></i>
                 <div><div class="stat-num red"><?= count($pending_leaves) ?></div><div class="stat-label">Leave requests</div></div>
             </div>
         </div>
@@ -228,22 +225,11 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
     </div>
 </div>
 
-<!-- NAV OFFCANVAS -->
-<div class="offcanvas offcanvas-start offcanvas-nav" tabindex="-1" id="mobileNav" style="max-width:280px;">
-    <div class="offcanvas-header">
-        <h6 class="mb-0">BizAdmin</h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-        <a class="nav-link" href="<?= base_url('HR/' . $this->session->userdata('system_id')) ?>"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a class="nav-link" href="<?= base_url('HR/employees') ?>"><i class="fa-solid fa-users"></i> Employees</a>
-        <a class="nav-link" href="<?= base_url('HR/roster') ?>"><i class="fa-solid fa-calendar-days"></i> Roster</a>
-        <a class="nav-link" href="<?= base_url('HR/leaveDashbaord') ?>"><i class="fa-solid fa-calendar-check"></i> Approve Leaves</a>
-        <a class="nav-link" href="<?= base_url('HR/timesheetWithoutRoster') ?>"><i class="fa-solid fa-clock-rotate-left"></i> Approve Timesheets</a>
-        <a class="nav-link" href="<?= base_url('HR/memo') ?>"><i class="fa-solid fa-bullhorn"></i> Send Memo</a>
-        <a class="nav-link" href="<?= base_url('auth/logout') ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-    </div>
-</div>
+<!-- NAV OFFCANVAS (shared partial) -->
+<?php
+$navHomeUrl = base_url('HR/' . $this->session->userdata('system_id'));
+include(APPPATH . 'views/general/mobile_nav_offcanvas.php');
+?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="<?= base_url('theme-assets/libs/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>

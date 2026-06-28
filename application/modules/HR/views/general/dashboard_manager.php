@@ -7,7 +7,7 @@
     .mgrv3 *{box-sizing:border-box;}
     .mgrv3 .db{background:#f1f5f9;border-radius:16px;overflow:hidden;border:.5px solid #e2e8f0;}
     .mgrv3 .layout{display:flex;min-height:700px;}
-    .mgrv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:20px;display:flex;flex-direction:column;gap:18px;}
+    .mgrv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:12px 20px 20px 20px;display:flex;flex-direction:column;gap:18px;}
     .mgrv3 .profile-block{text-align:center;padding-bottom:16px;border-bottom:.5px solid #f1f5f9;}
     .mgrv3 .av-wrap{position:relative;width:64px;height:64px;margin:0 auto 10px;}
     .mgrv3 .av-circle{width:64px;height:64px;border-radius:50%;border:2.5px solid #1D9E75;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;}
@@ -28,11 +28,11 @@
     .mgrv3 .act-btn i{width:18px;text-align:center;color:#1D9E75;font-size:14px;}
     .mgrv3 .act-btn.danger i{color:#ef4444;}
     .mgrv3 .act-btn.danger:hover{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
-    .mgrv3 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .mgrv3 .main{flex:1;padding:0 20px 20px 20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
     .mgrv3 .stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
     .mgrv3 .stat-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:16px 18px;}
-    .mgrv3 .stat-card.alert{border:1px solid #fecaca;}
-    .mgrv3 .stat-ic{font-size:20px;margin-bottom:8px;display:block;}
+    .mgrv3 .stat-card.alert{border:.5px solid #fecaca;}
+    .mgrv3 .stat-ic{font-size:20px;height:24px;line-height:24px;margin-bottom:8px;display:block;}
     .mgrv3 .stat-num{font-size:28px;font-weight:600;color:#1a2f52;}
     .mgrv3 .stat-num.red{color:#dc2626;}
     .mgrv3 .stat-label{font-size:12px;color:#64748b;margin-top:3px;}
@@ -94,7 +94,7 @@
     $feedCount = count($incident_reports) + count($injury_reports) + count($pending_leaves) + count($birthdays_today);
 ?>
 
-<main class="max-w-[1920px] mx-auto px-6 pb-8 pt-2">
+<main class="max-w-[1920px] mx-auto px-6 pb-8" style="padding-top:90px;">
  <div class="mgrv3">
   <div class="db">
    <div class="layout">
@@ -152,7 +152,7 @@
        <div class="stat-label">Employee on Break</div>
       </div>
       <div class="stat-card alert">
-       <i class="fa-solid fa-file-circle-exclamation stat-ic" style="color:#ef4444;"></i>
+       <i class="fa-solid fa-calendar-minus stat-ic" style="color:#ef4444;"></i>
        <div class="stat-num red"><?= count($pending_leaves) ?></div>
        <div class="stat-label">Leave Requests</div>
       </div>

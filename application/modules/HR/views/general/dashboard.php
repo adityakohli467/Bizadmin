@@ -129,7 +129,7 @@
 <div class="bg-[#F4F6F9] font-inter">
 
 
-<main class="max-w-[1920px] mx-auto px-6 pb-8 pt-2">
+<main class="max-w-[1920px] mx-auto px-6 pb-8" style="padding-top:90px;">
     <?php
     $w = $employeeProfileWidgetData ?? [];
     $employee_name     = ucfirst($w['employee_name'] ?? 'User');

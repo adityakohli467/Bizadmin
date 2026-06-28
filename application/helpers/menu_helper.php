@@ -228,3 +228,52 @@ if (!function_exists('fetch_render_menu')) {
         return $query->result();
     }
 }
+
+if (!function_exists('bizadmin_menu_icon')) {
+    /**
+     * Map a menu/sub-menu name to an icon class for the mobile navigation.
+     * $set: 'fa' (Font Awesome) or 'bx' (Boxicons).
+     */
+    function bizadmin_menu_icon($menuName, $set = 'fa') {
+        $key = strtolower(trim((string) $menuName));
+        $map = array(
+            'dashboard'   => array('fa' => 'fa-house',           'bx' => 'bx-home-alt'),
+            'profile'     => array('fa' => 'fa-user',            'bx' => 'bx-user'),
+            'employee'    => array('fa' => 'fa-users',           'bx' => 'bx-group'),
+            'employees'   => array('fa' => 'fa-users',           'bx' => 'bx-group'),
+            'staff'       => array('fa' => 'fa-users',           'bx' => 'bx-group'),
+            'leave'       => array('fa' => 'fa-calendar-minus',  'bx' => 'bx-calendar-minus'),
+            'roster'      => array('fa' => 'fa-calendar-days',   'bx' => 'bx-calendar'),
+            'shift'       => array('fa' => 'fa-calendar-days',   'bx' => 'bx-calendar'),
+            'timesheet'   => array('fa' => 'fa-clock',           'bx' => 'bx-time-five'),
+            'attendance'  => array('fa' => 'fa-clock',           'bx' => 'bx-time-five'),
+            'compliance'  => array('fa' => 'fa-shield-halved',   'bx' => 'bx-shield'),
+            'memo'        => array('fa' => 'fa-bullhorn',        'bx' => 'bx-broadcast'),
+            'task'        => array('fa' => 'fa-list-check',      'bx' => 'bx-list-check'),
+            'tasks'       => array('fa' => 'fa-list-check',      'bx' => 'bx-list-check'),
+            'document'    => array('fa' => 'fa-file-lines',      'bx' => 'bx-file'),
+            'documents'   => array('fa' => 'fa-file-lines',      'bx' => 'bx-file'),
+            'hiring'      => array('fa' => 'fa-user-plus',       'bx' => 'bx-user-plus'),
+            'recruit'     => array('fa' => 'fa-user-plus',       'bx' => 'bx-user-plus'),
+            'incident'    => array('fa' => 'fa-triangle-exclamation', 'bx' => 'bx-error'),
+            'injury'      => array('fa' => 'fa-kit-medical',     'bx' => 'bx-plus-medical'),
+            'resignation' => array('fa' => 'fa-file-signature',  'bx' => 'bx-file'),
+            'reimburse'   => array('fa' => 'fa-receipt',         'bx' => 'bx-receipt'),
+            'performance' => array('fa' => 'fa-chart-line',      'bx' => 'bx-line-chart'),
+            'report'      => array('fa' => 'fa-chart-column',    'bx' => 'bx-bar-chart-alt-2'),
+            'setting'     => array('fa' => 'fa-gear',            'bx' => 'bx-cog'),
+            'cash'        => array('fa' => 'fa-money-bill',      'bx' => 'bx-money'),
+            'supplier'    => array('fa' => 'fa-truck',           'bx' => 'bx-package'),
+            'recipe'      => array('fa' => 'fa-utensils',        'bx' => 'bx-bowl-hot'),
+            'clean'       => array('fa' => 'fa-broom',           'bx' => 'bx-spray-can'),
+            'catering'    => array('fa' => 'fa-bell-concierge',  'bx' => 'bx-restaurant'),
+        );
+        $default = array('fa' => 'fa-angle-right', 'bx' => 'bx-chevron-right');
+        $icon = $default;
+        foreach ($map as $needle => $icons) {
+            if (strpos($key, $needle) !== false) { $icon = $icons; break; }
+        }
+        $cls = isset($icon[$set]) ? $icon[$set] : $default[$set];
+        return ($set === 'bx') ? ('bx ' . $cls) : ('fa-solid ' . $cls);
+    }
+}
