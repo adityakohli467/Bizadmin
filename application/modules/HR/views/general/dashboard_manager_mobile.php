@@ -147,7 +147,7 @@ $feedCount = count($incident_reports) + count($injury_reports) + count($pending_
                 <i class="fa-solid fa-mug-hot stat-ic" style="color:#f97316;"></i>
                 <div><div class="stat-num"><?= (int) $employee_on_break_count ?></div><div class="stat-label">Employee on break</div></div>
             </div>
-            <div class="stat-card alert">
+            <div class="stat-card ">
                 <i class="fa-solid fa-calendar-minus stat-ic" style="color:#ef4444;"></i>
                 <div><div class="stat-num red"><?= count($pending_leaves) ?></div><div class="stat-label">Leave requests</div></div>
             </div>

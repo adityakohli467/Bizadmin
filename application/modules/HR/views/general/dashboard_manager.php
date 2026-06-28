@@ -151,7 +151,7 @@
        <div class="stat-num"><?= (int) $employee_on_break_count ?></div>
        <div class="stat-label">Employee on Break</div>
       </div>
-      <div class="stat-card alert">
+      <div class="stat-card ">
        <i class="fa-solid fa-calendar-minus stat-ic" style="color:#ef4444;"></i>
        <div class="stat-num red"><?= count($pending_leaves) ?></div>
        <div class="stat-label">Leave Requests</div>
