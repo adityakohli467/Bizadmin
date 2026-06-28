@@ -4,7 +4,7 @@
     <style>
     .empv3{font-family:'Inter',system-ui,sans-serif;}
     .empv3 *{box-sizing:border-box;}
-    .empv3 .db{background:#f1f5f9;border-radius:16px;overflow:hidden;border:.5px solid #e2e8f0;}
+    .empv3 .db{background:#f1f5f9;border-radius:0;overflow:hidden;border:.5px solid #e2e8f0;}
     .empv3 .layout{display:flex;min-height:700px;}
     .empv3 .sidebar{width:260px;flex-shrink:0;background:#fff;border-right:.5px solid #e2e8f0;padding:20px;display:flex;flex-direction:column;gap:18px;}
     .empv3 .profile-block{text-align:center;padding-bottom:16px;border-bottom:.5px solid #f1f5f9;}
@@ -19,7 +19,7 @@
     .empv3 .g-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
     .empv3 .present-pill.absent .g-dot{background:#ef4444;}
     .empv3 .block-title{font-size:12px;font-weight:600;color:#1e293b;margin-bottom:8px;}
-    .empv3 .sched-card{background:#f8fafc;border-radius:10px;padding:12px 14px;border:.5px solid #e2e8f0;}
+    .empv3 .sched-card{background:#f8fafc;border-radius:0;padding:12px 14px;border:.5px solid #e2e8f0;}
     .empv3 .sched-time{font-size:14px;font-weight:600;color:#1e293b;}
     .empv3 .sched-sub{font-size:12px;color:#64748b;margin-top:3px;}
     .empv3 .clocked{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:.5px solid #bbf7d0;border-radius:20px;padding:5px 10px;font-size:11px;color:#15803d;margin-top:8px;font-weight:600;}
@@ -29,7 +29,7 @@
     .empv3 .qs-label{font-size:12px;color:#64748b;}
     .empv3 .qs-val{font-size:13px;font-weight:600;color:#1e293b;}
     .empv3 .qs-val.teal{color:#0F6E56;}
-    .empv3 .leave-card{background:#0F6E56;border-radius:12px;padding:16px;}
+    .empv3 .leave-card{background:#0F6E56;border-radius:0;padding:16px;}
     .empv3 .lc-title{color:#9FE1CB;font-size:12px;font-weight:600;margin-bottom:12px;}
     .empv3 .lc-row{margin-bottom:10px;}
     .empv3 .lc-row:last-of-type{margin-bottom:0;}
@@ -40,7 +40,7 @@
     .empv3 .lc-fill{height:100%;background:#5DCAA5;border-radius:10px;}
     .empv3 .apply-btn{display:block;width:100%;background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.25);border-radius:8px;padding:9px;font-size:12px;color:#E1F5EE;font-weight:600;margin-top:12px;text-align:center;cursor:pointer;}
     .empv3 .apply-btn:hover{background:rgba(255,255,255,.18);}
-    .empv3 .cal-wrap{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:18px 20px;}
+    .empv3 .cal-wrap{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:18px 20px;}
     .empv3 .cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
     .empv3 .cal-month{font-size:13px;font-weight:600;color:#1e293b;}
     .empv3 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
@@ -54,13 +54,13 @@
     .empv3 .leg-d{width:8px;height:8px;border-radius:50%;}
     .empv3 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
     .empv3 .stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
-    .empv3 .stat-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:16px 18px;}
+    .empv3 .stat-card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:16px 18px;}
     .empv3 .stat-num{font-size:28px;font-weight:600;color:#1a2f52;}
     .empv3 .stat-label{font-size:12px;color:#64748b;margin-top:3px;}
     .empv3 .stat-present{font-size:18px;font-weight:600;color:#0F6E56;}
     .empv3 .stat-present.absent{color:#b91c1c;}
     .empv3 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    .empv3 .card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:18px 20px;}
+    .empv3 .card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:18px 20px;}
     .empv3 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
     .empv3 .card-title{font-size:13px;font-weight:600;color:#1e293b;}
     .empv3 .card-link{font-size:12px;color:#1D9E75;font-weight:600;cursor:pointer;background:none;border:none;padding:0;}
@@ -78,7 +78,7 @@
     .empv3 .ts-tbl td{font-size:12px;color:#1e293b;padding:9px 0;border-bottom:.5px solid #f1f5f9;vertical-align:middle;}
     .empv3 .ts-tbl tr:last-child td{border-bottom:none;}
     .empv3 .view-btn{background:#E1F5EE;color:#0F6E56;border:none;border-radius:7px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
-    .empv3 .avail-card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:20px 22px;}
+    .empv3 .avail-card{background:#fff;border-radius:0;border:.5px solid #e2e8f0;padding:20px 22px;}
     .empv3 .avail-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;}
     .empv3 .avail-sub{font-size:12px;color:#94a3b8;margin-top:4px;}
     .empv3 .save-btn{background:#1D9E75;border:none;border-radius:9px;padding:9px 22px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;}
@@ -129,7 +129,7 @@
 <div class="bg-[#F4F6F9] font-inter">
 
 
-<main class="max-w-[1920px] mx-auto px-6 pb-8" style="padding-top:90px;">
+<main class="w-full pb-8" style="padding-top:90px;">
     <?php
     $w = $employeeProfileWidgetData ?? [];
     $employee_name     = ucfirst($w['employee_name'] ?? 'User');
