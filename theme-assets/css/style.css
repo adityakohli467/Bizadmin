@@ -14379,6 +14379,38 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 .link-primary { color: #1a2f52 !important; }
 a.text-primary, .text-primary { color: #1a2f52 !important; }
+
+/* Horizontal top-menu bar + its submenu dropdowns -> navy.
+   Scoped to the horizontal layout so the vertical dark sidebar
+   used elsewhere keeps its own theme. */
+[data-layout="horizontal"] .app-menu.navbar-menu,
+[data-layout="horizontal"] .topnav.topnav-menu,
+[data-layout="horizontal"] .navbar-menu { background-color: #1a2f52 !important; }
+[data-layout="horizontal"] #navbar-nav .menu-dropdown,
+[data-layout="horizontal"] #navbar-nav .dropdown-menu,
+[data-layout="horizontal"] .navbar-menu .menu-dropdown { background-color: #1a2f52 !important; }
+
+/* Profile dropdown (top-right) navy + readable text */
+.topbar-user .dropdown-menu.bg-primary { background-color: #1a2f52 !important; }
+.topbar-user .dropdown-menu.bg-primary .dropdown-header,
+.topbar-user .dropdown-menu.bg-primary .dropdown-item { color: #ffffff !important; }
+.topbar-user .dropdown-menu.bg-primary .dropdown-item:hover,
+.topbar-user .dropdown-menu.bg-primary .dropdown-item:focus { background-color: #142340 !important; }
+
+/* Mobile header: keep the BizAdmin logo visible.
+   Each module topbar ships an inline ".logo-lg img{margin-left:100px}"
+   which pushes the logo off narrow screens. The #page-topbar ID here
+   wins on specificity, so the logo stays in view on phones/tablets. */
+@media (max-width: 991.98px) {
+    #page-topbar .horizontal-logo { display: block !important; }
+    #page-topbar .logo-lg img {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        height: 28px !important;
+        width: auto !important;
+    }
+    #page-topbar .navbar-header { padding-left: 8px; }
+}
 /* ============ end BizAdmin navy rebrand ============ */
 
 .login-38 .form-section .checkbox-theme input[type="checkbox"]:checked + label::before {

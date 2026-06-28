@@ -19,7 +19,7 @@
                                             <a href="/<?php echo $system['slug']; ?>/<?php echo $system['system_id']; ?>">
                                             <?php } ?>
                                             
-                                            <div class="card card-animate overflow-hidden" style="background-color: #282A53;">
+                                            <div class="card card-animate overflow-hidden" style="background-color: #1a2f52;">
                                                 <div class="position-absolute start-0" style="z-index: 0;">
                                                     <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120" fill="">
                                                         <style>

@@ -15,6 +15,6 @@
 </footer>
 <style>
  .wave-layer {
-      fill: #272A54;
+      fill: #1a2f52;
     }
 </style>

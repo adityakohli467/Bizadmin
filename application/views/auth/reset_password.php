@@ -35,7 +35,7 @@
                                 
                                 <div class="text-center mt-2">
                                   
-                                    <lord-icon src="https://cdn.lordicon.com/rqqkvjqf.json" trigger="loop" colors="primary:#272a54" class="avatar-xl">
+                                    <lord-icon src="https://cdn.lordicon.com/rqqkvjqf.json" trigger="loop" colors="primary:#1a2f52" class="avatar-xl">
                                     </lord-icon>
 
                                 </div>

@@ -37,7 +37,7 @@
                                     <h5 class="text-primary">Forgot Password?</h5>
                                     <p class="text-muted">Reset password now</p>
 
-                                    <lord-icon src="https://cdn.lordicon.com/rhvddzym.json" trigger="loop" colors="primary:#272a54" class="avatar-xl">
+                                    <lord-icon src="https://cdn.lordicon.com/rhvddzym.json" trigger="loop" colors="primary:#1a2f52" class="avatar-xl">
                                     </lord-icon>
 
                                 </div>
