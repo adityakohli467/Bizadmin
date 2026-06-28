@@ -2620,14 +2620,14 @@ h6 {
 .btn-warning,
 .card-warning,
 .show>.btn-outline-warning.dropdown-toggle {
-	border-color: #172153;
-	background-color: #172153;
+	border-color: #1a2f52;
+	background-color: #1a2f52;
 }
 .btn-warning{
 	color:#fff;
 }
 .btn-warning:hover{
-	background-color:#172153;
+	background-color:#1a2f52;
 	border-color:#D76100;
 	color:#fff;
 }
@@ -2876,7 +2876,7 @@ a:hover {
 .badge-warning,
 .bg-warning,
 .nav.nav-pills.nav-pills-warning .nav-link.active {
-	background-color: #172153 !important;
+	background-color: #1a2f52 !important;
 }
 
 .badge-inverse,
@@ -3476,7 +3476,7 @@ select.form-control-square {
 
 .custom-control-input.is-valid~.custom-control-description,
 .was-validated .custom-control-input:valid~.custom-control-description {
-	color: #172153;
+	color: #1a2f52;
 }
 
 .custom-file-input.is-invalid~.custom-file-control,
@@ -4101,8 +4101,8 @@ select.form-control-square {
 
 .login-form .btn-success {
 	color: #fff;
-	background-color: #172153;
-	border-color: #172153;
+	background-color: #1a2f52;
+	border-color: #1a2f52;
 }
 
 .login-form .btn-success:hover {
@@ -4657,7 +4657,7 @@ button.btn-link {
 }
 
 .btn-info {
-	background-color: #172153;
+	background-color: #1a2f52;
 	border: none;
 }
 .btn-info:hover {
@@ -5131,12 +5131,12 @@ span.sec_icon {
     height: 50px;
     width: 50px;
     font-size: 26px;
-    border: 1px solid #172153;
+    border: 1px solid #1a2f52;
     display: inline-block;
     text-align: center;
     line-height: 50px;
     border-radius: 100px;
-    color:#172153;
+    color:#1a2f52;
 }
 .homepage_fl_right {
     float: right;
@@ -6242,7 +6242,7 @@ body:not(.nav_small) .nav.nav-pills.nav-stacked.labels-info p{
 	/*background:url(../images/default-bg.jpg.imgix.banner.jpg) 0 0 no-repeat;*/
 	background-size:cover;
 	background-attachment:fixed;
-	    background-color: #172153;
+	    background-color: #1a2f52;
 }
 .h_rainfall{
 	    height: 299px;
@@ -6334,8 +6334,8 @@ body .dataTables_wrapper .dataTables_paginate .paginate_button.current,
 body .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
 body .dataTables_wrapper#customers_wrapper .dataTables_paginate .paginate_button:hover{
     color: #fff !important;
-    border: 1px solid #172153 !important;
-    background: #172153 !important;
+    border: 1px solid #1a2f52 !important;
+    background: #1a2f52 !important;
 }
 body{
     padding-bottom: 65px !important;

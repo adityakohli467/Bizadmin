@@ -14330,6 +14330,57 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: #424242;
 }
 
+/* ============================================================
+   BizAdmin global navy rebrand (#1a2f52)
+   Loaded once via the shared header for every module.
+   Scoped to specific components so the dark sidebar / nav
+   active states keep their original contrast.
+   ============================================================ */
+/* Uniform topbar header across all apps */
+#page-topbar { background-color: #1a2f52 !important; }
+#page-topbar .navbar-header { background-color: transparent !important; }
+#page-topbar .user-name-text { color: #ffffff !important; }
+#page-topbar .user-name-sub-text,
+#page-topbar .user-name-sub-text i { color: rgba(255, 255, 255, 0.7) !important; }
+#page-topbar .hamburger-icon span { background-color: #ffffff !important; }
+
+/* Primary buttons -> navy (success/green stays green) */
+.btn-primary {
+    --vz-btn-bg: #1a2f52;
+    --vz-btn-border-color: #1a2f52;
+    --vz-btn-hover-bg: #142340;
+    --vz-btn-hover-border-color: #142340;
+    --vz-btn-active-bg: #142340;
+    --vz-btn-active-border-color: #142340;
+    --vz-btn-disabled-bg: #1a2f52;
+    --vz-btn-disabled-border-color: #1a2f52;
+    --vz-btn-focus-shadow-rgb: 26, 47, 82;
+}
+.btn-outline-primary {
+    --vz-btn-color: #1a2f52;
+    --vz-btn-border-color: #1a2f52;
+    --vz-btn-hover-bg: #1a2f52;
+    --vz-btn-hover-border-color: #1a2f52;
+    --vz-btn-active-bg: #1a2f52;
+    --vz-btn-active-border-color: #1a2f52;
+    --vz-btn-disabled-color: #1a2f52;
+    --vz-btn-disabled-border-color: #1a2f52;
+}
+
+/* Primary backgrounds, badges, table & modal headers -> navy */
+.bg-primary,
+.badge.bg-primary,
+.text-bg-primary { background-color: #1a2f52 !important; }
+.modal-header.bg-primary { background-color: #1a2f52 !important; }
+.table-primary {
+    --vz-table-bg: #1a2f52;
+    --vz-table-color: #ffffff;
+    color: #ffffff;
+}
+.link-primary { color: #1a2f52 !important; }
+a.text-primary, .text-primary { color: #1a2f52 !important; }
+/* ============ end BizAdmin navy rebrand ============ */
+
 .login-38 .form-section .checkbox-theme input[type="checkbox"]:checked + label::before {
     background-color: #6fca3d;
     border-color: #6fca3d;

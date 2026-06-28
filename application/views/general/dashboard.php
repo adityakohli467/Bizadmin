@@ -117,8 +117,8 @@
 #locationDashboard .ld-hero::after{content:'';position:absolute;bottom:-80px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,164,.10) 0%,transparent 70%);pointer-events:none;}
 #locationDashboard .ld-hero-inner{max-width:1040px;margin:0 auto;position:relative;z-index:1;}
 #locationDashboard .ld-greeting{display:flex;align-items:center;gap:.6rem;margin-bottom:.25rem;}
-#locationDashboard .ld-greeting-icon{width:42px;height:42px;border-radius:12px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#172153,#2a3a82);color:#ffd166;font-size:1.3rem;flex-shrink:0;}
-#locationDashboard .ld-greeting h1{font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700;color:#172153;margin:0;letter-spacing:-.02em;}
+#locationDashboard .ld-greeting-icon{width:42px;height:42px;border-radius:12px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#1a2f52,#2a3a82);color:#ffd166;font-size:1.3rem;flex-shrink:0;}
+#locationDashboard .ld-greeting h1{font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700;color:#1a2f52;margin:0;letter-spacing:-.02em;}
 #locationDashboard .ld-greeting .ld-name{background:linear-gradient(135deg,#6366f1,#06b6a4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 #locationDashboard .ld-subtitle{color:#6b7280;font-size:clamp(.9rem,2vw,1.05rem);margin:.15rem 0 0 3.4rem;}
 #locationDashboard .ld-pill{display:inline-flex;align-items:center;gap:.45rem;margin:.85rem 0 0 3.4rem;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:.45rem .9rem;font-size:.82rem;font-weight:500;color:#475569;box-shadow:0 1px 3px rgba(0,0,0,.04);}
@@ -129,7 +129,7 @@
 #locationDashboard .ld-search{display:flex;align-items:center;gap:.6rem;background:#fff;border:2px solid #e5e7eb;border-radius:14px;padding:.65rem 1rem;transition:border-color .2s,box-shadow .2s;}
 #locationDashboard .ld-search:focus-within{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.10);}
 #locationDashboard .ld-search i{color:#9ca3af;font-size:1.25rem;}
-#locationDashboard .ld-search input{border:0;outline:0;flex:1;font-size:.92rem;color:#172153;background:transparent;}
+#locationDashboard .ld-search input{border:0;outline:0;flex:1;font-size:.92rem;color:#1a2f52;background:transparent;}
 
 /* Cards */
 #locationDashboard .ld-cards-wrap{max-width:1040px;margin:1.75rem auto 0;padding:0 1.5rem;position:relative;z-index:1;}
@@ -151,7 +151,7 @@
 #locationDashboard .ld-badge i{font-size:.8rem;}
 
 #locationDashboard .ld-card-icon{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));margin-bottom:1rem;box-shadow:0 6px 16px -4px var(--c1);}
-#locationDashboard .ld-card-name{font-size:1.05rem;font-weight:700;color:#172153;line-height:1.3;word-break:break-word;}
+#locationDashboard .ld-card-name{font-size:1.05rem;font-weight:700;color:#1a2f52;line-height:1.3;word-break:break-word;}
 #locationDashboard .ld-card-sub{font-size:.75rem;color:#94a3b8;margin-top:.3rem;display:flex;align-items:center;gap:4px;}
 #locationDashboard .ld-card-sub i{font-size:.95rem;}
 

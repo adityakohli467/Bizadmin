@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
-    <?php $this->load->view('general/tailwind_common_assets'); ?>
+<?php /* Employee dashboard: rendered inside the shared Velzon layout (header > content > footer). Page-specific assets only. */ ?>
+<link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+<?php $this->load->view('general/tailwind_common_assets'); ?>
     <style>
     .empv3{font-family:'Inter',system-ui,sans-serif;}
     .empv3 *{box-sizing:border-box;}
@@ -107,7 +102,7 @@
     /* Common system loader overlay */
     #ts-loader-overlay{display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;}
     #ts-loader-overlay.show{display:flex;}
-    #ts-loader-overlay .ts-spinner{width:130px;height:130px;border:3px solid #f3f3f3;border-top:3px solid #172153;border-radius:50%;animation:tsspin 1s linear infinite;}
+    #ts-loader-overlay .ts-spinner{width:130px;height:130px;border:3px solid #f3f3f3;border-top:3px solid #1a2f52;border-radius:50%;animation:tsspin 1s linear infinite;}
     @keyframes tsspin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
     /* Timesheet details modal - matched to dashboard UI */
     #timesheetDetailsModal .modal-content{border:none;border-radius:16px;overflow:hidden;font-family:'Inter',sans-serif;}
@@ -131,8 +126,7 @@
     #timesheetDetailsModal .btn-close-soft{background:#f1f5f9;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:500;color:#475569;cursor:pointer;}
     #timesheetDetailsModal .btn-close-soft:hover{background:#e2e8f0;}
     </style>
-</head>
-<body class="bg-[#F4F6F9] font-inter">
+<div class="bg-[#F4F6F9] font-inter">
 
 
 <main class="max-w-[1920px] mx-auto px-6 pb-8 pt-2">
@@ -823,5 +817,4 @@
      
 </main>
 
-</body>
-</html>
+</div>

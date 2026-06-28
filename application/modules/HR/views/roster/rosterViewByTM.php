@@ -17,7 +17,7 @@
         }
         }
         [data-layout-mode=light] thead th {
-    color: #172153;
+    color: #1a2f52;
 }
     </style>
 </head>

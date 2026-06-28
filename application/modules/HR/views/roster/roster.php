@@ -173,7 +173,7 @@
         width: 130px; 
         height: 130px;
         border: 3px solid #f3f3f3; 
-        border-top: 3px solid #172153;
+        border-top: 3px solid #1a2f52;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }

@@ -1,6 +1,6 @@
 <style>
     h6{
-        color: #172153 !important;
+        color: #1a2f52 !important;
     }
     .step-wizard .step {
         flex: 1;
@@ -38,18 +38,18 @@
     }
     .step .label {
         font-weight: 800;
-        color: #172153 !important;
+        color: #1a2f52 !important;
         font-size: 14px;
     }
     .pageTitle{
         font-weight: 800 !important;
         font-size: 28px !important;
-        color: #172153 !important;
+        color: #1a2f52 !important;
     }
 
     .sectionTitle{
         font-weight: 800 !important;
-        color: #172153 !important;
+        color: #1a2f52 !important;
     }
 
 </style>

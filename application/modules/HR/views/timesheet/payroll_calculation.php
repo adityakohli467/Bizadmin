@@ -20,7 +20,7 @@
     <style>
         ::-webkit-scrollbar { display: none; }
         h2,h1,h6{
-                color: #172153 !important;
+                color: #1a2f52 !important;
         }
     </style>
 

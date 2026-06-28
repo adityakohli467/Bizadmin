@@ -492,11 +492,11 @@ input:checked + .slider:before {
 /* Page hero */
 #checklistPage .cl-hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
 #checklistPage .cl-hero-left{display:flex;align-items:center;gap:.75rem;}
-#checklistPage .cl-hero-icon{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#172153,#2a3a82);color:#ffd166;font-size:1.4rem;flex-shrink:0;}
-#checklistPage .cl-hero-title{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:700;color:#172153;margin:0;letter-spacing:-.02em;line-height:1.2;}
+#checklistPage .cl-hero-icon{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#1a2f52,#2a3a82);color:#ffd166;font-size:1.4rem;flex-shrink:0;}
+#checklistPage .cl-hero-title{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:700;color:#1a2f52;margin:0;letter-spacing:-.02em;line-height:1.2;}
 #checklistPage .cl-hero-name{background:linear-gradient(135deg,#6366f1,#06b6a4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 #checklistPage .cl-hero-sub{margin:.1rem 0 0;color:#6b7280;font-size:.88rem;}
-#checklistPage .cl-loc-chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.55rem 1rem;font-size:.85rem;font-weight:600;color:#172153;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .2s,box-shadow .2s,transform .2s;}
+#checklistPage .cl-loc-chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:.55rem 1rem;font-size:.85rem;font-weight:600;color:#1a2f52;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .2s,box-shadow .2s,transform .2s;}
 #checklistPage .cl-loc-chip:hover{border-color:#6366f1;box-shadow:0 6px 18px rgba(99,102,241,.15);transform:translateY(-1px);}
 #checklistPage .cl-loc-chip i.bxs-map{color:#06b6a4;font-size:1.05rem;}
 #checklistPage .cl-loc-chev{color:#9ca3af;font-size:1.1rem;}
@@ -529,7 +529,7 @@ input:checked + .slider:before {
     background:#fff!important;border:0!important;border-radius:18px 18px 0 0;
     padding:1.1rem 1.3rem .4rem;
 }
-#checklistPage .card.card-height-100 .card-header .fw-semibold{color:#172153;font-size:1rem;}
+#checklistPage .card.card-height-100 .card-header .fw-semibold{color:#1a2f52;font-size:1rem;}
 #checklistPage .card.card-height-100 .card-header i.ri-file-list-fill{
     color:#6366f1;background:#eef0ff;width:32px;height:32px;border-radius:9px;
     display:inline-grid;place-items:center;font-size:1rem;margin-right:.25rem;
