@@ -85,7 +85,7 @@ if (!empty($upcoming)) {
 .mr-arrow:active{background:#eef2fb;}
 .mr-cards-track{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
 .mr-cards-track::-webkit-scrollbar{display:none;}
-.mr-card{flex:0 0 76%;max-width:300px;border:1px solid #eef2f6;border-top:3px solid #25A69A;border-radius:12px;padding:14px 16px;background:#fff;box-shadow:0 2px 8px rgba(16,40,80,.05);}
+.mr-card{flex:0 0 auto;width:240px;aspect-ratio:1;border:1px solid #eef2f6;border-top:3px solid #25A69A;border-radius:12px;padding:14px 16px;background:#fff;box-shadow:0 2px 8px rgba(16,40,80,.05);}
 .mr-card.off{border-top-color:#cbd5e1;background:#f8fafc;}
 .mr-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
 .mr-card .dw{font-size:.72rem;color:#94a3b8;font-weight:600;}
@@ -103,7 +103,7 @@ if (!empty($upcoming)) {
 <div class="mr-head">
     <h3 class="mr-title">My Roster</h3>
 </div>
-<p class="mr-sub">View your published shifts, hours and upcoming schedule.</p>
+<p class="mr-sub">View your shifts, hours and upcoming schedule.</p>
 
 <div class="mr-toolbar">
     <div class="mr-week">

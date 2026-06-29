@@ -142,12 +142,14 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
                     </button>
                 </div>
 
-                <!-- Location: open the location selection page -->
+                <!-- Location: open the location selection page (hidden for employees) -->
+                <?php if ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager'])): ?>
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
                         <a href="<?php echo site_url('auth/dashboard'); ?>" title="Switch location"><i class='bx bx-map fs-22 text-white'></i></a>
                     </button>
                 </div>
+                <?php endif; ?>
 
                 <?php if ($tb_settingsUrl !== '' && ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager']))): ?>
                 <div class="ms-1 header-item d-none d-sm-flex">
