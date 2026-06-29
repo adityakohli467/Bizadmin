@@ -42,8 +42,8 @@ if (!empty($upcoming)) {
 .mr-week .btn-nav:hover{border-color:var(--mr-teal);color:var(--mr-teal);}
 .mr-week .label{padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-weight:600;color:#1a1a1a;background:#fff;}
 .mr-actions{display:flex;gap:8px;}
-.mr-actions .btn{border:1px solid #e2e8f0;background:#fff;color:#1a1a1a;border-radius:8px;padding:7px 16px;font-size:.85rem;cursor:pointer;}
-.mr-actions .btn:hover{border-color:var(--mr-teal);color:var(--mr-teal);}
+.mr-actions .btn{border:1px solid #25A69A;background:#25A69A;color:#fff;border-radius:8px;padding:7px 16px;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.mr-actions .btn:hover{background:#1f8c82;border-color:#1f8c82;color:#fff;}
 .mr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:16px;border:1px solid #eef2f6;border-radius:10px;background:#fff;overflow:hidden;}
 .mr-stat{padding:16px 20px;border-right:1px solid #eef2f6;}
 .mr-stat:last-child{border-right:0;}
@@ -51,8 +51,8 @@ if (!empty($upcoming)) {
 .mr-stat .val{font-size:1.2rem;font-weight:700;color:var(--mr-teal);}
 .mr-stat .val.navy{color:#1a1a1a;font-size:1rem;}
 .mr-tablecard{border:1px solid #eef2f6;border-radius:10px;overflow:hidden;background:#fff;margin-bottom:16px;}
-.mr-table{width:100%;border-collapse:collapse;font-size:.9rem;color:#1a1a1a;}
-.mr-table th,.mr-table td{padding:12px 14px;border:1px solid #f0f3f7;text-align:left;vertical-align:middle;}
+.mr-table{width:100%;border-collapse:collapse;font-size:.8rem;color:#1a1a1a;}
+.mr-table th,.mr-table td{padding:10px 12px;border:1px solid #f0f3f7;text-align:left;vertical-align:middle;}
 .mr-table thead th:first-child{width:110px;color:#1a1a1a;font-weight:700;}
 .mr-table thead th{font-weight:700;color:#1a1a1a;}
 .mr-table .rowlbl{color:#475569;font-weight:600;background:#fbfcfe;}
@@ -61,21 +61,40 @@ if (!empty($upcoming)) {
 .mr-grid2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 .mr-panel{border:1px solid #eef2f6;border-radius:10px;padding:16px 18px;background:#fff;}
 .mr-panel h6{font-weight:700;color:#1a1a1a;margin:0 0 12px;font-size:1rem;}
-.mr-up{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f3f5f9;}
+.mr-up{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f5f9;}
 .mr-up:last-child{border-bottom:0;}
-.mr-up .dt{text-align:center;border:1px solid #e2e8f0;border-radius:8px;padding:4px 8px;min-width:46px;}
-.mr-up .dt .d{font-weight:700;color:#1a1a1a;}
-.mr-up .dt .m{font-size:.7rem;color:#94a3b8;text-transform:uppercase;}
+.mr-up .dt{text-align:center;border:1px solid #cdd9ef;background:#eef2fb;border-radius:8px;padding:5px 10px;min-width:48px;}
+.mr-up .dt .d{font-weight:700;color:#1a2f52;font-size:1.05rem;line-height:1;}
+.mr-up .dt .m{font-size:.68rem;color:#3b82f6;text-transform:uppercase;font-weight:600;}
 .mr-up .meta{flex:1;}
-.mr-up .meta b{color:#1a1a1a;font-size:.85rem;}
+.mr-up .meta b{color:#1a2f52;font-size:.9rem;}
 .mr-up .meta small{color:#94a3b8;display:block;}
+.mr-up .rel{font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:6px;white-space:nowrap;}
 .mr-srow{display:flex;justify-content:space-between;padding:8px 0;font-size:.9rem;border-bottom:1px solid #f3f5f9;color:#1a1a1a;}
 .mr-srow:last-child{border:0;}
 .mr-srow .v{font-weight:700;color:var(--mr-teal);}
 .mr-leg{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:.85rem;color:#1a1a1a;}
 .mr-dot{width:11px;height:11px;border-radius:50%;}
 .mr-empty{color:#cbd5e1;}
-@media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-stat{border-bottom:1px solid #eef2f6;}.mr-grid2{grid-template-columns:1fr;}.mr-table-wrap{overflow-x:auto;}.mr-table{min-width:760px;}}
+/* Mobile card view */
+.mr-cards{display:none;margin-bottom:16px;}
+.mr-cards-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.mr-cards-head h6{margin:0;font-weight:700;color:#1a2f52;font-size:1.05rem;}
+.mr-cards-nav{display:flex;gap:8px;}
+.mr-arrow{width:34px;height:34px;border:1px solid #e2e8f0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#1a2f52;cursor:pointer;}
+.mr-arrow:active{background:#eef2fb;}
+.mr-cards-track{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.mr-cards-track::-webkit-scrollbar{display:none;}
+.mr-card{flex:0 0 76%;max-width:300px;border:1px solid #eef2f6;border-top:3px solid #25A69A;border-radius:12px;padding:14px 16px;background:#fff;box-shadow:0 2px 8px rgba(16,40,80,.05);}
+.mr-card.off{border-top-color:#cbd5e1;background:#f8fafc;}
+.mr-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.mr-card .dw{font-size:.72rem;color:#94a3b8;font-weight:600;}
+.mr-card .dn{font-size:1.5rem;font-weight:700;color:#1a2f52;line-height:1;}
+.mr-card .hh{color:#25A69A;font-weight:700;font-size:.9rem;}
+.mr-card .tm{margin-top:8px;font-weight:600;color:#1a1a1a;font-size:.9rem;}
+.mr-card .rl{color:#475569;font-size:.85rem;margin-top:4px;}
+.mr-card .lc{display:flex;align-items:center;gap:6px;color:#25A69A;font-size:.82rem;margin-top:4px;}
+@media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-stat{border-bottom:1px solid #eef2f6;}.mr-grid2{grid-template-columns:1fr;}.mr-tablecard{display:none;}.mr-cards{display:block;}}
 @media(max-width:575px){.mr-stats{grid-template-columns:1fr;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{justify-content:flex-end;}}
 </style>
 
@@ -93,8 +112,7 @@ if (!empty($upcoming)) {
         <button class="btn-nav" type="button" data-start="<?php echo $nextStart; ?>" onclick="mrLoadWeek('<?php echo $nextStart; ?>')"><i class="bx bx-chevron-right"></i></button>
     </div>
     <div class="mr-actions">
-        <button class="btn" type="button" onclick="window.print()">Export</button>
-        <button class="btn" type="button" onclick="window.print()">Print</button>
+        <button class="btn" type="button" onclick="window.print()"><i class="bx bx-printer"></i> Print</button>
     </div>
 </div>
 
@@ -138,14 +156,48 @@ if (!empty($upcoming)) {
     </table>
 </div>
 
+<!-- Mobile card view (replaces table on small screens) -->
+<div class="mr-cards">
+    <div class="mr-cards-head">
+        <h6>This Week</h6>
+        <div class="mr-cards-nav">
+            <button type="button" class="mr-arrow" onclick="mrScroll(-1)"><i class="bx bx-chevron-left"></i></button>
+            <button type="button" class="mr-arrow" onclick="mrScroll(1)"><i class="bx bx-chevron-right"></i></button>
+        </div>
+    </div>
+    <div class="mr-cards-track" id="mrCardsTrack">
+        <?php foreach ($days as $date => $list): $t = mr_shift_type($list[0]['start'] ?? ''); $isOff = empty($list); ?>
+            <div class="mr-card<?php echo $isOff?' off':'';?>">
+                <div class="mr-card-top">
+                    <div><div class="dw"><?php echo strtoupper(date('D',strtotime($date)));?></div><div class="dn"><?php echo date('j',strtotime($date));?></div></div>
+                    <div class="hh"><?php echo $isOff?'—':number_format(array_sum(array_column($list,'hours')),2).'h';?></div>
+                </div>
+                <span class="mr-badge" style="<?php echo $isOff?'color:#94a3b8;background:rgba(148,163,184,.15)':'color:'.$t[1].';background:'.$t[2];?>"><?php echo $isOff?'Off':$t[0];?></span>
+                <div class="tm"><?php echo $isOff?'Not Scheduled':mr_fmt_time($list[0]['start']).' - '.mr_fmt_time($list[0]['end']);?></div>
+                <?php if(!$isOff): ?>
+                    <div class="rl"><?php echo htmlspecialchars($list[0]['role']?:'—');?></div>
+                    <div class="lc"><span class="mr-dot" style="background:<?php echo $t[1];?>"></span><?php echo htmlspecialchars($list[0]['area']?:($locationName?:''));?></div>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
 <div class="mr-grid2">
     <div class="mr-panel">
         <h6>Upcoming Shifts</h6>
         <?php if (empty($upcoming)): ?><div class="mr-empty">No upcoming shifts.</div><?php endif; ?>
         <?php foreach ($upcoming as $u): ?>
+            <?php
+                $daysAway = (int) floor((strtotime($u['date']) - strtotime(date('Y-m-d'))) / 86400);
+                if ($daysAway <= 0) { $rel = 'Today'; $relC = 'color:#25A69A;background:rgba(37,166,154,.15)'; }
+                elseif ($daysAway === 1) { $rel = 'Tomorrow'; $relC = 'color:#f59e0b;background:rgba(245,158,11,.15)'; }
+                else { $rel = 'In '.$daysAway.' days'; $relC = 'color:#3b82f6;background:rgba(59,130,246,.15)'; }
+            ?>
             <div class="mr-up">
                 <div class="dt"><div class="d"><?php echo date('j',strtotime($u['date']));?></div><div class="m"><?php echo date('D',strtotime($u['date']));?></div></div>
                 <div class="meta"><b><?php echo mr_shift_type($u['start'])[0];?> Shift</b><small><?php echo mr_fmt_time($u['start']).' - '.mr_fmt_time($u['end']).' ('.number_format($u['hours'],2).' hrs)';?></small><small><?php echo htmlspecialchars($u['area']?:($locationName?:''));?></small></div>
+                <span class="rel" style="<?php echo $relC;?>"><?php echo $rel;?></span>
             </div>
         <?php endforeach; ?>
     </div>
@@ -175,6 +227,13 @@ function mrLoadWeek(start){
             wrap.outerHTML=html;
         })
         .catch(function(){ if(l)l.classList.remove('show'); });
+}
+function mrScroll(dir){
+    var t=document.getElementById('mrCardsTrack');
+    if(!t)return;
+    var card=t.querySelector('.mr-card');
+    var w=card?card.offsetWidth+12:260;
+    t.scrollBy({left:dir*w,behavior:'smooth'});
 }
 </script>
 </div>
