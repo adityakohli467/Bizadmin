@@ -282,6 +282,10 @@ class Roster extends MY_Controller {
 }
     
     function rosterList(){
+        // Employees see their personal weekly roster instead of the admin list.
+        if ((int)$this->roleId === 4) {
+            return $this->myRoster();
+        }
         $this->session->set_userdata('previous_url', current_url());
      $conditions = array('location_id' => $this->location_id, 'is_deleted' => '0','status'=> 1);
      $data['rosterList'] = $this->common_model->fetchRecordsDynamically('HR_roster','',$conditions);
@@ -290,6 +294,112 @@ class Roster extends MY_Controller {
 	  $this->load->view('roster/rosterList',$data);
 	  $this->load->view('general/footer');
     //  echo "<pre>"; print_r($rosterList); exit;
+    }
+
+    /**
+     * Employee-facing weekly roster ("My Roster").
+     * Shows the logged-in employee's published shifts for a chosen week with
+     * summary stats, upcoming shifts and a legend. AJAX (?ajax=1) returns just
+     * the inner content so the prev/next arrows can swap weeks with a loader.
+     */
+    public function myRoster()
+    {
+        $user_id = $this->ion_auth->user()->row()->id;
+        $empRow  = $this->common_model->fetchRecordsDynamically('HR_employee', ['emp_id','first_name','last_name'], ['userId' => $user_id]);
+        $empId   = isset($empRow[0]['emp_id']) ? $empRow[0]['emp_id'] : '';
+        $empName = isset($empRow[0]['first_name']) ? trim($empRow[0]['first_name'].' '.($empRow[0]['last_name'] ?? '')) : '';
+
+        // Week range (default current Mon-Sun, overridable via query params)
+        $startParam = $this->input->get('start_date');
+        $endParam   = $this->input->get('end_date');
+        try {
+            if (!empty($startParam)) {
+                $weekStart = new DateTime($startParam);
+            } else {
+                $weekStart = new DateTime('monday this week');
+            }
+        } catch (Throwable $e) {
+            $weekStart = new DateTime('monday this week');
+        }
+        $weekEnd = (clone $weekStart)->modify('+6 days');
+        $startSql = $weekStart->format('Y-m-d');
+        $endSql   = $weekEnd->format('Y-m-d');
+
+        // Lookup maps for role (position) and area names
+        $posMap = []; $areaMap = [];
+        foreach ((array)$this->common_model->fetchRecordsDynamically('HR_emp_position', ['position_id','position_name'], ['is_deleted' => 0]) as $p) {
+            $posMap[$p['position_id']] = $p['position_name'];
+        }
+        foreach ((array)$this->common_model->fetchRecordsDynamically('HR_prepArea', ['id','prep_name'], ['is_deleted' => 0]) as $a) {
+            $areaMap[$a['id']] = $a['prep_name'];
+        }
+
+        // Published shifts for this employee in the week
+        $shifts = [];
+        if (!empty($empId)) {
+            $shifts = $this->tenantDb->select('rd.*')
+                ->from('HR_roster_details rd')
+                ->join('HR_roster r', 'r.roster_id = rd.roster_id', 'inner')
+                ->where('rd.employee_id', $empId)
+                ->where('rd.is_deleted', 0)
+                ->where('r.is_deleted', 0)
+                ->where('r.is_published', 1)
+                ->where('rd.roster_date >=', $startSql)
+                ->where('rd.roster_date <=', $endSql)
+                ->order_by('rd.roster_date', 'ASC')
+                ->order_by('rd.shift_start_time', 'ASC')
+                ->get()->result_array();
+        }
+
+        // Build day map keyed by date; compute totals
+        $days = [];
+        for ($i = 0; $i < 7; $i++) {
+            $d = (clone $weekStart)->modify("+{$i} days");
+            $days[$d->format('Y-m-d')] = [];
+        }
+        $totalSeconds = 0; $shiftCount = 0; $upcoming = [];
+        $todaySql = date('Y-m-d');
+        foreach ($shifts as $s) {
+            $date = $s['roster_date'];
+            $st = !empty($s['shift_start_time']) ? $s['shift_start_time'] : '';
+            $et = !empty($s['shift_end_time']) ? $s['shift_end_time'] : '';
+            $hrs = 0;
+            if ($st && $et) {
+                $diff = strtotime($date.' '.$et) - strtotime($date.' '.$st);
+                if ($diff > 0) { $totalSeconds += $diff; $shiftCount++; $hrs = $diff/3600; }
+            }
+            $entry = [
+                'start' => $st, 'end' => $et, 'hours' => $hrs,
+                'role'  => isset($posMap[$s['position_id']]) ? $posMap[$s['position_id']] : '',
+                'area'  => isset($areaMap[$s['prep_area_id']]) ? $areaMap[$s['prep_area_id']] : '',
+                'break' => $s['break_duration'] ?? '',
+                'notes' => $s['task_description'] ?? '',
+            ];
+            if (isset($days[$date])) { $days[$date][] = $entry; }
+            if ($date >= $todaySql) { $upcoming[] = $entry + ['date' => $date]; }
+        }
+
+        $data = [
+            'empName'      => $empName,
+            'weekStart'    => $startSql,
+            'weekEnd'      => $endSql,
+            'weekRange'    => $weekStart->format('d') . ' - ' . $weekEnd->format('d M Y'),
+            'prevStart'    => (clone $weekStart)->modify('-7 days')->format('Y-m-d'),
+            'nextStart'    => (clone $weekStart)->modify('+7 days')->format('Y-m-d'),
+            'days'         => $days,
+            'totalSeconds' => $totalSeconds,
+            'shiftCount'   => $shiftCount,
+            'upcoming'     => array_slice($upcoming, 0, 4),
+            'locationName' => $this->session->userdata('location_name'),
+        ];
+
+        if ($this->input->get('ajax')) {
+            $this->load->view('roster/myRoster', $data);
+            return;
+        }
+        $this->load->view('general/header');
+        $this->load->view('roster/myRoster', $data);
+        $this->load->view('general/footer');
     }
     
 

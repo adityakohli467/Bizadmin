@@ -137,6 +137,7 @@ $route['HR/memo/addMemoComments'] = 'Memo/addMemoComments';
 
 // Roster, Site AND Prep Area
 $route['HR/roster'] = 'Roster/rosterList';
+$route['HR/myRoster'] = 'Roster/myRoster';
 $route['HR/rosterForm/(:any)'] = 'Roster/rosterForm/$1';
 $route['HR/rosterForm'] = 'Roster/rosterForm';
 $route['HR/roster/add'] = 'Roster/addRoster';

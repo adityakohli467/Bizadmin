@@ -1,0 +1,178 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+// ---- helpers (view-scoped) ----
+if (!function_exists('mr_fmt_time')) {
+    function mr_fmt_time($t) { return ($t !== '' && $t !== null) ? date('g:i A', strtotime($t)) : ''; }
+}
+if (!function_exists('mr_shift_type')) {
+    // Classify a shift by start hour: Morning < 12, Afternoon 12-16, Evening >= 16.
+    function mr_shift_type($start) {
+        if ($start === '' || $start === null) return ['Not Scheduled', '#94a3b8', 'rgba(148,163,184,.15)'];
+        $h = (int) date('G', strtotime($start));
+        if ($h < 12)  return ['Morning',   '#25A69A', 'rgba(37,166,154,.15)'];
+        if ($h < 16)  return ['Afternoon', '#f59e0b', 'rgba(245,158,11,.15)'];
+        return ['Evening', '#3b82f6', 'rgba(59,130,246,.15)'];
+    }
+}
+$totalHours = $totalSeconds / 3600;
+$avgShift   = $shiftCount > 0 ? $totalHours / $shiftCount : 0;
+$daysScheduled = 0;
+foreach ($days as $list) { if (!empty($list)) $daysScheduled++; }
+// Next shift label
+$nextShift = '—';
+if (!empty($upcoming)) {
+    $u = $upcoming[0];
+    $nextShift = date('D, j M', strtotime($u['date'])) . ', ' . mr_fmt_time($u['start']);
+}
+?>
+<div id="myRoster" class="mr-wrap">
+<style>
+.mr-wrap{--mr-teal:#25A69A;--mr-navy:#1a2f52;padding:18px;max-width:1180px;margin:0 auto;}
+.mr-loader{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:9999;}
+.mr-loader.show{display:flex;}
+.mr-spin{width:46px;height:46px;border:4px solid #d7eee9;border-top-color:var(--mr-teal);border-radius:50%;animation:mrspin .8s linear infinite;}
+@keyframes mrspin{to{transform:rotate(360deg)}}
+.mr-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;}
+.mr-title{font-size:1.5rem;font-weight:700;color:var(--mr-navy);margin:0;}
+.mr-sub{color:#64748b;font-size:.9rem;margin:0 0 14px;}
+.mr-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;}
+.mr-week{display:flex;align-items:center;gap:6px;}
+.mr-week .btn-nav{width:38px;height:38px;border:1px solid #e2e8f0;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mr-navy);}
+.mr-week .btn-nav:hover{border-color:var(--mr-teal);color:var(--mr-teal);}
+.mr-week .label{padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-weight:600;color:var(--mr-navy);background:#fff;}
+.mr-actions{display:flex;gap:8px;}
+.mr-actions .btn{border:1px solid #e2e8f0;background:#fff;color:var(--mr-navy);border-radius:8px;padding:7px 16px;font-size:.85rem;cursor:pointer;}
+.mr-actions .btn:hover{border-color:var(--mr-teal);color:var(--mr-teal);}
+.mr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.mr-stat{border:1px solid #eef2f6;border-radius:10px;padding:14px 16px;background:#fff;}
+.mr-stat .lbl{font-size:.8rem;color:#64748b;margin-bottom:4px;}
+.mr-stat .val{font-size:1.15rem;font-weight:700;color:var(--mr-teal);}
+.mr-stat .val.navy{color:var(--mr-navy);font-size:1rem;}
+.mr-tablecard{border:1px solid #eef2f6;border-radius:10px;overflow:hidden;background:#fff;margin-bottom:16px;}
+.mr-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.mr-table th,.mr-table td{padding:10px 12px;border:1px solid #f0f3f7;text-align:left;vertical-align:middle;}
+.mr-table thead th:first-child{width:90px;color:#64748b;font-weight:600;}
+.mr-table .rowlbl{color:#64748b;font-weight:600;background:#fbfcfe;}
+.mr-table th .dnum{color:var(--mr-teal);font-weight:600;}
+.mr-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:.72rem;font-weight:600;}
+.mr-grid2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.mr-panel{border:1px solid #eef2f6;border-radius:10px;padding:14px 16px;background:#fff;}
+.mr-panel h6{font-weight:700;color:var(--mr-navy);margin:0 0 10px;font-size:.95rem;}
+.mr-up{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f3f5f9;}
+.mr-up:last-child{border-bottom:0;}
+.mr-up .dt{text-align:center;border:1px solid #e2e8f0;border-radius:8px;padding:4px 8px;min-width:46px;}
+.mr-up .dt .d{font-weight:700;color:var(--mr-navy);}
+.mr-up .dt .m{font-size:.7rem;color:#94a3b8;text-transform:uppercase;}
+.mr-up .meta{flex:1;}
+.mr-up .meta b{color:var(--mr-navy);font-size:.85rem;}
+.mr-up .meta small{color:#94a3b8;display:block;}
+.mr-srow{display:flex;justify-content:space-between;padding:6px 0;font-size:.85rem;border-bottom:1px solid #f3f5f9;}
+.mr-srow:last-child{border:0;}
+.mr-srow .v{font-weight:700;color:var(--mr-teal);}
+.mr-leg{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:.82rem;color:#475569;}
+.mr-dot{width:11px;height:11px;border-radius:50%;}
+.mr-empty{color:#cbd5e1;}
+@media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-grid2{grid-template-columns:1fr;}.mr-table-wrap{overflow-x:auto;}.mr-table{min-width:760px;}}
+@media(max-width:575px){.mr-stats{grid-template-columns:1fr;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{justify-content:flex-end;}}
+</style>
+
+<div class="mr-loader" id="mrLoader"><div class="mr-spin"></div></div>
+
+<div class="mr-head">
+    <h3 class="mr-title">My Roster</h3>
+</div>
+<p class="mr-sub">View your published shifts, hours and upcoming schedule.</p>
+
+<div class="mr-toolbar">
+    <div class="mr-week">
+        <button class="btn-nav" type="button" data-start="<?php echo $prevStart; ?>" onclick="mrLoadWeek('<?php echo $prevStart; ?>')"><i class="bx bx-chevron-left"></i></button>
+        <span class="label"><?php echo htmlspecialchars($weekRange); ?></span>
+        <button class="btn-nav" type="button" data-start="<?php echo $nextStart; ?>" onclick="mrLoadWeek('<?php echo $nextStart; ?>')"><i class="bx bx-chevron-right"></i></button>
+    </div>
+    <div class="mr-actions">
+        <button class="btn" type="button" onclick="window.print()">Export</button>
+        <button class="btn" type="button" onclick="window.print()">Print</button>
+    </div>
+</div>
+
+<div class="mr-stats">
+    <div class="mr-stat"><div class="lbl">Total Hours</div><div class="val"><?php echo number_format($totalHours,2); ?> hrs</div></div>
+    <div class="mr-stat"><div class="lbl">Scheduled Shifts</div><div class="val navy"><?php echo (int)$shiftCount; ?></div></div>
+    <div class="mr-stat"><div class="lbl">Average Shift</div><div class="val"><?php echo number_format($avgShift,2); ?> hrs</div></div>
+    <div class="mr-stat"><div class="lbl">Next Shift</div><div class="val navy"><?php echo htmlspecialchars($nextShift); ?></div></div>
+</div>
+
+<div class="mr-tablecard mr-table-wrap">
+    <table class="mr-table">
+        <thead><tr>
+            <th>Day</th>
+            <?php foreach ($days as $date => $list): ?>
+                <th><div><?php echo date('D, j M', strtotime($date)); ?></div><div class="dnum"><?php $f=$list[0]['hours']??0; echo $f? number_format(array_sum(array_column($list,'hours')),2).' hrs':''; ?></div></th>
+            <?php endforeach; ?>
+        </tr></thead>
+        <tbody>
+            <tr><td class="rowlbl">Shift</td>
+                <?php foreach ($days as $list): $t=mr_shift_type($list[0]['start']??''); ?>
+                    <td><?php if(!empty($list)): ?><span class="mr-badge" style="color:<?php echo $t[1];?>;background:<?php echo $t[2];?>"><?php echo $t[0];?></span><?php else: ?><span class="mr-badge" style="color:#94a3b8;background:rgba(148,163,184,.15)">Not Scheduled</span><?php endif; ?></td>
+                <?php endforeach; ?>
+            </tr>
+            <tr><td class="rowlbl">Time</td>
+                <?php foreach ($days as $list): ?><td><?php echo !empty($list)?mr_fmt_time($list[0]['start']).' - '.mr_fmt_time($list[0]['end']):'<span class="mr-empty">—</span>'; ?></td><?php endforeach; ?>
+            </tr>
+            <tr><td class="rowlbl">Role</td>
+                <?php foreach ($days as $list): ?><td><?php echo !empty($list)&&$list[0]['role']?htmlspecialchars($list[0]['role']):'<span class="mr-empty">—</span>'; ?></td><?php endforeach; ?>
+            </tr>
+            <tr><td class="rowlbl">Location</td>
+                <?php foreach ($days as $list): ?><td><?php echo !empty($list)?htmlspecialchars($list[0]['area']?:($locationName?:'')):'<span class="mr-empty">—</span>'; ?></td><?php endforeach; ?>
+            </tr>
+            <tr><td class="rowlbl">Break</td>
+                <?php foreach ($days as $list): ?><td><?php echo !empty($list)&&$list[0]['break']?htmlspecialchars($list[0]['break']).' min':'<span class="mr-empty">—</span>'; ?></td><?php endforeach; ?>
+            </tr>
+            <tr><td class="rowlbl">Notes</td>
+                <?php foreach ($days as $list): ?><td><?php echo !empty($list)&&$list[0]['notes']?htmlspecialchars($list[0]['notes']):'<span class="mr-empty">—</span>'; ?></td><?php endforeach; ?>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="mr-grid2">
+    <div class="mr-panel">
+        <h6>Upcoming Shifts</h6>
+        <?php if (empty($upcoming)): ?><div class="mr-empty">No upcoming shifts.</div><?php endif; ?>
+        <?php foreach ($upcoming as $u): ?>
+            <div class="mr-up">
+                <div class="dt"><div class="d"><?php echo date('j',strtotime($u['date']));?></div><div class="m"><?php echo date('D',strtotime($u['date']));?></div></div>
+                <div class="meta"><b><?php echo mr_shift_type($u['start'])[0];?> Shift</b><small><?php echo mr_fmt_time($u['start']).' - '.mr_fmt_time($u['end']).' ('.number_format($u['hours'],2).' hrs)';?></small><small><?php echo htmlspecialchars($u['area']?:($locationName?:''));?></small></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <div class="mr-panel">
+        <h6>Roster Period Summary</h6>
+        <div class="mr-srow"><span>Total Scheduled Hours</span><span class="v"><?php echo number_format($totalHours,2);?> hrs</span></div>
+        <div class="mr-srow"><span>Total Shifts</span><span class="v"><?php echo (int)$shiftCount;?></span></div>
+        <div class="mr-srow"><span>Average Shift Length</span><span class="v"><?php echo number_format($avgShift,2);?> hrs</span></div>
+        <div class="mr-srow"><span>Days Scheduled</span><span class="v"><?php echo (int)$daysScheduled;?> / 7</span></div>
+    </div>
+    <div class="mr-panel">
+        <h6>Legend</h6>
+        <div class="mr-leg"><span class="mr-dot" style="background:#25A69A"></span> Morning Shift <span style="margin-left:auto;color:#94a3b8">Before 12:00 PM</span></div>
+        <div class="mr-leg"><span class="mr-dot" style="background:#f59e0b"></span> Afternoon Shift <span style="margin-left:auto;color:#94a3b8">12:00 - 4:00 PM</span></div>
+        <div class="mr-leg"><span class="mr-dot" style="background:#3b82f6"></span> Evening Shift <span style="margin-left:auto;color:#94a3b8">4:00 PM - Close</span></div>
+        <div class="mr-leg"><span class="mr-dot" style="background:#94a3b8"></span> Not Scheduled <span style="margin-left:auto;color:#94a3b8">No shifts assigned</span></div>
+    </div>
+</div>
+
+<script>
+function mrLoadWeek(start){
+    var l=document.getElementById('mrLoader'); if(l)l.classList.add('show');
+    fetch('<?php echo site_url('HR/myRoster'); ?>?ajax=1&start_date='+encodeURIComponent(start))
+        .then(function(r){return r.text();})
+        .then(function(html){
+            var wrap=document.getElementById('myRoster');
+            wrap.outerHTML=html;
+        })
+        .catch(function(){ if(l)l.classList.remove('show'); });
+}
+</script>
+</div>
