@@ -432,6 +432,13 @@ class Employees extends MY_Controller {
     $this->session->userdata('mail_from')
 );
 
+// Mark onboarding email as sent so the status badge stays correct even when
+// the email is (re)sent from the employee list icon, not just on create.
+if (isset($mailStatus['status']) && $mailStatus['status'] === 'success') {
+    $statusUpdate = array('onboarding_status' => 1);
+    $this->common_model->commonRecordUpdate('HR_employee', 'emp_id', $emp_id, $statusUpdate);
+}
+
 // Log the outcome so delivery problems are visible on the server.
 log_message(
     'error',
