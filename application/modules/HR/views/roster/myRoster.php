@@ -94,6 +94,7 @@ if (!empty($upcoming)) {
 .mr-card .tm{margin-top:8px;font-weight:600;color:#1a1a1a;font-size:.9rem;}
 .mr-card .rl{color:#475569;font-size:.85rem;margin-top:4px;}
 .mr-card .lc{display:flex;align-items:center;gap:6px;color:#25A69A;font-size:.82rem;margin-top:4px;}
+.mr-card .bk{display:flex;align-items:center;gap:6px;color:#64748b;font-size:.8rem;margin-top:6px;}
 @media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-stat{border-bottom:1px solid #eef2f6;}.mr-grid2{grid-template-columns:1fr;}.mr-tablecard{display:none;}.mr-cards{display:block;}}
 @media(max-width:575px){.mr-wrap{padding-top:70px;}.mr-sub{font-size:.78rem;white-space:nowrap;}.mr-stats{grid-template-columns:1fr 1fr;}.mr-stat-hide{display:none;}.mr-stat{border-bottom:0;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{display:none;}}
 </style>
@@ -177,6 +178,7 @@ if (!empty($upcoming)) {
                 <?php if(!$isOff): ?>
                     <div class="rl"><?php echo htmlspecialchars($list[0]['role']?:'—');?></div>
                     <div class="lc"><span class="mr-dot" style="background:<?php echo $t[1];?>"></span><?php echo htmlspecialchars($list[0]['area']?:($locationName?:''));?></div>
+                    <?php if(!empty($list[0]['break'])): ?><div class="bk"><i class='bx bx-coffee'></i> <?php echo htmlspecialchars($list[0]['break']);?> min break</div><?php endif; ?>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
