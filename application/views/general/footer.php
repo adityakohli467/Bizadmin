@@ -1,10 +1,10 @@
 	<!-- footer -->
-        <footer class="footer">
+        <footer class="footer" style="background:#1a2f52;">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <p class="mb-0 text-mute">&copy;
+                            <p class="mb-0" style="color:#fff;">&copy;
                                 <script>document.write(new Date().getFullYear())</script> © Bizadmin
                             </p>
                         </div>

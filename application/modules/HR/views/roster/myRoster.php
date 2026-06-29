@@ -28,13 +28,13 @@ if (!empty($upcoming)) {
 ?>
 <div id="myRoster" class="mr-wrap">
 <style>
-.mr-wrap{--mr-teal:#25A69A;--mr-navy:#1a2f52;padding:18px 24px;max-width:1320px;margin:0 auto;color:#1a1a1a;}
+.mr-wrap{--mr-teal:#25A69A;--mr-navy:#1a2f52;padding:90px 24px 48px;max-width:1180px;margin:0 auto;color:#1a1a1a;}
 .mr-loader{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:9999;}
 .mr-loader.show{display:flex;}
 .mr-spin{width:46px;height:46px;border:4px solid #d7eee9;border-top-color:var(--mr-teal);border-radius:50%;animation:mrspin .8s linear infinite;}
 @keyframes mrspin{to{transform:rotate(360deg)}}
 .mr-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;}
-.mr-title{font-size:1.6rem;font-weight:700;color:#1a1a1a;margin:0;}
+.mr-title{font-size:1.6rem;font-weight:700;color:#1a2f52;margin:0;}
 .mr-sub{color:#475569;font-size:.92rem;margin:0 0 14px;}
 .mr-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;}
 .mr-week{display:flex;align-items:center;gap:6px;}
@@ -89,7 +89,7 @@ if (!empty($upcoming)) {
 <div class="mr-toolbar">
     <div class="mr-week">
         <button class="btn-nav" type="button" data-start="<?php echo $prevStart; ?>" onclick="mrLoadWeek('<?php echo $prevStart; ?>')"><i class="bx bx-chevron-left"></i></button>
-        <span class="label"><?php echo htmlspecialchars($weekRange); ?></span>
+        <span class="label"><?php echo htmlspecialchars($weekRange); ?><i class="bx bx-calendar" style="margin-left:8px;color:#64748b;"></i></span>
         <button class="btn-nav" type="button" data-start="<?php echo $nextStart; ?>" onclick="mrLoadWeek('<?php echo $nextStart; ?>')"><i class="bx bx-chevron-right"></i></button>
     </div>
     <div class="mr-actions">
