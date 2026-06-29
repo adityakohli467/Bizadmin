@@ -85,7 +85,7 @@ if (!empty($upcoming)) {
 .mr-arrow:active{background:#eef2fb;}
 .mr-cards-track{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
 .mr-cards-track::-webkit-scrollbar{display:none;}
-.mr-card{flex:0 0 auto;width:240px;aspect-ratio:1;border:1px solid #eef2f6;border-top:3px solid #25A69A;border-radius:12px;padding:14px 16px;background:#fff;box-shadow:0 2px 8px rgba(16,40,80,.05);}
+.mr-card{flex:0 0 auto;width:240px;aspect-ratio:1;border:1px solid #eef2f6;border-top:3px solid #25A69A;border-radius:0;padding:14px 16px;background:#fff;box-shadow:0 2px 8px rgba(16,40,80,.05);}
 .mr-card.off{border-top-color:#cbd5e1;background:#f8fafc;}
 .mr-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
 .mr-card .dw{font-size:.72rem;color:#94a3b8;font-weight:600;}
@@ -95,7 +95,7 @@ if (!empty($upcoming)) {
 .mr-card .rl{color:#475569;font-size:.85rem;margin-top:4px;}
 .mr-card .lc{display:flex;align-items:center;gap:6px;color:#25A69A;font-size:.82rem;margin-top:4px;}
 @media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-stat{border-bottom:1px solid #eef2f6;}.mr-grid2{grid-template-columns:1fr;}.mr-tablecard{display:none;}.mr-cards{display:block;}}
-@media(max-width:575px){.mr-stats{grid-template-columns:1fr;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{justify-content:flex-end;}}
+@media(max-width:575px){.mr-wrap{padding-top:70px;}.mr-stats{grid-template-columns:1fr 1fr;}.mr-stat-hide{display:none;}.mr-stat{border-bottom:0;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{order:-1;justify-content:flex-end;}}
 </style>
 
 <div class="mr-loader" id="mrLoader"><div class="mr-spin"></div></div>
@@ -118,8 +118,8 @@ if (!empty($upcoming)) {
 
 <div class="mr-stats">
     <div class="mr-stat"><div class="lbl">Total Hours</div><div class="val"><?php echo number_format($totalHours,2); ?> hrs</div></div>
-    <div class="mr-stat"><div class="lbl">Scheduled Shifts</div><div class="val navy"><?php echo (int)$shiftCount; ?></div></div>
-    <div class="mr-stat"><div class="lbl">Average Shift</div><div class="val"><?php echo number_format($avgShift,2); ?> hrs</div></div>
+    <div class="mr-stat mr-stat-hide"><div class="lbl">Scheduled Shifts</div><div class="val navy"><?php echo (int)$shiftCount; ?></div></div>
+    <div class="mr-stat mr-stat-hide"><div class="lbl">Average Shift</div><div class="val"><?php echo number_format($avgShift,2); ?> hrs</div></div>
     <div class="mr-stat"><div class="lbl">Next Shift</div><div class="val navy"><?php echo htmlspecialchars($nextShift); ?></div></div>
 </div>
 
