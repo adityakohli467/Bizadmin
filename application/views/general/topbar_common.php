@@ -135,23 +135,17 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
             </div>
 
             <div class="d-flex align-items-center">
+                <!-- Home: always go to the checklist landing page -->
                 <div class="ms-1 header-item d-none d-sm-flex">
-                    <?php
-                        $tb_isAdminMgr = ($this->ion_auth->is_admin() || $this->ion_auth->in_group(['manager']));
-                        if ($tb_isAdminMgr && $tb_onDashboard) {
-                            // On the dashboard: show a location icon that opens the location selection page.
-                            $tb_homeHref  = site_url('auth/dashboard');
-                            $tb_homeIcon  = 'bx bx-map';
-                            $tb_homeTitle = 'Switch location';
-                        } else {
-                            // Any other page: home icon returns to this module's dashboard.
-                            $tb_homeHref  = $tb_homeUrl;
-                            $tb_homeIcon  = 'bx bxs-home';
-                            $tb_homeTitle = 'Home';
-                        }
-                    ?>
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
-                        <a href="<?php echo $tb_homeHref; ?>" title="<?php echo $tb_homeTitle; ?>"><i class='<?php echo $tb_homeIcon; ?> fs-22 text-white'></i></a>
+                        <a href="<?php echo site_url('auth/checklist'); ?>" title="Home"><i class='bx bxs-home fs-22 text-white'></i></a>
+                    </button>
+                </div>
+
+                <!-- Location: open the location selection page -->
+                <div class="ms-1 header-item d-none d-sm-flex">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
+                        <a href="<?php echo site_url('auth/dashboard'); ?>" title="Switch location"><i class='bx bx-map fs-22 text-white'></i></a>
                     </button>
                 </div>
 
