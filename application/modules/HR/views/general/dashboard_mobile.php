@@ -378,7 +378,7 @@ $empId = $empId ?? '';
 <!-- NAV OFFCANVAS -->
 <div class="offcanvas offcanvas-start offcanvas-nav" tabindex="-1" id="mobileNav" style="max-width:280px;">
     <div class="offcanvas-header">
-        <h6 class="mb-0">BizAdmin</h6>
+        <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo">
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
