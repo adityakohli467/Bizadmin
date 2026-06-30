@@ -1,57 +1,195 @@
 <style>
-    h6{
-        color: #1a2f52 !important;
+    /* ===== BizAdmin Employee Details — Brand palette =====
+       Blue:  #1a2f52  (headings, active steps, primary)
+       Green: #25A69A  (save / primary actions, success)
+       NOTE: page header/topbar is intentionally NOT restyled. */
+    :root{
+        --bz-blue:   #1a2f52;
+        --bz-blue-2: #25406f;
+        --bz-green:  #25A69A;
+        --bz-green-d:#1f8f85;
+        --bz-line:   #e5e7eb;
+        --bz-muted:  #6b7280;
+        --bz-bg:     #f5f7fa;
     }
-    .step-wizard .step {
-        flex: 1;
-        text-decoration: none;
-        color: inherit;
-        position: relative;
-    }
-    .step-wizard .step:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        top: 24px;
-        right: -50%;
-        width: 100%;
-        height: 2px;
-        background-color: #4867aa8f;
-        z-index: 0;
-    }
-    .step .icon-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #284990;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 8px;
-        font-size: 20px;
-        position: relative;
-        z-index: 1;
-    }
-    .step.active .icon-circle,
-    .step:hover .icon-circle {
-        background-color: #F06549;
-    }
-    .step .label {
-        font-weight: 800;
-        color: #1a2f52 !important;
-        font-size: 14px;
+
+    h6{ color: var(--bz-blue) !important; }
+
+    /* ---------- Page header ---------- */
+    .emp-page-head{
+        display:flex; flex-wrap:wrap; align-items:flex-start;
+        justify-content:space-between; gap:12px; margin-bottom:18px;
     }
     .pageTitle{
         font-weight: 800 !important;
-        font-size: 28px !important;
-        color: #1a2f52 !important;
+        font-size: clamp(20px, 2.4vw, 28px) !important;
+        color: var(--bz-blue) !important;
+        margin-bottom: 2px;
     }
+    .pageSubtitle{ color: var(--bz-muted); font-size: 14px; margin: 0; }
+    .saved-badge{
+        display:inline-flex; align-items:center; gap:6px;
+        color: var(--bz-green); font-weight:600; font-size:13px; white-space:nowrap;
+    }
+    .saved-badge i{ font-size:16px; }
 
     .sectionTitle{
         font-weight: 800 !important;
-        color: #1a2f52 !important;
+        color: var(--bz-blue) !important;
+        font-size: 18px;
+        margin-bottom: 4px;
     }
 
+    /* ---------- Card ---------- */
+    .main-content .card{
+        border: 1px solid var(--bz-line);
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(16,24,40,.06);
+    }
+    .main-content .card-body{ padding: clamp(16px, 2.5vw, 28px); }
+
+    /* ---------- Step wizard ---------- */
+    .step-wizard{
+        gap: 8px;
+        background: #fff;
+        border: 1px solid var(--bz-line);
+        border-radius: 14px;
+        padding: 18px 14px;
+    }
+    .step-wizard .step{
+        flex: 1 1 0;
+        min-width: 130px;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0 6px;
+    }
+    /* connector line between steps */
+    .step-wizard .step:not(:last-child)::after{
+        content:'';
+        position:absolute;
+        top: 25px;
+        left: calc(50% + 28px);
+        width: calc(100% - 56px);
+        height: 3px;
+        border-radius: 3px;
+        background-color: var(--bz-line);
+        z-index: 0;
+    }
+    .step-wizard .step.active:not(:last-child)::after,
+    .step-wizard .step.completed:not(:last-child)::after{
+        background-color: var(--bz-blue);
+    }
+    .step .icon-circle{
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        background-color: #eef1f6;
+        color: var(--bz-blue);
+        display:flex; align-items:center; justify-content:center;
+        margin: 0 auto 10px;
+        font-size: 18px; font-weight: 700;
+        position: relative; z-index: 1;
+        border: 2px solid transparent;
+        transition: all .2s ease;
+    }
+    .step.active .icon-circle,
+    .step.completed .icon-circle,
+    .step:hover .icon-circle{
+        background-color: var(--bz-blue);
+        color: #fff;
+    }
+    .step .label{
+        font-weight: 700;
+        color: var(--bz-blue) !important;
+        font-size: 14px;
+        line-height: 1.2;
+    }
+    .step .step-desc{
+        font-size: 12px;
+        color: var(--bz-muted);
+        margin-top: 2px;
+        line-height: 1.25;
+    }
+
+    /* ---------- Forms ---------- */
+    .main-content .form-label,
+    .main-content .control-label{
+        font-weight: 600;
+        color: var(--bz-blue);
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    .main-content .form-control,
+    .main-content .form-select{
+        border-radius: 10px;
+        border: 1px solid var(--bz-line);
+        padding: 9px 12px;
+        font-size: 14px;
+    }
+    .main-content .form-control:focus,
+    .main-content .form-select:focus{
+        border-color: var(--bz-green);
+        box-shadow: 0 0 0 .18rem rgba(37,166,154,.18);
+    }
+    .control-label span,
+    .fieldError{ color: #dc3545; }
+
+    /* ---------- Buttons (green primary) ---------- */
+    .main-content .btn-success,
+    .main-content .btn-ph{
+        background-color: var(--bz-green) !important;
+        border-color: var(--bz-green) !important;
+        color: #fff !important;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 9px 22px;
+        box-shadow: none;
+    }
+    .main-content .btn-success:hover,
+    .main-content .btn-ph:hover{
+        background-color: var(--bz-green-d) !important;
+        border-color: var(--bz-green-d) !important;
+    }
+    .main-content .btn-outline-secondary.btn-cancel,
+    .main-content .btn-cancel{
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 9px 22px;
+        color: var(--bz-blue);
+        border: 1px solid var(--bz-line);
+        background: #fff;
+    }
+    /* small add / remove row buttons stay compact */
+    .add-Positionrow.btn-success,
+    .remove-Positionrow{
+        padding: 4px 12px !important;
+    }
+    .remove-Positionrow.btn-danger{
+        background-color:#ef4444 !important; border-color:#ef4444 !important;
+        border-radius:10px;
+    }
+
+    .emp-form-footer{
+        display:flex; justify-content:flex-end; gap:10px;
+        margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--bz-line);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 991.98px){
+        .step-wizard{ flex-wrap: wrap; gap: 18px; }
+        .step-wizard .step{ flex: 1 1 40%; min-width: 40%; }
+        .step-wizard .step:not(:last-child)::after{ display:none; }
+    }
+    @media (max-width: 575.98px){
+        .emp-page-head{ flex-direction: column; }
+        .step-wizard .step{ flex: 1 1 100%; min-width: 100%; }
+        .emp-form-footer{ flex-direction: column-reverse; }
+        .emp-form-footer .btn{ width:100%; }
+    }
 </style>
 
 <div class="main-content">
@@ -60,7 +198,13 @@
 
             <div class="row">
 
-                <h3 class="pageTitle">  Employee Details </h3>
+                <div class="emp-page-head">
+                    <div>
+                        <h3 class="pageTitle">Employee Details</h3>
+                        <p class="pageSubtitle">Manage your personal information and profile details</p>
+                    </div>
+                    <span class="saved-badge"><i class="ri-checkbox-circle-line"></i> All changes are saved automatically</span>
+                </div>
 
                 <!-- end col -->
                 <div class="col-md-12 col-sm-12 col-lg-12 col-xxl-12">
@@ -70,18 +214,21 @@
                                 <a class="step text-center active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
                                     <div class="icon-circle"><i class="fas fa-user"></i></div>
                                     <div class="label">Personal</div>
+                                    <div class="step-desc">Basic personal information</div>
                                 </a>
 
                                 <?php if($this->roleId != 4) { ?>
                                     <a class="step text-center" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">
                                         <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
                                         <div class="label">Employment</div>
+                                        <div class="step-desc">Role &amp; work details</div>
                                     </a>
                                 <?php } ?>
 
                                 <a class="step text-center" id="v-pills-onboarding-tab" data-bs-toggle="pill" href="#v-pills-onboarding" role="tab" aria-controls="v-pills-onboarding" aria-selected="false">
                                     <div class="icon-circle"><i class="fas fa-file-alt"></i></div>
                                     <div class="label">Onboarding Form</div>
+                                    <div class="step-desc">Complete onboarding details</div>
                                 </a>
 
                                 <!--<a class="step text-center" id="v-pills-shifts-tab" data-bs-toggle="pill" href="#v-pills-shifts" role="tab" aria-controls="v-pills-shifts" aria-selected="false">-->
@@ -96,7 +243,8 @@
 
                                 <a class="step text-center" id="v-pills-unavailability-tab" data-bs-toggle="pill" href="#v-pills-unavailability" role="tab" aria-controls="v-pills-unavailability" aria-selected="false">
                                     <div class="icon-circle"><i class="fas fa-ban"></i></div>
-                                    <div class="label">Unavailability</div>
+                                    <div class="label">Availability</div>
+                                    <div class="step-desc">Set your weekly availability</div>
                                 </a>
                             </div>
                             <div class="tab-content text-black mt-4 mt-md-0" id="v-pills-tabContent">
@@ -226,7 +374,10 @@
                                             <!--	</div>-->
                                         </div>
 
-                                        <input type="button" name="contact_submit" id="save_continue_personal" class="btn btn-success btn-ph" value="SAVE">
+                                        <div class="emp-form-footer">
+                                            <button type="button" class="btn btn-cancel" onclick="history.back();">Cancel</button>
+                                            <input type="button" name="contact_submit" id="save_continue_personal" class="btn btn-success btn-ph" value="Save Changes">
+                                        </div>
                                     </form>
                                 </div>
 
@@ -565,8 +716,9 @@
                                         }
 
                                         .custom-tabs .nav-link.active {
-                                            background: #284990 !important;
+                                            background: #1a2f52 !important;
                                             color: #fff !important;
+                                            border-color: #1a2f52 !important;
                                         }
 
                                         .custom-tabs .nav-link i {

@@ -366,6 +366,8 @@ class Roster extends MY_Controller {
             $hrs = 0;
             if ($st && $et) {
                 $diff = strtotime($date.' '.$et) - strtotime($date.' '.$st);
+                // Overnight shift: end time is on the next day (e.g. 5 PM -> 12 AM)
+                // if ($diff <= 0) { $diff += 86400; }
                 if ($diff > 0) { $totalSeconds += $diff; $shiftCount++; $hrs = $diff/3600; }
             }
             $entry = [
