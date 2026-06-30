@@ -159,9 +159,30 @@
         border-radius: 10px;
         font-weight: 600;
         padding: 9px 22px;
+        line-height: 1.5;
         color: var(--bz-blue);
         border: 1px solid var(--bz-line);
         background: #fff;
+        box-shadow: none !important;
+    }
+    .main-content .btn-cancel:hover,
+    .main-content .btn-cancel:focus{
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: var(--bz-blue);
+        box-shadow: none !important;
+    }
+
+    /* ---------- Yes/No toggle (tablinks) ---------- */
+    .main-content .tab .tablinks.active{
+        background: var(--bz-blue) !important;
+        border-color: var(--bz-blue) !important;
+        color: #fff !important;
+    }
+    .main-content .tab .tablinks.active:hover{
+        background: var(--bz-blue-2) !important;
+        border-color: var(--bz-blue-2) !important;
+        color: #fff !important;
     }
     /* small add / remove row buttons stay compact */
     .add-Positionrow.btn-success,
@@ -174,19 +195,32 @@
     }
 
     .emp-form-footer{
-        display:flex; justify-content:flex-end; gap:10px;
+        display:flex; align-items:center; justify-content:flex-end; gap:10px;
         margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--bz-line);
     }
 
     /* ---------- Responsive ---------- */
     @media (max-width: 991.98px){
-        .step-wizard{ flex-wrap: wrap; gap: 18px; }
-        .step-wizard .step{ flex: 1 1 40%; min-width: 40%; }
-        .step-wizard .step:not(:last-child)::after{ display:none; }
+        .step-wizard{ flex-wrap: nowrap; gap: 6px; padding: 14px 8px; }
+        .step-wizard .step{ flex: 1 1 0; min-width: 0; }
     }
     @media (max-width: 575.98px){
         .emp-page-head{ flex-direction: column; }
-        .step-wizard .step{ flex: 1 1 100%; min-width: 100%; }
+        /* Keep all steps in ONE compact row on mobile */
+        .step-wizard{ flex-wrap: nowrap; gap: 2px; padding: 10px 4px; }
+        .step-wizard .step{ flex: 1 1 0; min-width: 0; padding: 0 2px; }
+        .step .icon-circle{
+            width: 30px; height: 30px;
+            font-size: 12px; margin-bottom: 5px;
+        }
+        .step .label{ font-size: 10px; line-height: 1.15; }
+        .step .step-desc{ display: none; }            /* hide descriptions to keep it tiny */
+        .step-wizard .step:not(:last-child)::after{
+            top: 15px;
+            left: calc(50% + 18px);
+            width: calc(100% - 36px);
+            height: 2px;
+        }
         .emp-form-footer{ flex-direction: column-reverse; }
         .emp-form-footer .btn{ width:100%; }
     }
@@ -723,6 +757,28 @@
 
                                         .custom-tabs .nav-link i {
                                             font-size: 16px;
+                                        }
+
+                                        /* Mobile: clean, evenly aligned 2-column grid */
+                                        @media (max-width: 575.98px){
+                                            .custom-tabs{
+                                                flex-wrap: wrap;
+                                                gap: 8px !important;
+                                                margin-bottom: 1rem !important;
+                                            }
+                                            .custom-tabs .nav-item{
+                                                flex: 1 1 calc(50% - 4px);
+                                                max-width: calc(50% - 4px);
+                                            }
+                                            .custom-tabs .nav-link{
+                                                margin: 0 !important;
+                                                width: 100%;
+                                                height: 100%;
+                                                min-height: 46px;
+                                                padding: 10px 8px;
+                                                font-size: 12px;
+                                                text-align: center;
+                                            }
                                         }
                                     </style>
 
