@@ -114,6 +114,8 @@ $empId = $empId ?? '';
         .nav-left{display:flex;align-items:center;gap:10px;}
         .hamburger{color:rgba(255,255,255,.85);font-size:18px;cursor:pointer;background:none;border:none;display:flex;}
         .brand{color:#fff;font-size:14px;font-weight:500;}
+        .brand-logo{height:26px;width:auto;display:block;}
+        .av-link{display:inline-flex;text-decoration:none;}
         .nav-right{display:flex;align-items:center;gap:10px;}
         .bell{color:rgba(255,255,255,.7);font-size:17px;position:relative;}
         .notif-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;position:absolute;top:-1px;right:-1px;border:1.5px solid #1a2f52;}
@@ -234,11 +236,11 @@ $empId = $empId ?? '';
     <div class="topnav">
         <div class="nav-left">
             <button class="hamburger" type="button" aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="fa-solid fa-bars"></i></button>
-            <div class="brand">BizAdmin</div>
+            <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo">
         </div>
         <div class="nav-right">
             <div class="bell" aria-label="Notifications"><i class="fa-solid fa-bell"></i><div class="notif-dot"></div></div>
-            <div class="av-sm"><?= htmlspecialchars($initials) ?></div>
+            <a href="https://bizadmin.com.au/HR/employees" class="av-link" aria-label="Employees"><div class="av-sm"><?= htmlspecialchars($initials) ?></div></a>
         </div>
     </div>
 
