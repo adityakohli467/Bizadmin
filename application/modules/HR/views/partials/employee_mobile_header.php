@@ -36,6 +36,7 @@ if (!isset($ehInitials) || trim((string) $ehInitials) === '') {
     if ($ehInitials === '') { $ehInitials = 'U'; }
 }
 
+if (!isset($ehShowStrip))    { $ehShowStrip = false; }
 if (!isset($ehShowBadge))    { $ehShowBadge = false; }
 if (!isset($ehShiftStarted)) { $ehShiftStarted = false; }
 if (!isset($ehHomeUrl) || $ehHomeUrl === '') {
@@ -55,7 +56,8 @@ if (!isset($ehAvatarUrl) || $ehAvatarUrl === '') {
     .emp-mhead .bell{color:rgba(255,255,255,.7);font-size:17px;position:relative;display:flex;}
     .emp-mhead .notif-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;position:absolute;top:-1px;right:-1px;border:1.5px solid #1a2f52;}
     .emp-mhead .av-link{display:inline-flex;text-decoration:none;}
-    .emp-mhead .av-sm{width:28px;height:28px;border-radius:50%;background:#25A69A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;}
+    .emp-mhead .av-sm{width:30px;height:30px;border-radius:50%;border:2px solid #25A69A;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;position:relative;flex-shrink:0;}
+    .emp-mhead .av-sm .online-dot{width:8px;height:8px;bottom:0;right:0;border-width:1.5px;}
     .emp-mhead .profile-strip{background:#1a2f52;padding:0 16px 14px;display:flex;align-items:center;gap:12px;}
     .emp-mhead .avatar-ring{width:44px;height:44px;border-radius:50%;border:2px solid #25A69A;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0;position:relative;}
     .emp-mhead .online-dot{width:9px;height:9px;background:#22c55e;border-radius:50%;border:2px solid #1a2f52;position:absolute;bottom:1px;right:1px;}
@@ -72,9 +74,10 @@ if (!isset($ehAvatarUrl) || $ehAvatarUrl === '') {
         </div>
         <div class="nav-right">
             <div class="bell" aria-label="Notifications"><i class="fa-solid fa-bell"></i><div class="notif-dot"></div></div>
-            <a href="<?= $ehAvatarUrl ?>" class="av-link" aria-label="Profile"><div class="av-sm"><?= htmlspecialchars($ehInitials) ?></div></a>
+            <a href="<?= $ehAvatarUrl ?>" class="av-link" aria-label="Profile"><div class="av-sm"><span><?= htmlspecialchars($ehInitials) ?></span><div class="online-dot"></div></div></a>
         </div>
     </div>
+    <?php if ($ehShowStrip): ?>
     <div class="profile-strip">
         <div class="avatar-ring"><span><?= htmlspecialchars($ehInitials) ?></span><div class="online-dot"></div></div>
         <div>
@@ -85,4 +88,5 @@ if (!isset($ehAvatarUrl) || $ehAvatarUrl === '') {
             <div class="present-badge<?= $ehShiftStarted ? '' : ' absent' ?>"><?= $ehShiftStarted ? 'Present' : 'Absent' ?></div>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 </div>

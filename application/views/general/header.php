@@ -52,29 +52,6 @@
     <script src="<?php echo base_url(""); ?>theme-assets/js/jquery.signature.min.js"></script>
     <script src="<?php echo base_url(""); ?>theme-assets/js/jquery.ui.touch-punch.js"></script>
     
-    <!--for opening calnder on click of calnder icon, across all project, in flatcpiker-->
-<!--    <script>-->
-<!--    document.addEventListener("DOMContentLoaded", function () {-->
-  // initialize flatpickr for all inputs with data-provider
-<!--  document.querySelectorAll('[data-provider="flatpickr"]').forEach(function (el) {-->
-<!--    el._flatpickr = flatpickr(el, {-->
-<!--      dateFormat: el.dataset.dateFormat || "d M, Y"-->
-<!--    });-->
-<!--  });-->
-
-  // bind icon click
-<!--  document.querySelectorAll(".calendar-trigger").forEach(function (trigger) {-->
-<!--    trigger.addEventListener("click", function () {-->
-<!--      const targetInput = document.querySelector(this.getAttribute("data-target"));-->
-<!--      if (targetInput && targetInput._flatpickr) {-->
-<!--        targetInput._flatpickr.open();-->
-<!--      }-->
-<!--    });-->
-<!--  });-->
-<!--});-->
-
-<!--    </script>-->
-    
   
      
     

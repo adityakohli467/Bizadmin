@@ -234,9 +234,10 @@ $empId = $empId ?? '';
 <div class="screen">
 
     <?php
-    // Shared employee mobile header (single source of truth). Badge only on dashboard.
+    // Shared employee mobile header (single source of truth). Strip + badge only on dashboard.
     $ehName         = $employee_name;
     $ehInitials     = $initials;
+    $ehShowStrip    = true;
     $ehShowBadge    = true;
     $ehShiftStarted = $shift_started;
     $ehHomeUrl      = base_url('HR/' . $this->session->userdata('system_id'));
