@@ -97,7 +97,27 @@ $tb_menus  = fetch_render_menu($tb_systemId, $this->session->userdata('user_id')
         #page-topbar .logo-lg img { margin-left: 0 !important; margin-top: 0 !important; height: 28px !important; width: auto !important; }
         #page-topbar .navbar-header { padding-left: 8px; }
     }
+
+    /* Employee portal: swap the Velzon mobile topbar for the dashboard-style header */
+    @media (max-width: 1024.98px) {
+        .emp-mhead ~ #page-topbar { display: none !important; }
+        .emp-mhead ~ .main-content .page-content { padding-top: 1rem !important; }
+    }
+    @media (min-width: 1025px) {
+        .emp-mhead { display: none !important; }
+    }
 </style>
+<?php
+// Employee portal (HR module, employee role) gets the dashboard-style mobile header.
+// Admin/manager and all desktop views are untouched (CSS hides it >=1025px).
+$tb_isEmployeePortal = ($tb_isHr
+    && ! $this->ion_auth->is_admin()
+    && ! $this->ion_auth->in_group(['manager']));
+if ($tb_isEmployeePortal) {
+    $ehHomeUrl = $tb_homeUrl;
+    include(APPPATH . 'modules/HR/views/partials/employee_mobile_header.php');
+}
+?>
 <header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">

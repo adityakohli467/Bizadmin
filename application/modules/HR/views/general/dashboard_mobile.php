@@ -233,29 +233,15 @@ $empId = $empId ?? '';
 
 <div class="screen">
 
-    <div class="topnav">
-        <div class="nav-left">
-            <button class="hamburger" type="button" aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="fa-solid fa-bars"></i></button>
-            <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo">
-        </div>
-        <div class="nav-right">
-            <div class="bell" aria-label="Notifications"><i class="fa-solid fa-bell"></i><div class="notif-dot"></div></div>
-            <a href="https://bizadmin.com.au/HR/employees" class="av-link" aria-label="Employees"><div class="av-sm"><?= htmlspecialchars($initials) ?></div></a>
-        </div>
-    </div>
-
-    <div class="profile-strip">
-        <div class="avatar-ring"><span><?= htmlspecialchars($initials) ?></span><div class="online-dot"></div></div>
-        <div>
-            <div class="p-name"><?= htmlspecialchars($employee_name) ?></div>
-            <div class="p-sub"><?= date('D, d F Y') ?></div>
-        </div>
-        <?php if ($shift_started): ?>
-            <div class="present-badge">Present</div>
-        <?php else: ?>
-            <div class="present-badge absent">Absent</div>
-        <?php endif; ?>
-    </div>
+    <?php
+    // Shared employee mobile header (single source of truth). Badge only on dashboard.
+    $ehName         = $employee_name;
+    $ehInitials     = $initials;
+    $ehShowBadge    = true;
+    $ehShiftStarted = $shift_started;
+    $ehHomeUrl      = base_url('HR/' . $this->session->userdata('system_id'));
+    include(APPPATH . 'modules/HR/views/partials/employee_mobile_header.php');
+    ?>
 
     <div class="content">
 
