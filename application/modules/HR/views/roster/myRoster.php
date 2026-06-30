@@ -97,6 +97,8 @@ if (!empty($upcoming)) {
 .mr-card .bk{display:flex;align-items:center;gap:6px;color:#64748b;font-size:.8rem;margin-top:6px;}
 @media(max-width:991px){.mr-stats{grid-template-columns:repeat(2,1fr);}.mr-stat{border-bottom:1px solid #eef2f6;}.mr-grid2{grid-template-columns:1fr;}.mr-tablecard{display:none;}.mr-cards{display:block;}}
 @media(max-width:575px){.mr-wrap{padding-top:70px;}.mr-sub{font-size:.78rem;white-space:nowrap;}.mr-stats{grid-template-columns:1fr 1fr;}.mr-stat-hide{display:none;}.mr-stat{border-bottom:0;}.mr-title{font-size:1.25rem;}.mr-toolbar{flex-direction:column;align-items:stretch;}.mr-actions{display:none;}}
+/* Employee mobile header is static (not a fixed topbar) -> remove the extra top gap, match profile page */
+@media(max-width:1024.98px){#myRoster.mr-wrap{padding-top:16px;}}
 </style>
 
 <div class="mr-loader" id="mrLoader"><div class="mr-spin"></div></div>

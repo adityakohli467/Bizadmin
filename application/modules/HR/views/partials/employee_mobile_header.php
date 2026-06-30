@@ -70,7 +70,7 @@ if (!isset($ehAvatarUrl) || $ehAvatarUrl === '') {
     <div class="topnav">
         <div class="nav-left">
             <button class="hamburger" type="button" aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="fa-solid fa-bars"></i></button>
-            <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo">
+            <a href="<?= $ehHomeUrl ?>" class="av-link" aria-label="Home"><img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo"></a>
         </div>
         <div class="nav-right">
             <div class="bell" aria-label="Notifications"><i class="fa-solid fa-bell"></i><div class="notif-dot"></div></div>

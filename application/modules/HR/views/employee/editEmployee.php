@@ -237,7 +237,7 @@
                         <h3 class="pageTitle">Employee Details</h3>
                         <p class="pageSubtitle">Manage your personal information and profile details</p>
                     </div>
-                    <span class="saved-badge"><i class="ri-checkbox-circle-line"></i> All changes are saved automatically</span>
+                    <span class="saved-badge"><i class="ri-checkbox-circle-line"></i> please click save button to save the updated info</span>
                 </div>
 
                 <!-- end col -->

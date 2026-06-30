@@ -103,6 +103,7 @@ $empId = $empId ?? '';
     <title>BizAdmin</title>
     <link rel="shortcut icon" href="<?= base_url(); ?>login-assets/img/favicon.jpeg" />
     <link href="<?= base_url('theme-assets/css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?= base_url('theme-assets/css/icons.min.css'); ?>" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
