@@ -375,19 +375,11 @@ $empId = $empId ?? '';
     </div>
 </div>
 
-<!-- NAV OFFCANVAS -->
-<div class="offcanvas offcanvas-start offcanvas-nav" tabindex="-1" id="mobileNav" style="max-width:280px;">
-    <div class="offcanvas-header">
-        <img src="/theme-assets/images/logo/BizAdminLogo_White.png" alt="BizAdmin" class="brand-logo">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-        <a class="nav-link" href="<?= base_url('HR/' . $this->session->userdata('system_id')) ?>"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a class="nav-link" href="<?= base_url('HR/roster') ?>"><i class="fa-solid fa-calendar-days"></i> Roster</a>
-        <a class="nav-link" href="#" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#requestLeaveModal"><i class="fa-solid fa-calendar-plus"></i> Apply for leave</a>
-        <a class="nav-link" href="<?= base_url('auth/logout') ?>"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-    </div>
-</div>
+<!-- NAV OFFCANVAS (shared dynamic role/system menu) -->
+<?php
+$navHomeUrl = base_url('HR/' . $this->session->userdata('system_id'));
+include(APPPATH . 'views/general/mobile_nav_offcanvas.php');
+?>
 
 <!-- LEAVE REQUEST MODAL -->
 <div class="modal fade" id="requestLeaveModal" tabindex="-1" aria-hidden="true">
