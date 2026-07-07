@@ -180,3 +180,6 @@ $route['HR/leaveDashbaord'] = 'Leaves/leaveDashbaord';
 //timesheet details
 $route['HR/Home/getTimesheetDetails'] = 'Home/getTimesheetDetails';
 
+//HR assistant chatbot
+$route['HR/chatbot/ask'] = 'Chatbot/ask';
+

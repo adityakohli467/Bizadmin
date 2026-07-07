@@ -264,3 +264,171 @@
 </main>
 
 </div>
+
+<!-- ============================================================
+     HR ASSISTANT CHATBOT (admin/manager)
+     Ask plain-English questions; answers come from live DB data.
+     ============================================================ -->
+<style>
+  .hrbot-fab{position:fixed;right:24px;bottom:24px;z-index:1050;width:58px;height:58px;border-radius:50%;
+    background:#1a2f52;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.28);
+    display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s;}
+  .hrbot-fab:hover{background:#0F6E56;transform:translateY(-2px);}
+  .hrbot-panel{position:fixed;right:24px;bottom:92px;z-index:1050;width:380px;max-width:calc(100vw - 32px);
+    height:540px;max-height:calc(100vh - 130px);background:#fff;border-radius:16px;overflow:hidden;
+    box-shadow:0 18px 50px rgba(15,23,42,.30);display:none;flex-direction:column;font-family:'Inter',system-ui,sans-serif;}
+  .hrbot-panel.open{display:flex;}
+  .hrbot-head{background:#1a2f52;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;}
+  .hrbot-head .hrbot-av{width:34px;height:34px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;
+    justify-content:center;font-size:15px;}
+  .hrbot-head .hrbot-title{font-size:14px;font-weight:600;line-height:1.2;}
+  .hrbot-head .hrbot-sub{font-size:11px;color:#9FE1CB;}
+  .hrbot-head .hrbot-close{margin-left:auto;background:none;border:none;color:#cbd5e1;font-size:18px;cursor:pointer;}
+  .hrbot-body{flex:1;overflow-y:auto;padding:16px;background:#f1f5f9;display:flex;flex-direction:column;gap:12px;}
+  .hrbot-msg{max-width:88%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.5;white-space:pre-wrap;
+    word-wrap:break-word;}
+  .hrbot-msg.bot{background:#fff;color:#1e293b;border:.5px solid #e2e8f0;align-self:flex-start;border-bottom-left-radius:4px;}
+  .hrbot-msg.user{background:#1a2f52;color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .hrbot-tbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px;background:#fff;border-radius:8px;overflow:hidden;}
+  .hrbot-tbl th{background:#E1F5EE;color:#0F6E56;text-align:left;padding:6px 8px;font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.3px;}
+  .hrbot-tbl td{padding:6px 8px;border-top:.5px solid #f1f5f9;color:#334155;}
+  .hrbot-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 10px;background:#f1f5f9;}
+  .hrbot-chip{background:#fff;border:.5px solid #cbd5e1;color:#475569;border-radius:16px;padding:5px 11px;font-size:11px;
+    cursor:pointer;transition:background .15s,border-color .15s,color .15s;}
+  .hrbot-chip:hover{background:#E1F5EE;border-color:#9FE1CB;color:#0F6E56;}
+  .hrbot-foot{display:flex;gap:8px;padding:12px;background:#fff;border-top:.5px solid #e2e8f0;}
+  .hrbot-input{flex:1;border:.5px solid #cbd5e1;border-radius:22px;padding:9px 14px;font-size:13px;outline:none;font-family:inherit;}
+  .hrbot-input:focus{border-color:#25A69A;box-shadow:0 0 0 2px rgba(37,166,154,.15);}
+  .hrbot-send{width:40px;height:40px;border-radius:50%;background:#25A69A;border:none;color:#fff;font-size:15px;cursor:pointer;
+    flex-shrink:0;transition:background .15s;}
+  .hrbot-send:hover{background:#0F6E56;}
+  .hrbot-send:disabled{background:#94a3b8;cursor:not-allowed;}
+  .hrbot-typing{display:flex;gap:4px;align-items:center;padding:10px 13px;}
+  .hrbot-typing span{width:7px;height:7px;border-radius:50%;background:#94a3b8;animation:hrbotBlink 1.2s infinite both;}
+  .hrbot-typing span:nth-child(2){animation-delay:.2s;}
+  .hrbot-typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes hrbotBlink{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
+</style>
+
+<button type="button" class="hrbot-fab" id="hrbotFab" title="HR Assistant" aria-label="Open HR Assistant">
+  <i class="fa-solid fa-robot"></i>
+</button>
+
+<div class="hrbot-panel" id="hrbotPanel" role="dialog" aria-label="HR Assistant">
+  <div class="hrbot-head">
+    <div class="hrbot-av"><i class="fa-solid fa-robot"></i></div>
+    <div>
+      <div class="hrbot-title">HR Assistant</div>
+      <div class="hrbot-sub">Ask about hours, leave, shifts &amp; more</div>
+    </div>
+    <button type="button" class="hrbot-close" id="hrbotClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="hrbot-body" id="hrbotBody">
+    <div class="hrbot-msg bot">Hi! I can answer questions about your team using live data. Try one of the suggestions below or type your own question.</div>
+  </div>
+  <div class="hrbot-chips" id="hrbotChips">
+    <span class="hrbot-chip">Who worked more than 45 hours last week?</span>
+    <span class="hrbot-chip">How many employees are on leave next week?</span>
+    <span class="hrbot-chip">Total hours worked in the last 2 weeks</span>
+    <span class="hrbot-chip">Who is present today?</span>
+  </div>
+  <div class="hrbot-foot">
+    <input type="text" class="hrbot-input" id="hrbotInput" placeholder="Ask a question…" autocomplete="off">
+    <button type="button" class="hrbot-send" id="hrbotSend" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var ASK_URL = '<?php echo base_url("HR/chatbot/ask"); ?>';
+  var fab   = document.getElementById('hrbotFab');
+  var panel = document.getElementById('hrbotPanel');
+  var body  = document.getElementById('hrbotBody');
+  var input = document.getElementById('hrbotInput');
+  var send  = document.getElementById('hrbotSend');
+  var chips = document.getElementById('hrbotChips');
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function scrollBottom(){ body.scrollTop = body.scrollHeight; }
+
+  function addUser(text){
+    var d = document.createElement('div');
+    d.className = 'hrbot-msg user';
+    d.textContent = text;
+    body.appendChild(d); scrollBottom();
+  }
+
+  function addBot(payload){
+    var d = document.createElement('div');
+    d.className = 'hrbot-msg bot';
+    var html = esc(payload.answer).replace(/\n/g, '<br>');
+    if (payload.rows && payload.rows.length) {
+      html += '<table class="hrbot-tbl">';
+      if (payload.columns && payload.columns.length) {
+        html += '<thead><tr>';
+        payload.columns.forEach(function(c){ html += '<th>' + esc(c) + '</th>'; });
+        html += '</tr></thead>';
+      }
+      html += '<tbody>';
+      payload.rows.forEach(function(r){
+        html += '<tr>';
+        r.forEach(function(cell){ html += '<td>' + esc(cell) + '</td>'; });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+    d.innerHTML = html;
+    body.appendChild(d); scrollBottom();
+  }
+
+  function addTyping(){
+    var d = document.createElement('div');
+    d.className = 'hrbot-msg bot hrbot-typing-wrap';
+    d.innerHTML = '<div class="hrbot-typing"><span></span><span></span><span></span></div>';
+    d.id = 'hrbotTyping';
+    body.appendChild(d); scrollBottom();
+  }
+  function removeTyping(){ var t = document.getElementById('hrbotTyping'); if (t) t.remove(); }
+
+  function togglePanel(openIt){
+    var willOpen = (typeof openIt === 'boolean') ? openIt : !panel.classList.contains('open');
+    panel.classList.toggle('open', willOpen);
+    if (willOpen) { setTimeout(function(){ input.focus(); }, 50); }
+  }
+
+  function ask(question){
+    question = (question || '').trim();
+    if (!question) { return; }
+    addUser(question);
+    input.value = '';
+    send.disabled = true;
+    addTyping();
+
+    var fd = new FormData();
+    fd.append('question', question);
+
+    fetch(ASK_URL, { method: 'POST', body: fd, credentials: 'same-origin' })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        removeTyping();
+        addBot(data && data.answer ? data : { answer: 'Sorry, I could not process that.' });
+      })
+      .catch(function(){
+        removeTyping();
+        addBot({ answer: 'Network error — please try again.' });
+      })
+      .finally(function(){ send.disabled = false; input.focus(); });
+  }
+
+  fab.addEventListener('click', function(){ togglePanel(); });
+  document.getElementById('hrbotClose').addEventListener('click', function(){ togglePanel(false); });
+  send.addEventListener('click', function(){ ask(input.value); });
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); ask(input.value); } });
+  chips.addEventListener('click', function(e){
+    if (e.target.classList.contains('hrbot-chip')) { ask(e.target.textContent); }
+  });
+})();
+</script>
