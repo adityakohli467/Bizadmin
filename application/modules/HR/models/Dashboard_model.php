@@ -23,7 +23,7 @@ class Dashboard_model extends CI_Model {
         $this->tenantDb->where("location_id", $this->location_id);
         $this->tenantDb->where("DATE_FORMAT(dob,'%m-%d') =", $today);
 
-        return $this->tenantDb->get()->result();
+        return $this->safeResult();
     }
 
     /* --------------------------------------
@@ -37,7 +37,7 @@ class Dashboard_model extends CI_Model {
         $this->tenantDb->where("lm.location_id", $this->location_id);
         $this->tenantDb->where("lm.leave_status", 1); // pending
 
-        return $this->tenantDb->get()->result();
+        return $this->safeResult();
     }
 
     /* --------------------------------------
@@ -47,17 +47,15 @@ class Dashboard_model extends CI_Model {
     {
         $today = date('Y-m-d');
 
+        $this->tenantDb->where("status", 1)->where("date", $today);
+        $completed = $this->safeCount("hr_task_daily_status");
+
+        $this->tenantDb->where("status", 0)->where("date", $today);
+        $inProgress = $this->safeCount("hr_task_daily_status");
+
         return [
-            "completed_today" => $this->tenantDb->where("status", 1)
-                                          ->where("date", $today)
-                                          ->from("hr_task_daily_status")
-                                          ->count_all_results(),
-
-            "in_progress"     => $this->tenantDb->where("status", 0)
-                                          ->where("date", $today)
-                                          ->from("hr_task_daily_status")
-                                          ->count_all_results(),
-
+            "completed_today" => $completed,
+            "in_progress"     => $inProgress,
         ];
     }
 
@@ -66,10 +64,9 @@ class Dashboard_model extends CI_Model {
     ---------------------------------------*/
     public function get_pending_timesheets_count()
     {
-        return $this->tenantDb->where("approval_status", "pending")
-                        ->where("location_id", $this->location_id)
-                        ->from("HR_timesheet_details")
-                        ->count_all_results();
+        $this->tenantDb->where("approval_status", "pending")
+                       ->where("location_id", $this->location_id);
+        return $this->safeCount("HR_timesheet_details");
     }
 
     /* --------------------------------------
@@ -87,7 +84,7 @@ class Dashboard_model extends CI_Model {
         $this->tenantDb->where("t.location_id", $this->location_id);
         $this->tenantDb->order_by("t.clock_in_time", "ASC");
 
-        return $this->tenantDb->get()->result();
+        return $this->safeResult();
     }
 
     /* --------------------------------------
@@ -97,11 +94,10 @@ class Dashboard_model extends CI_Model {
     {
         $today = date('Y-m-d');
 
-        return $this->tenantDb->where("clock_in_time IS NOT NULL", NULL, FALSE)
-                        ->where("roster_date", $today)
-                        ->where("location_id", $this->location_id)
-                        ->from("HR_timesheet_details")
-                        ->count_all_results();
+        $this->tenantDb->where("clock_in_time IS NOT NULL", NULL, FALSE)
+                       ->where("roster_date", $today)
+                       ->where("location_id", $this->location_id);
+        return $this->safeCount("HR_timesheet_details");
     }
     
      /* --------------------------------------
@@ -141,13 +137,12 @@ class Dashboard_model extends CI_Model {
 {
     $today = date('Y-m-d');
 
-    return $this->tenantDb
+    $this->tenantDb
                 ->distinct()
                 ->select("employee_id")
-                ->from("HR_timesheet_details")
                 ->where("roster_date", $today)
-                ->where("location_id", $this->location_id)
-                ->count_all_results();
+                ->where("location_id", $this->location_id);
+    return $this->safeCount("HR_timesheet_details");
 }
 
 
@@ -164,7 +159,7 @@ class Dashboard_model extends CI_Model {
         $this->tenantDb->where("i.location_id", $this->location_id);
         $this->tenantDb->where("i.date_added", $today);
 
-        return $this->tenantDb->get()->result();
+        return $this->safeResult();
     }
     
     public function get_incident_reports()
@@ -177,7 +172,7 @@ class Dashboard_model extends CI_Model {
         $this->tenantDb->where("i.location_id", $this->location_id);
         $this->tenantDb->where("i.date_added", $today);
 
-        return $this->tenantDb->get()->result();
+        return $this->safeResult();
     }
     
     // get total hour of teams for todays date
@@ -190,7 +185,7 @@ class Dashboard_model extends CI_Model {
     $this->tenantDb->where("roster_date", $today);
     $this->tenantDb->where("location_id", $this->location_id);
 
-    $rows = $this->tenantDb->get()->result();
+    $rows = $this->safeResult();
 
     $totalSeconds = 0;
     $now = time();
@@ -228,5 +223,42 @@ class Dashboard_model extends CI_Model {
     return $hours;
 }
 
+    /* --------------------------------------
+       SAFE QUERY HELPERS
+       Guard against a failed query returning FALSE (e.g. a missing table
+       for a tenant), which otherwise causes fatal errors such as
+       "Call to a member function num_rows()/result() on bool".
+       On any failure they log the issue and return an empty/zero result
+       so the dashboard renders gracefully instead of crashing.
+    ---------------------------------------*/
+
+    /** Run the queued query and return its result rows, or [] on failure. */
+    private function safeResult()
+    {
+        try {
+            $query = $this->tenantDb->get();
+            return ($query !== FALSE) ? $query->result() : [];
+        } catch (\Throwable $e) {
+            log_message('error', 'Dashboard_model::safeResult failed: ' . $e->getMessage());
+            $this->tenantDb->reset_query();
+            return [];
+        }
+    }
+
+    /** Count rows for the given table using the queued conditions, or 0 on failure. */
+    private function safeCount($table)
+    {
+        try {
+            if (!$this->tenantDb->table_exists($table)) {
+                $this->tenantDb->reset_query();
+                return 0;
+            }
+            return (int) $this->tenantDb->from($table)->count_all_results();
+        } catch (\Throwable $e) {
+            log_message('error', 'Dashboard_model::safeCount failed on ' . $table . ': ' . $e->getMessage());
+            $this->tenantDb->reset_query();
+            return 0;
+        }
+    }
 
 }

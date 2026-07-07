@@ -65,6 +65,18 @@ class Chatbot_model extends CI_Model {
             return $this->reply('Please type a question, e.g. "Who worked more than 45 hours last week?"', 'empty');
         }
 
+        // 0) STRICT SAFETY GUARD — this assistant is read-only.
+        // Refuse anything that looks like a request to modify, delete, or
+        // execute data/commands. The engine never runs write SQL, but we
+        // reject such requests up front so they are never processed at all.
+        if ($this->isHazardous($qRaw)) {
+            return $this->reply(
+                "I can only answer read-only questions about your team's data (hours, leave, shifts, attendance, headcount, birthdays). "
+                . "I can't create, edit, update, delete, or run any changes. Please rephrase as a question, e.g. \"Who worked more than 45 hours last week?\"",
+                'blocked'
+            );
+        }
+
         // 1) Try the LLM planner.
         $spec = $this->planWithLlm($qRaw);
         if (is_array($spec) && !empty($spec['intent']) && $spec['intent'] !== 'unknown') {
@@ -865,6 +877,42 @@ PROMPT;
     /* =====================================================================
      *  SHARED HELPERS
      * ===================================================================== */
+
+    /**
+     * Strict safety guard. Returns true if the question appears to request a
+     * mutating / destructive / command action rather than a read-only query.
+     * The assistant is answer-only and must never process such requests.
+     */
+    private function isHazardous($question)
+    {
+        $q = strtolower($question);
+
+        // Whole-word hazardous verbs/keywords (SQL DML/DDL, admin actions,
+        // command execution, and common phrasings of "change this data").
+        $patterns = [
+            // SQL / data mutation
+            '\bdelete\b', '\bremove\b', '\bdrop\b', '\btruncate\b', '\bupdate\b',
+            '\bedit\b', '\bmodify\b', '\balter\b', '\binsert\b', '\breplace\b',
+            '\brename\b', '\bmerge\b', '\bupsert\b', '\bwipe\b', '\breset\b',
+            '\bpurge\b', '\brevoke\b', '\bgrant\b', '\bexecute\b', '\bexec\b',
+            // record/action verbs (things that would change state)
+            '\bapprove\b', '\breject\b', '\bassign\b', '\bunassign\b',
+            '\bfire\b', '\bhire\b', '\bterminate\b', '\bdeactivate\b',
+            '\bactivate\b', '\bdisable\b', '\benable\b', '\bpromote\b',
+            '\bdemote\b', '\bsuspend\b',
+            // injection / command attempts
+            ';\s*(?:drop|delete|update|insert|truncate|alter)\b',
+            '--', '/\*', '\bunion\s+select\b', '\bxp_cmdshell\b',
+            '\bshutdown\b', '\brm\s+-rf\b', '\bsudo\b', '<script',
+        ];
+
+        foreach ($patterns as $p) {
+            if (preg_match('/' . $p . '/i', $q)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private function has($haystack, array $needles)
     {

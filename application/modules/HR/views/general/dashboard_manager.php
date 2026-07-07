@@ -266,7 +266,7 @@
 </div>
 
 <!-- ============================================================
-     HR ASSISTANT CHATBOT (admin/manager)
+     BIZADMIN AI ASSISTANT CHATBOT (admin/manager)
      Ask plain-English questions; answers come from live DB data.
      ============================================================ -->
 <style>
@@ -311,15 +311,15 @@
   @keyframes hrbotBlink{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
 </style>
 
-<button type="button" class="hrbot-fab" id="hrbotFab" title="HR Assistant" aria-label="Open HR Assistant">
+<button type="button" class="hrbot-fab" id="hrbotFab" title="Bizadmin AI Assistant" aria-label="Open Bizadmin AI Assistant">
   <i class="fa-solid fa-robot"></i>
 </button>
 
-<div class="hrbot-panel" id="hrbotPanel" role="dialog" aria-label="HR Assistant">
+<div class="hrbot-panel" id="hrbotPanel" role="dialog" aria-label="Bizadmin AI Assistant">
   <div class="hrbot-head">
     <div class="hrbot-av"><i class="fa-solid fa-robot"></i></div>
     <div>
-      <div class="hrbot-title">HR Assistant</div>
+      <div class="hrbot-title">Bizadmin AI Assistant</div>
       <div class="hrbot-sub">Ask about hours, leave, shifts &amp; more</div>
     </div>
     <button type="button" class="hrbot-close" id="hrbotClose" aria-label="Close">&times;</button>
