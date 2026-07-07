@@ -265,6 +265,7 @@
 
 </div>
 
+<?php if (false): // TEMPORARILY DISABLED — re-enable the Bizadmin AI Assistant chatbot tomorrow (change to `if (true)` or remove this guard). ?>
 <!-- ============================================================
      BIZADMIN AI ASSISTANT CHATBOT (admin/manager)
      Ask plain-English questions; answers come from live DB data.
@@ -432,3 +433,4 @@
   });
 })();
 </script>
+<?php endif; // END TEMPORARILY DISABLED Bizadmin AI Assistant chatbot ?>
