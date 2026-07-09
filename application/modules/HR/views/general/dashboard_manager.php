@@ -272,15 +272,17 @@
 <style>
   .hrbot-fab{position:fixed;right:24px;bottom:24px;z-index:1050;width:58px;height:58px;border-radius:50%;
     background:#1a2f52;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.28);
-    display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s;}
-  .hrbot-fab:hover{background:#0F6E56;transform:translateY(-2px);}
+    display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;overflow:hidden;padding:0;}
+  .hrbot-fab:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,.36);}
+  .hrbot-fab img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .hrbot-panel{position:fixed;right:24px;bottom:92px;z-index:1050;width:380px;max-width:calc(100vw - 32px);
     height:540px;max-height:calc(100vh - 130px);background:#fff;border-radius:16px;overflow:hidden;
     box-shadow:0 18px 50px rgba(15,23,42,.30);display:none;flex-direction:column;font-family:'Inter',system-ui,sans-serif;}
   .hrbot-panel.open{display:flex;}
   .hrbot-head{background:#1a2f52;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;}
   .hrbot-head .hrbot-av{width:34px;height:34px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;
-    justify-content:center;font-size:15px;}
+    justify-content:center;font-size:15px;overflow:hidden;}
+  .hrbot-head .hrbot-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
   .hrbot-head .hrbot-title{font-size:14px;font-weight:600;line-height:1.2;}
   .hrbot-head .hrbot-sub{font-size:11px;color:#9FE1CB;}
   .hrbot-head .hrbot-close{margin-left:auto;background:none;border:none;color:#cbd5e1;font-size:18px;cursor:pointer;}
@@ -312,12 +314,12 @@
 </style>
 
 <button type="button" class="hrbot-fab" id="hrbotFab" title="Bizadmin AI Assistant" aria-label="Open Bizadmin AI Assistant">
-  <i class="fa-solid fa-robot"></i>
+  <img src="<?php echo base_url(''); ?>theme-assets/images/bizzy-bot.png" alt="Bizzy AI Assistant">
 </button>
 
 <div class="hrbot-panel" id="hrbotPanel" role="dialog" aria-label="Bizadmin AI Assistant">
   <div class="hrbot-head">
-    <div class="hrbot-av"><i class="fa-solid fa-robot"></i></div>
+    <div class="hrbot-av"><img src="<?php echo base_url(''); ?>theme-assets/images/bizzy-bot.png" alt="Bizzy"></div>
     <div>
       <div class="hrbot-title">Bizadmin AI Assistant</div>
       <div class="hrbot-sub">Ask about hours, leave, shifts &amp; more</div>
