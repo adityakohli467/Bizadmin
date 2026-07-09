@@ -271,7 +271,7 @@
      ============================================================ -->
 <style>
   .hrbot-fab{position:fixed;right:24px;bottom:24px;z-index:1050;width:58px;height:58px;border-radius:50%;
-    background:#1a2f52;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.28);
+    background:#fff;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.28);
     display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;overflow:hidden;padding:0;}
   .hrbot-fab:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,.36);}
   .hrbot-fab img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
