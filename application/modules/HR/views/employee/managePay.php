@@ -705,7 +705,7 @@ window.__MP = <?php echo json_encode($mpData, JSON_HEX_TAG | JSON_HEX_APOS | JSO
                     '</tr></thead>' +
                     '<tbody id="mpRows">' + rowsHtml + '</tbody>' +
                 '</table></div>' +
-                '<button type="button" class="mp-add-another" id="mpAddAnother"><i class="ri-add-line"></i> Add Another Pay Rate</button>' +
+                '<button type="button" class="mp-add-another" id="mpAddAnother"><i class="ri-add-line"></i> Add another position</button>' +
                 '<div class="mp-actions">' +
                     '<button type="button" class="mp-btn mp-btn-light" id="mpReset"><i class="ri-refresh-line"></i> Reset</button>' +
                     '<button type="button" class="mp-btn mp-btn-save" id="mpSave"><i class="ri-check-line"></i> Save Pay Rates</button>' +
