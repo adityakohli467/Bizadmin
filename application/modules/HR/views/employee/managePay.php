@@ -235,11 +235,27 @@ $mpData = [
         flex-wrap: wrap;
     }
 
+    /* Slightly shorter employee header card. */
+    #managePay .mp-emp-card {
+        padding: 16px 22px;
+    }
+
     #managePay .mp-emp-header .mp-avatar {
-        width: 64px;
-        height: 64px;
-        flex: 0 0 64px;
+        width: 56px;
+        height: 56px;
+        flex: 0 0 56px;
         font-size: 20px;
+    }
+
+    /* Colorful dummy user-icon avatar. */
+    #managePay .mp-avatar-lg {
+        background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+        color: #fff;
+    }
+
+    #managePay .mp-avatar-lg i {
+        font-size: 30px;
+        line-height: 1;
     }
 
     #managePay .mp-emp-header h4 {
@@ -272,9 +288,9 @@ $mpData = [
     #managePay .mp-meta-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 18px 24px;
-        margin-top: 20px;
-        padding-top: 18px;
+        gap: 14px 24px;
+        margin-top: 14px;
+        padding-top: 14px;
         border-top: 1px solid var(--mp-border);
     }
 
@@ -664,9 +680,9 @@ window.__MP = <?php echo json_encode($mpData, JSON_HEX_TAG | JSON_HEX_APOS | JSO
         var st = ensureState(emp);
 
         var head = '' +
-            '<div class="mp-card">' +
+            '<div class="mp-card mp-emp-card">' +
                 '<div class="mp-emp-header">' +
-                    '<div class="mp-avatar">' + esc(initials(emp.name)) + '</div>' +
+                    '<div class="mp-avatar mp-avatar-lg"><i class="ri-user-3-fill"></i></div>' +
                     '<div>' +
                         '<h4>' + esc(emp.name || 'Unnamed') + ' <span class="mp-badge">Active</span></h4>' +
                     '</div>' +
