@@ -70,7 +70,7 @@ $mpData = [
     #managePay .mp-shell {
         display: flex;
         gap: 20px;
-        align-items: stretch;
+        align-items: flex-start;
     }
 
     /* ---------- Left: employee list ---------- */
@@ -83,6 +83,10 @@ $mpData = [
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        /* Stay in view and scroll the list internally instead of the whole page. */
+        position: sticky;
+        top: 90px;
+        max-height: calc(100vh - 110px);
     }
 
     #managePay .mp-aside-head {
@@ -466,7 +470,7 @@ $mpData = [
 
     @media (max-width: 991px) {
         #managePay .mp-shell { flex-direction: column; }
-        #managePay .mp-aside { width: 100%; flex: 1 1 auto; }
+        #managePay .mp-aside { width: 100%; flex: 1 1 auto; position: static; max-height: none; }
         #managePay .mp-list { max-height: 320px; }
     }
 </style>
