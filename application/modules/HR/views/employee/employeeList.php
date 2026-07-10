@@ -21,6 +21,12 @@
 
     <!-- Right Side Buttons -->
     <div class="d-flex gap-2">
+        <?php if ($this->roleId == 1) { ?>
+        <a href="/HR/Employee/managePay" class="btn btn-outline-primary">
+            <i class="ri-money-dollar-circle-line"></i> Manage Pay
+        </a>
+        <?php } ?>
+
         <button 
             class="btn btn-primary" 
             type="button" 

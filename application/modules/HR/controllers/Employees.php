@@ -250,6 +250,107 @@ class Employees extends MY_Controller {
     $this->load->view('general/footer');
 }
 
+    /**
+     * Manage Pay : dedicated master-detail page listing all active employees
+     * (left, scrollable, no pagination) with an editable pay-rate panel on the
+     * right. All rates are preloaded as JSON for instant client-side switching.
+     */
+    public function managePay()
+    {
+        // Pay rates are admin-only, consistent with the edit-employee page.
+        if ($this->roleId != 1) {
+            redirect('HR/employees');
+            return;
+        }
+
+        $userId     = $this->ion_auth->get_user_id();
+        $locationId = $this->location_id ?? 0;
+
+        // Active, non-contractor employees for the current location.
+        $data['empLists'] = $this->employee_model->employeeList('', '0');
+
+        $empIds = array_column($data['empLists'], 'emp_id');
+        $data['payRatesMap'] = $this->employee_model->payRatesMapForEmployees($empIds);
+
+        $data['positions'] = $this->common_model
+            ->fetchRecordsDynamically('HR_emp_position', '', ['status' => '1', 'is_deleted' => '0']) ?? [];
+
+        $data['payrollTypes'] = $this->common_model
+            ->fetchRecordsDynamically('HR_payroll_type', ['id', 'name'], ['is_deleted' => 0, 'location_id' => $locationId]) ?? [];
+
+        $this->load->view('general/header');
+        $this->load->view('employee/managePay', $data);
+        $this->load->view('general/footer');
+    }
+
+    /**
+     * savePayRates : focused AJAX endpoint used by the Manage Pay page. Updates
+     * only HR_emp_to_position rows for a single employee (create/update/delete)
+     * without touching the rest of the employee record.
+     */
+    public function savePayRates()
+    {
+        if ($this->roleId != 1) {
+            echo json_encode(['status' => 'error', 'message' => 'Not authorized']);
+            return;
+        }
+
+        $empId = $this->input->post('emp_id');
+        if (empty($empId)) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid employee']);
+            return;
+        }
+
+        // Remove rows the user deleted in the UI.
+        $removeIds = $this->input->post('removeIds');
+        if (is_array($removeIds)) {
+            $removeIds = array_values(array_filter(array_map('intval', $removeIds)));
+            if (!empty($removeIds)) {
+                $this->common_model->commonBulkRecordDelete('HR_emp_to_position', $removeIds, 'id');
+            }
+        }
+
+        $saved = [];
+        $rows  = $this->input->post('rows');
+        if (is_array($rows)) {
+            foreach ($rows as $row) {
+                // A position is required for a row to be persisted.
+                if (empty($row['position_id'])) {
+                    continue;
+                }
+
+                $num = function ($v) {
+                    return (isset($v) && is_numeric($v)) ? $v : 0;
+                };
+
+                $payload = [
+                    'emp_id'            => $empId,
+                    'position_id'       => $row['position_id'],
+                    'payroll_type_id'   => (isset($row['payroll_type_id']) && $row['payroll_type_id'] !== '') ? $row['payroll_type_id'] : null,
+                    'rate'              => $num($row['rate'] ?? 0),
+                    'Saturday_rate'     => $num($row['Saturday_rate'] ?? 0),
+                    'Sunday_rate'       => $num($row['Sunday_rate'] ?? 0),
+                    'holiday_rate'      => $num($row['holiday_rate'] ?? 0),
+                    'early_start'       => $num($row['early_start'] ?? 0),
+                    'late_night'        => $num($row['late_night'] ?? 0),
+                    'uniform_allowance' => $num($row['uniform_allowance'] ?? 0),
+                ];
+
+                $tempKey = isset($row['tempKey']) ? $row['tempKey'] : null;
+
+                if (!empty($row['id'])) {
+                    $this->common_model->commonRecordUpdate('HR_emp_to_position', 'id', $row['id'], $payload);
+                    $saved[] = ['tempKey' => $tempKey, 'id' => $row['id']];
+                } else {
+                    $newId = $this->common_model->commonRecordCreate('HR_emp_to_position', $payload);
+                    $saved[] = ['tempKey' => $tempKey, 'id' => $newId];
+                }
+            }
+        }
+
+        echo json_encode(['status' => 'success', 'saved' => $saved]);
+    }
+
 	function employeeCommonUpdate($empId,$data){
 	   // echo "<pre>"; print_r($data); exit;
 	 $this->common_model->commonRecordUpdate('HR_employee','emp_id',$empId,$data);     

@@ -126,6 +126,28 @@ class Employee_model extends CI_Model{
     return $employees;
 }
 
+	/**
+	 * Return a map of emp_id => array of full pay-rate rows (HR_emp_to_position),
+	 * fetched in a single query. Used by the "Manage Pay" master-detail page so
+	 * all employees' rates can be preloaded for instant client-side switching.
+	 */
+	function payRatesMapForEmployees($empIds)
+	{
+		if (empty($empIds)) {
+			return [];
+		}
+
+		$this->tenantDb->select('id, emp_id, position_id, payroll_type_id, rate, Saturday_rate, Sunday_rate, holiday_rate, early_start, late_night, uniform_allowance');
+		$this->tenantDb->from('HR_emp_to_position');
+		$this->tenantDb->where_in('emp_id', $empIds);
+		$rows = $this->tenantDb->get()->result_array();
+
+		$map = [];
+		foreach ($rows as $r) {
+			$map[$r['emp_id']][] = $r;
+		}
+		return $map;
+	}
 
 	
 	function employeeDetails($emp_id) {
