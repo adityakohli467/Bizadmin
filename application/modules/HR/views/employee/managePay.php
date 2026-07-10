@@ -6,16 +6,20 @@
  */
 
 // Build a compact JSON payload the client uses to render everything.
+$mpEmpTypeMap = ['1' => 'Full Time', '2' => 'Part Time', '3' => 'Casual'];
 $mpEmployees = [];
 foreach (($empLists ?? []) as $e) {
     $eid = $e['emp_id'];
+    $empTypeKey = isset($e['employee_type']) ? (string) $e['employee_type'] : '';
     $mpEmployees[] = [
-        'emp_id'        => $eid,
-        'name'          => trim($e['name'] ?? ''),
-        'email'         => $e['email'] ?? '',
-        'phone'         => $e['phone'] ?? '',
-        'position_name' => $e['primary_position_name'] ?? '',
-        'positions'     => isset($payRatesMap[$eid]) ? array_values($payRatesMap[$eid]) : [],
+        'emp_id'          => $eid,
+        'name'            => trim($e['name'] ?? ''),
+        'email'           => $e['email'] ?? '',
+        'phone'           => $e['phone'] ?? '',
+        'position_name'   => $e['primary_position_name'] ?? '',
+        'employment_type' => isset($mpEmpTypeMap[$empTypeKey]) ? $mpEmpTypeMap[$empTypeKey] : '—',
+        'prep_area'       => $e['prep_name'] ?? '',
+        'positions'       => isset($payRatesMap[$eid]) ? array_values($payRatesMap[$eid]) : [],
     ];
 }
 
@@ -53,6 +57,14 @@ $mpData = [
 
     #managePay {
         color: var(--mp-text);
+    }
+
+    /* Tighten the gap between the top nav/header and the page content. */
+    .page-content:has(#managePay) {
+        padding-top: 12px;
+    }
+    #managePay {
+        margin-top: -18px;
     }
 
     #managePay .mp-shell {
@@ -659,7 +671,8 @@ window.__MP = <?php echo json_encode($mpData, JSON_HEX_TAG | JSON_HEX_APOS | JSO
                 '</div>' +
                 '<div class="mp-meta-grid">' +
                     metaItem('Position', emp.position_name || '—') +
-                    metaItem('Employee ID', emp.emp_id) +
+                    metaItem('Employment Type', emp.employment_type || '—') +
+                    metaItem('Prep Area', emp.prep_area || '—') +
                     metaItem('Email', emp.email || '—') +
                     metaItem('Phone', emp.phone || '—') +
                 '</div>' +
@@ -693,7 +706,6 @@ window.__MP = <?php echo json_encode($mpData, JSON_HEX_TAG | JSON_HEX_APOS | JSO
                     '<button type="button" class="mp-btn mp-btn-light" id="mpReset"><i class="ri-refresh-line"></i> Reset</button>' +
                     '<button type="button" class="mp-btn mp-btn-save" id="mpSave"><i class="ri-check-line"></i> Save Pay Rates</button>' +
                 '</div>' +
-                '<div class="mp-note"><i class="ri-information-line"></i> All rates are in AUD (Australian Dollars). Leave empty or enter 0.00 if not applicable.</div>' +
             '</div>';
 
         $detail.innerHTML = head + table;
