@@ -59,12 +59,12 @@ $mpData = [
         color: var(--mp-text);
     }
 
-    /* Tighten the gap between the top nav/header and the page content. */
+    /* A little breathing room between the top nav/header and the page content. */
     .page-content:has(#managePay) {
-        padding-top: 12px;
+        padding-top: 28px;
     }
     #managePay {
-        margin-top: -18px;
+        margin-top: 0;
     }
 
     #managePay .mp-shell {
@@ -797,16 +797,36 @@ window.__MP = <?php echo json_encode($mpData, JSON_HEX_TAG | JSON_HEX_APOS | JSO
         var st = workState[String(selectedId)];
         if (!emp || !st) return;
 
-        // Validate: any row with a position must have a weekday rate.
-        var invalid = false;
+        // A row "has data" if a payroll type is picked or any rate is non-zero.
+        function rowHasData(r) {
+            if (r.payroll_type_id) return true;
+            var numKeys = ['rate', 'Saturday_rate', 'Sunday_rate', 'holiday_rate', 'early_start', 'late_night', 'uniform_allowance'];
+            return numKeys.some(function (k) {
+                var n = parseFloat(r[k]);
+                return !isNaN(n) && n !== 0;
+            });
+        }
+
+        // Validate: data entered without a Position must not be silently dropped.
+        var missingPosition = false;
+        var missingRate = false;
         st.rows.forEach(function (r) {
-            if (r.position_id && (r.rate === '' || isNaN(parseFloat(r.rate)))) invalid = true;
+            if (!r.position_id) {
+                if (rowHasData(r)) missingPosition = true;
+                return;
+            }
+            if (r.rate === '' || isNaN(parseFloat(r.rate))) missingRate = true;
         });
-        if (invalid) { showToast('Enter a Weekday rate for each position', true); return; }
+
+        if (missingPosition) { showToast('Please select a Position for each pay rate you entered', true); return; }
+        if (missingRate) { showToast('Enter a Weekday rate for each position', true); return; }
+
+        // Rows that will actually be persisted (a Position is required).
+        var payloadRows = st.rows.filter(function (r) { return r.position_id; });
+        if (!payloadRows.length) { showToast('Add at least one position with a pay rate', true); return; }
 
         var payload = { emp_id: emp.emp_id, rows: [], removeIds: st.removed.slice() };
-        st.rows.forEach(function (r) {
-            if (!r.position_id) return; // skip empty rows
+        payloadRows.forEach(function (r) {
             payload.rows.push({
                 tempKey: r.key, id: r.id, position_id: r.position_id,
                 payroll_type_id: r.payroll_type_id,
