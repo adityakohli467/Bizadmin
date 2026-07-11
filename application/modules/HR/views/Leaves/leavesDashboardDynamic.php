@@ -308,7 +308,7 @@ document.addEventListener('click', function (e) {
                     </div>
 
                     <div class="space-y-2 text-sm text-gray-700 mb-4">
-                        <p><span class="font-medium">This Request:</span> ${d.leaveTypeName || 'N/A'}</p>
+                        <p><span class="font-medium">Leave Type:</span> ${d.leaveTypeName || 'N/A'}</p>
                         <p><span class="font-medium">Dates:</span> ${d.start_date || ''} to ${d.end_date || ''}</p>
                         <p><span class="font-medium">Reason:</span> ${d.leaveComments || '-'}</p>
                         <p><span class="font-medium">Status:</span> ${statusMap[d.leave_status] || 'Unknown'}</p>
