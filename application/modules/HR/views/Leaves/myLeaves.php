@@ -26,7 +26,7 @@ foreach ($leaves as $lv) {
     .my-leaves { font-family:'Inter', sans-serif; }
 </style>
 
-<main class="my-leaves w-full pb-8" style="padding-top:90px;">
+<main class="my-leaves w-full pb-8" style="padding-top:90px; padding-bottom:60px;">
   <div class="px-8">
 
     <!-- Page header -->

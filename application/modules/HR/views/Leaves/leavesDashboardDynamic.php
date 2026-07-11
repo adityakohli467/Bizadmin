@@ -30,7 +30,7 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
     #modalContent p, #modalContent h3 { color:#111827 !important; }
 </style>
 
-<main class="leave-dash w-full pb-8" style="padding-top:90px;">
+<main class="leave-dash w-full pb-8" style="padding-top:90px; padding-bottom:60px;">
   <div class="px-8">
 
     <!-- Page header -->
@@ -201,7 +201,7 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
     </div>
 
     <!-- Details Modal (hidden) -->
-    <div id="leaveModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+    <div id="leaveModal" class="fixed inset-0 z-50 hidden items-start justify-center bg-black bg-opacity-50" style="padding-top:80px; padding-bottom:40px;">
         <div class="bg-white rounded-lg w-11/12 max-w-2xl p-6 overflow-y-auto" style="max-height:85vh;">
             <div id="modalContent"></div>
             <div class="mt-4 text-right">
