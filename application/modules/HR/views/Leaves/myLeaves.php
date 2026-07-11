@@ -60,8 +60,11 @@ foreach ($leaves as $lv) {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Leave history -->
         <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div class="p-6 border-b border-gray-200">
+            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-gray-900">Leave History</h3>
+                <button type="button" id="openApplyLeave" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+                    <i class="fa-solid fa-calendar-plus mr-2"></i>Apply for Leave
+                </button>
             </div>
 
             <?php if (empty($leaves)): ?>
@@ -157,6 +160,62 @@ foreach ($leaves as $lv) {
     </div>
 
   </div>
+
+  <!-- Apply for Leave Modal -->
+  <div id="applyLeaveModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-xl w-11/12 max-w-2xl overflow-y-auto" style="max-height:90vh;">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900"><i class="fa-solid fa-calendar-plus mr-2 text-indigo-600"></i>Request Leave</h3>
+            <button type="button" id="closeApplyLeave" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div class="p-6">
+            <div id="applyLeaveSuccess" class="hidden mb-4 px-4 py-3 rounded-lg bg-green-50 text-green-700 text-sm"><i class="fa-solid fa-check-circle mr-2"></i>Leave request submitted successfully!</div>
+            <div id="applyLeaveError" class="hidden mb-4 px-4 py-3 rounded-lg bg-red-50 text-red-700 text-sm"></div>
+
+            <form id="applyLeaveForm" enctype="multipart/form-data">
+                <input type="hidden" name="emp_id" value="<?php echo htmlspecialchars($empId ?? ''); ?>">
+                <input type="hidden" name="<?php echo $csrf_name; ?>" value="<?php echo $csrf_hash; ?>">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date <span class="text-red-500">*</span></label>
+                        <input type="date" name="start_date" id="al_start_date" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date <span class="text-red-500">*</span></label>
+                        <input type="date" name="end_date" id="al_end_date" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Leave Type <span class="text-red-500">*</span></label>
+                        <select name="leave_type" id="al_leave_type" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Select Leave Type</option>
+                            <?php if (!empty($leaveTypes)): ?>
+                                <?php foreach ($leaveTypes as $type): ?>
+                                    <option value="<?php echo $type['id']; ?>"><?php echo htmlspecialchars($type['leaveTypeName']); ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <div id="al_cert_field" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Medical Certificate <span class="text-red-500">*</span></label>
+                        <input type="file" name="userfile[]" id="al_cert" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900">
+                        <p class="text-xs text-gray-500 mt-1">Required for sick leave (PDF, JPG, PNG, DOC).</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                        <textarea name="leaveComments" rows="3" placeholder="Enter reason for leave..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <button type="button" id="cancelApplyLeave" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50">Cancel</button>
+            <button type="button" id="submitApplyLeave" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+                <i class="fa-solid fa-paper-plane mr-2"></i><span class="btn-label">Submit Request</span>
+            </button>
+        </div>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -182,4 +241,89 @@ document.addEventListener('click', function (e) {
         alert('Could not cancel the request. Please try again.');
     });
 });
+
+// ---------- Apply for Leave modal ----------
+(function () {
+    const modal    = document.getElementById('applyLeaveModal');
+    const openBtn  = document.getElementById('openApplyLeave');
+    const closeEls = ['closeApplyLeave', 'cancelApplyLeave'].map(id => document.getElementById(id));
+    const submitBtn = document.getElementById('submitApplyLeave');
+    const form     = document.getElementById('applyLeaveForm');
+    const typeSel  = document.getElementById('al_leave_type');
+    const certField = document.getElementById('al_cert_field');
+    const certInput = document.getElementById('al_cert');
+    const successBox = document.getElementById('applyLeaveSuccess');
+    const errorBox   = document.getElementById('applyLeaveError');
+
+    function openModal() {
+        successBox.classList.add('hidden');
+        errorBox.classList.add('hidden');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    closeEls.forEach(el => el && el.addEventListener('click', closeModal));
+
+    // Show medical certificate field for sick leave
+    typeSel.addEventListener('change', function () {
+        const isSick = /sick/i.test(typeSel.options[typeSel.selectedIndex].text);
+        if (isSick) {
+            certField.classList.remove('hidden');
+            certInput.setAttribute('required', 'required');
+        } else {
+            certField.classList.add('hidden');
+            certInput.removeAttribute('required');
+            certInput.value = '';
+        }
+    });
+
+    submitBtn.addEventListener('click', function () {
+        errorBox.classList.add('hidden');
+        successBox.classList.add('hidden');
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const isSick = /sick/i.test(typeSel.options[typeSel.selectedIndex].text);
+        if (isSick && certInput.files.length === 0) {
+            errorBox.textContent = 'Medical certificate is required for sick leave.';
+            errorBox.classList.remove('hidden');
+            return;
+        }
+
+        const label = submitBtn.querySelector('.btn-label');
+        const original = label.textContent;
+        submitBtn.disabled = true;
+        label.textContent = 'Submitting...';
+
+        fetch('<?php echo base_url("HR/Leaves/requestLeave"); ?>', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: new FormData(form)
+        }).then(r => r.json().catch(() => ({ success: true })))
+          .then(res => {
+              if (res === 'success' || (res && res.success)) {
+                  successBox.classList.remove('hidden');
+                  setTimeout(function () { location.reload(); }, 1200);
+              } else {
+                  errorBox.textContent = (res && res.message) || 'Failed to submit leave request.';
+                  errorBox.classList.remove('hidden');
+                  submitBtn.disabled = false;
+                  label.textContent = original;
+              }
+          }).catch(function () {
+              errorBox.textContent = 'An error occurred. Please try again.';
+              errorBox.classList.remove('hidden');
+              submitBtn.disabled = false;
+              label.textContent = original;
+          });
+    });
+})();
 </script>

@@ -264,6 +264,12 @@ class Leaves extends MY_Controller {
             'empName'  => trim(($empData[0]['first_name'] ?? '') . ' ' . ($empData[0]['last_name'] ?? '')),
             'leaves'   => $empId ? $this->Leave_model->get_employee_leaves($empId) : [],
             'balances' => $empId ? $this->Leave_model->get_employee_leave_balance($empId) : [],
+            'leaveTypes' => $this->common_model->fetchRecordsDynamically(
+                'HR_leaves',
+                ['id', 'leaveTypeName', 'entitlements'],
+                [],
+                'leaveTypeName ASC'
+            ),
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash()
         ];
