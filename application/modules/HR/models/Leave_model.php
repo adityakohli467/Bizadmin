@@ -121,37 +121,7 @@ class Leave_model extends CI_Model {
      * Approve Leave
      * ----------------------------------------------- */
     public function approve_leave($id, $approver_id, $comment = '') {
-
-        try {
-            $this->tenantDb->trans_start();
-
-            $this->tenantDb->where('id', (int)$id)
-                ->update('HR_leave_management', [
-                    'leave_status' => 2,
-                    'approver_id' => (int)$approver_id,
-                    'approver_comment' => $comment,
-                    'approved_date' => date('Y-m-d H:i:s')
-                ]);
-
-            if ($this->tenantDb->affected_rows() == 0) {
-                throw new Exception("Approve update failed for leave ID $id");
-            }
-
-            $this->tenantDb->insert('HR_leave_history', [
-                'leave_id' => (int)$id,
-                'action'   => 'approved',
-                'comment'  => $comment,
-                'actor_id' => (int)$approver_id,
-                'date_added'=> date('Y-m-d H:i:s')
-            ]);
-
-            $this->tenantDb->trans_complete();
-            return $this->tenantDb->trans_status();
-
-        } catch (Exception $e) {
-            log_message('error', 'approve_leave failed: ' . $e->getMessage());
-            return false;
-        }
+        return $this->set_leave_status($id, 2, $approver_id, $comment);
     }
 
     /* -----------------------------------------------
@@ -164,34 +134,36 @@ class Leave_model extends CI_Model {
             return false;
         }
 
+        return $this->set_leave_status($id, 3, $approver_id, $comment);
+    }
+
+    /* -----------------------------------------------
+     * Shared status updater. Only writes optional
+     * approver columns when they exist in the schema,
+     * so it works regardless of migration state.
+     * ----------------------------------------------- */
+    private function set_leave_status($id, $status, $approver_id, $comment) {
+
         try {
-            $this->tenantDb->trans_start();
+            $update = ['leave_status' => (int)$status];
 
-            $this->tenantDb->where('id', (int)$id)
-                ->update('HR_leave_management', [
-                    'leave_status' => 3,
-                    'approver_id' => (int)$approver_id,
-                    'approver_comment' => $comment,
-                    'approved_date' => date('Y-m-d H:i:s')
-                ]);
-
-            if ($this->tenantDb->affected_rows() == 0) {
-                throw new Exception("Reject update failed for leave ID $id");
+            if ($this->tenantDb->field_exists('approver_id', 'HR_leave_management')) {
+                $update['approver_id'] = (int)$approver_id;
+            }
+            if ($this->tenantDb->field_exists('approver_comment', 'HR_leave_management')) {
+                $update['approver_comment'] = $comment;
+            }
+            if ($this->tenantDb->field_exists('approved_date', 'HR_leave_management')) {
+                $update['approved_date'] = date('Y-m-d H:i:s');
             }
 
-            $this->tenantDb->insert('HR_leave_history', [
-                'leave_id' => (int)$id,
-                'action'   => 'rejected',
-                'comment'  => $comment,
-                'actor_id' => (int)$approver_id,
-                'date_added'=> date('Y-m-d H:i:s')
-            ]);
+            $ok = $this->tenantDb->where('id', (int)$id)
+                ->update('HR_leave_management', $update);
 
-            $this->tenantDb->trans_complete();
-            return $this->tenantDb->trans_status();
+            return $ok !== false;
 
         } catch (Exception $e) {
-            log_message('error', 'reject_leave failed: ' . $e->getMessage());
+            log_message('error', 'set_leave_status failed: ' . $e->getMessage());
             return false;
         }
     }
