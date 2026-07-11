@@ -39,9 +39,6 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
             <i class="fa-solid fa-plane-departure text-xl" style="color:#111827;"></i>
             <h1 class="text-2xl font-bold" style="color:#111827;">Leave Management</h1>
         </div>
-        <a href="<?php echo base_url('HR'); ?>" class="text-sm font-medium hover:opacity-70" style="color:#111827;">
-            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
-        </a>
     </div>
     <div id="stats-section" class="mb-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -35,27 +35,24 @@ foreach ($leaves as $lv) {
             <i class="fa-solid fa-calendar-check text-xl" style="color:#111827;"></i>
             <h1 class="text-2xl font-bold" style="color:#111827;">My Leaves</h1>
         </div>
-        <a href="<?php echo base_url('HR'); ?>" class="text-sm font-medium hover:opacity-70" style="color:#111827;">
-            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
-        </a>
     </div>
 
     <!-- Summary stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <h3 class="text-3xl font-bold text-gray-900 mb-1"><?php echo $total_leaves; ?></h3>
+            <h3 class="text-3xl font-bold mb-1" style="color:#111827;"><?php echo $total_leaves; ?></h3>
             <p class="text-sm text-gray-600">Total Requests</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <h3 class="text-3xl font-bold text-orange-600 mb-1"><?php echo $pending_leaves; ?></h3>
+            <h3 class="text-3xl font-bold mb-1" style="color:#111827;"><?php echo $pending_leaves; ?></h3>
             <p class="text-sm text-gray-600">Pending</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <h3 class="text-3xl font-bold text-green-600 mb-1"><?php echo $approved_leaves; ?></h3>
+            <h3 class="text-3xl font-bold mb-1" style="color:#111827;"><?php echo $approved_leaves; ?></h3>
             <p class="text-sm text-gray-600">Approved</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-            <h3 class="text-3xl font-bold text-red-600 mb-1"><?php echo $rejected_leaves; ?></h3>
+            <h3 class="text-3xl font-bold mb-1" style="color:#111827;"><?php echo $rejected_leaves; ?></h3>
             <p class="text-sm text-gray-600">Rejected</p>
         </div>
     </div>
