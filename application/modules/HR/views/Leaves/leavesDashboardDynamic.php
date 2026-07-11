@@ -24,6 +24,10 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
     .leave-dash .text-gray-600 { color:#4b5563 !important; }
     .leave-dash .text-gray-500 { color:#6b7280 !important; }
     .leave-dash { font-family:'Inter', sans-serif; }
+    /* Details modal: keep table text dark (theme makes th white) */
+    #modalContent th { color:#374151 !important; background:transparent !important; }
+    #modalContent td { color:#111827 !important; }
+    #modalContent p, #modalContent h3 { color:#111827 !important; }
 </style>
 
 <main class="leave-dash w-full pb-8" style="padding-top:90px;">
