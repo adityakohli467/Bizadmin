@@ -168,13 +168,23 @@ class Leaves extends MY_Controller {
       if (isset($_FILES['userfile']) && !empty($_FILES['userfile']['name'][0])) {
           $uploadedFileName = $this->common_model->uploadAttachment($_FILES, $uploadPath);
       }
-      
+
+      // Validate date range: start date must be on or before end date
+      $startDate = date('Y-m-d', strtotime($this->input->post('start_date')));
+      $endDate   = date('Y-m-d', strtotime($this->input->post('end_date')));
+      if ($startDate > $endDate) {
+          $this->output
+              ->set_content_type('application/json')
+              ->set_output(json_encode(['success' => false, 'message' => 'End date must be the same as or after the start date.']));
+          return;
+      }
+
       // Prepare data for insert
       $data = [
           'emp_id' => $this->input->post('emp_id'),
           'leave_type' => $this->input->post('leave_type'),
-          'start_date' => date('Y-m-d', strtotime($this->input->post('start_date'))),
-          'end_date' => date('Y-m-d', strtotime($this->input->post('end_date'))),
+          'start_date' => $startDate,
+          'end_date' => $endDate,
           'leaveComments' => $this->input->post('leaveComments'),
           'medical_certificate' => $uploadedFileName,
           'leave_status' => 1, // Pending

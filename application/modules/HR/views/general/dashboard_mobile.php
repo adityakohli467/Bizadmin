@@ -595,6 +595,13 @@ $(function () {
         var form = $('#newLeaveRequestForm')[0];
         if (!form.checkValidity()) { form.reportValidity(); return; }
 
+        var sDate = $('#leave_start_date').val();
+        var eDate = $('#leave_end_date').val();
+        if (sDate && eDate && eDate < sDate) {
+            $('#leaveErrorAlert').removeClass('d-none').text('End date must be the same as or after the start date.');
+            return;
+        }
+
         var isSick  = /sick/i.test($('#leave_type option:selected').text());
         var hasFile = $('#medical_certificate')[0].files.length > 0;
         if (isSick && !hasFile) {

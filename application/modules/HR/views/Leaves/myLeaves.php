@@ -269,6 +269,16 @@ document.addEventListener('click', function (e) {
     if (openBtn) openBtn.addEventListener('click', openModal);
     closeEls.forEach(el => el && el.addEventListener('click', closeModal));
 
+    // Keep end date on or after start date
+    const startInput = document.getElementById('al_start_date');
+    const endInput   = document.getElementById('al_end_date');
+    startInput.addEventListener('change', function () {
+        endInput.min = startInput.value;
+        if (endInput.value && endInput.value < startInput.value) {
+            endInput.value = startInput.value;
+        }
+    });
+
     // Show medical certificate field for sick leave
     typeSel.addEventListener('change', function () {
         const isSick = /sick/i.test(typeSel.options[typeSel.selectedIndex].text);
@@ -288,6 +298,14 @@ document.addEventListener('click', function (e) {
 
         if (!form.checkValidity()) {
             form.reportValidity();
+            return;
+        }
+
+        const startVal = document.getElementById('al_start_date').value;
+        const endVal   = document.getElementById('al_end_date').value;
+        if (startVal && endVal && endVal < startVal) {
+            errorBox.textContent = 'End date must be the same as or after the start date.';
+            errorBox.classList.remove('hidden');
             return;
         }
 

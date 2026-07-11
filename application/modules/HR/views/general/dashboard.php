@@ -656,6 +656,16 @@
                  return;
              }
              
+             // Validate start date is on or before end date
+             const sDate = $('#leave_start_date').val();
+             const eDate = $('#leave_end_date').val();
+             if (sDate && eDate && eDate < sDate) {
+                 $('#leaveErrorAlert').removeClass('d-none').html(
+                     '<i class="fa-solid fa-exclamation-circle me-2"></i>End date must be the same as or after the start date.'
+                 );
+                 return;
+             }
+             
              // Validate sick leave has attachment
              const selectedLeaveType = $('#leave_type option:selected').text();
              const isSickLeave = /sick/i.test(selectedLeaveType);
