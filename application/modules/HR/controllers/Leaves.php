@@ -34,8 +34,10 @@ class Leaves extends MY_Controller {
             'csrf_hash' => $this->security->get_csrf_hash()
         ];
 
-        // Standalone Tailwind page (renders its own <html>/<head>/<body>)
+        // Rendered inside the shared Velzon layout (header > content > footer)
+        $this->load->view('general/header');
         $this->load->view('Leaves/leavesDashboardDynamic', $data);
+        $this->load->view('general/footer');
     }
     
     

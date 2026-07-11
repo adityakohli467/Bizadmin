@@ -13,38 +13,32 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
     return isset($r['leave_status']) && (int)$r['leave_status'] === 1;
 }));
 ?>
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leave Dashboard</title>
-  <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
-  <?php $this->load->view('general/tailwind_common_assets'); ?>
-  <style>
+<?php /* Leave dashboard: rendered inside the shared Velzon layout (header > content > footer). Page-specific assets only. */ ?>
+<link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+<?php $this->load->view('general/tailwind_common_assets'); ?>
+<style>
     /* Keep text visible regardless of theme overrides */
-    .text-gray-900 { color:#111827 !important; }
-    .text-gray-800 { color:#1f2937 !important; }
-    .text-gray-700 { color:#374151 !important; }
-    .text-gray-600 { color:#4b5563 !important; }
-    .text-gray-500 { color:#6b7280 !important; }
-    body { font-family:'Inter', sans-serif; }
-  </style>
-</head>
-<body class="bg-gray-100">
+    .leave-dash .text-gray-900 { color:#111827 !important; }
+    .leave-dash .text-gray-800 { color:#1f2937 !important; }
+    .leave-dash .text-gray-700 { color:#374151 !important; }
+    .leave-dash .text-gray-600 { color:#4b5563 !important; }
+    .leave-dash .text-gray-500 { color:#6b7280 !important; }
+    .leave-dash { font-family:'Inter', sans-serif; }
+</style>
 
-<!-- Top bar -->
-<nav class="bg-[#1e2a5a] text-white px-8 py-4 flex items-center justify-between shadow">
-    <div class="flex items-center gap-3">
-        <i class="fa-solid fa-plane-departure text-xl"></i>
-        <h1 class="text-lg font-bold text-white">Leave Management</h1>
+<main class="leave-dash w-full pb-8" style="padding-top:90px;">
+  <div class="px-8">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-plane-departure text-xl" style="color:#111827;"></i>
+            <h1 class="text-2xl font-bold" style="color:#111827;">Leave Management</h1>
+        </div>
+        <a href="<?php echo base_url('HR'); ?>" class="text-sm font-medium hover:opacity-70" style="color:#111827;">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+        </a>
     </div>
-    <a href="<?php echo base_url('HR'); ?>" class="text-sm font-medium text-white/90 hover:text-white">
-        <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
-    </a>
-</nav>
-
-<main class="p-8">
     <div id="stats-section" class="mb-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
@@ -215,6 +209,7 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
         </div>
     </div>
 
+  </div>
 </main>
 
 <script>
@@ -292,5 +287,3 @@ document.getElementById('modalClose').addEventListener('click', function () {
     modal.classList.remove('flex');
 });
 </script>
-</body>
-</html>
