@@ -248,7 +248,7 @@ $empId = $empId ?? '';
     <div class="content">
 
         <div class="stat-row">
-            <div class="stat-card"><div class="stat-num"><?= $leaveReqCount ?></div><div class="stat-label">Leave requests</div></div>
+            <a href="<?= base_url('HR/myLeaves') ?>" class="stat-card" style="text-decoration:none;color:inherit;"><div class="stat-num"><?= $leaveReqCount ?></div><div class="stat-label">Leave requests</div></a>
             <div class="stat-card"><div class="stat-num"><?= $upcomingShifts ?></div><div class="stat-label">Upcoming shifts</div></div>
             <div class="stat-card">
                 <div class="stat-present <?= $shift_started ? '' : 'off' ?>"><?= $shift_started ? 'Active' : 'Off' ?></div>

@@ -37,10 +37,10 @@ class Leave_model extends CI_Model {
     public function get_leave_requests($location_id = null, $status = null, $limit = 50, $offset = 0) {
 
         try {
-            $this->tenantDb->select('hlm.*, hl.leaveTypeName, e.first_name, e.last_name, e.employee_code, e.department')
+            $this->tenantDb->select('hlm.*, hl.leaveTypeName, e.first_name, e.last_name, e.preferred_name, e.email')
                 ->from('HR_leave_management hlm')
                 ->join('HR_leaves hl', 'hl.id = hlm.leave_type', 'left')
-                ->join('employees e', 'e.id = hlm.emp_id', 'left')
+                ->join('HR_employee e', 'e.emp_id = hlm.emp_id', 'left')
                 ->where('hlm.leave_status !=', 0);
 
             if ($location_id) {
@@ -101,10 +101,10 @@ class Leave_model extends CI_Model {
     public function get_leave_by_id($id) {
 
         try {
-            $this->tenantDb->select('hlm.*, hl.leaveTypeName, e.first_name, e.last_name, e.employee_code, e.department, e.email')
+            $this->tenantDb->select('hlm.*, hl.leaveTypeName, e.first_name, e.last_name, e.preferred_name, e.email')
                 ->from('HR_leave_management hlm')
                 ->join('HR_leaves hl', 'hl.id = hlm.leave_type', 'left')
-                ->join('employees e', 'e.id = hlm.emp_id', 'left')
+                ->join('HR_employee e', 'e.emp_id = hlm.emp_id', 'left')
                 ->where('hlm.id', (int)$id)
                 ->limit(1);
 
@@ -193,6 +193,58 @@ class Leave_model extends CI_Model {
         } catch (Exception $e) {
             log_message('error', 'reject_leave failed: ' . $e->getMessage());
             return false;
+        }
+    }
+
+    /* -----------------------------------------------
+     * Employee's own leave history (all statuses except cancelled)
+     * ----------------------------------------------- */
+    public function get_employee_leaves($emp_id) {
+
+        try {
+            $this->tenantDb->select('hlm.*, hl.leaveTypeName')
+                ->from('HR_leave_management hlm')
+                ->join('HR_leaves hl', 'hl.id = hlm.leave_type', 'left')
+                ->where('hlm.emp_id', (int)$emp_id)
+                ->where('hlm.leave_status !=', 0)
+                ->order_by('hlm.date_added', 'DESC');
+
+            $q = $this->tenantDb->get();
+            return $this->safe_result_array($q);
+
+        } catch (Exception $e) {
+            log_message('error', 'get_employee_leaves failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /* -----------------------------------------------
+     * Aggregated leave stats for one employee
+     * ----------------------------------------------- */
+    public function get_employee_leave_stats($emp_id) {
+
+        $default = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0, 'approved_days' => 0];
+
+        try {
+            $sql = "SELECT
+                        COUNT(*) AS total,
+                        SUM(leave_status = 1) AS pending,
+                        SUM(leave_status = 2) AS approved,
+                        SUM(leave_status = 3) AS rejected,
+                        COALESCE(SUM(CASE WHEN leave_status = 2
+                            THEN DATEDIFF(end_date, start_date) + 1 ELSE 0 END), 0) AS approved_days
+                    FROM HR_leave_management
+                    WHERE emp_id = " . (int)$emp_id . "
+                      AND leave_status != 0";
+
+            $q = $this->tenantDb->query($sql);
+            $row = $this->safe_row_array($q);
+
+            return array_merge($default, array_map('intval', $row ?: []));
+
+        } catch (Exception $e) {
+            log_message('error', 'get_employee_leave_stats failed: ' . $e->getMessage());
+            return $default;
         }
     }
 

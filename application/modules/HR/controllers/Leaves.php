@@ -122,7 +122,20 @@ class Leaves extends MY_Controller {
             return;
         }
         $row = $this->Leave_model->get_leave_by_id($id);
-        echo json_encode(['success'=>true,'data'=>$row]);
+
+        $balances = [];
+        $history_summary = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0, 'approved_days' => 0];
+        if (!empty($row['emp_id'])) {
+            $balances = $this->Leave_model->get_employee_leave_balance($row['emp_id']);
+            $history_summary = $this->Leave_model->get_employee_leave_stats($row['emp_id']);
+        }
+
+        echo json_encode([
+            'success' => true,
+            'data' => $row,
+            'balances' => $balances,
+            'history' => $history_summary
+        ]);
     }
 
     /**
@@ -232,6 +245,32 @@ class Leaves extends MY_Controller {
     function cancelLeave(){
         $data['leave_status'] = 0;
       $this->common_model->commonRecordUpdate('HR_leave_management','id',$_POST['id'],$data);   
+    }
+
+    /**
+     * Employee-facing page: view own leave history, status and balances
+     */
+    function myLeaves(){
+        $user_id = $this->ion_auth->user()->row()->id;
+        $empData = $this->common_model->fetchRecordsDynamically(
+            'HR_employee',
+            ['emp_id', 'first_name', 'last_name'],
+            ['userId' => $user_id]
+        );
+        $empId = isset($empData[0]['emp_id']) ? $empData[0]['emp_id'] : '';
+
+        $data = [
+            'empId'    => $empId,
+            'empName'  => trim(($empData[0]['first_name'] ?? '') . ' ' . ($empData[0]['last_name'] ?? '')),
+            'leaves'   => $empId ? $this->Leave_model->get_employee_leaves($empId) : [],
+            'balances' => $empId ? $this->Leave_model->get_employee_leave_balance($empId) : [],
+            'csrf_name' => $this->security->get_csrf_token_name(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ];
+
+        $this->load->view('general/header');
+        $this->load->view('Leaves/myLeaves', $data);
+        $this->load->view('general/footer');
     }
 }
 

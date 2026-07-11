@@ -118,7 +118,7 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
                             <div class="flex items-start justify-between mb-2">
                                 <div>
                                     <h4 class="font-semibold text-gray-900"><?php echo htmlspecialchars($employee_name); ?></h4>
-                                    <p class="text-sm text-gray-500"><?php echo htmlspecialchars($r['department'] ?? ($r['employee_code'] ?? '')); ?></p>
+                                    <p class="text-sm text-gray-500"><?php echo htmlspecialchars($r['preferred_name'] ?? ($r['email'] ?? '')); ?></p>
                                 </div>
                                 <span class="px-3 py-1 <?php echo $badge_class; ?> text-xs font-semibold rounded-full"><?php echo $status_label; ?></span>
                             </div>
@@ -201,7 +201,7 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
 
     <!-- Details Modal (hidden) -->
     <div id="leaveModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-lg w-11/12 max-w-2xl p-6">
+        <div class="bg-white rounded-lg w-11/12 max-w-2xl p-6 overflow-y-auto" style="max-height:85vh;">
             <div id="modalContent"></div>
             <div class="mt-4 text-right">
                 <button id="modalClose" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Close</button>
@@ -261,17 +261,72 @@ document.addEventListener('click', function (e) {
             .then(r => r.json()).then(res => {
                 if (!res.success) { alert(res.message || 'No data'); return; }
                 const d = res.data || {};
+                const balances = res.balances || [];
+                const hist = res.history || {};
                 const name = ((d.first_name || '') + ' ' + (d.last_name || '')).trim() || 'Employee';
                 const statusMap = { 1: 'Pending', 2: 'Approved', 3: 'Rejected' };
+
+                let balanceRows = '';
+                if (balances.length) {
+                    balanceRows = balances.map(b => {
+                        const ent = parseFloat(b.entitlements || 0);
+                        const used = parseFloat(b.used_days || 0);
+                        const rem = (b.remaining !== undefined) ? parseFloat(b.remaining) : Math.max(0, ent - used);
+                        return `<tr class="border-b border-gray-100">
+                                    <td class="py-1 pr-4">${b.leaveTypeName || ''}</td>
+                                    <td class="py-1 pr-4 text-center">${used}</td>
+                                    <td class="py-1 pr-4 text-center">${ent}</td>
+                                    <td class="py-1 text-center font-medium">${rem}</td>
+                                </tr>`;
+                    }).join('');
+                } else {
+                    balanceRows = `<tr><td colspan="4" class="py-2 text-gray-500">No balance data.</td></tr>`;
+                }
+
                 const html = `
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">${name}</h3>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <p><span class="font-medium">Leave Type:</span> ${d.leaveTypeName || 'N/A'}</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-1">${name}</h3>
+                    <p class="text-sm text-gray-500 mb-4">${d.email || ''}</p>
+
+                    <div class="grid grid-cols-4 gap-3 mb-4">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-gray-900">${hist.total || 0}</div>
+                            <div class="text-xs text-gray-500">Total</div>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-orange-600">${hist.pending || 0}</div>
+                            <div class="text-xs text-gray-500">Pending</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-green-600">${hist.approved || 0}</div>
+                            <div class="text-xs text-gray-500">Approved</div>
+                        </div>
+                        <div class="bg-indigo-50 rounded-lg p-3 text-center">
+                            <div class="text-lg font-bold text-indigo-600">${hist.approved_days || 0}</div>
+                            <div class="text-xs text-gray-500">Days taken</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-gray-700 mb-4">
+                        <p><span class="font-medium">This Request:</span> ${d.leaveTypeName || 'N/A'}</p>
                         <p><span class="font-medium">Dates:</span> ${d.start_date || ''} to ${d.end_date || ''}</p>
-                        <p><span class="font-medium">Department:</span> ${d.department || '-'}</p>
-                        <p><span class="font-medium">Comments:</span> ${d.leaveComments || '-'}</p>
+                        <p><span class="font-medium">Reason:</span> ${d.leaveComments || '-'}</p>
                         <p><span class="font-medium">Status:</span> ${statusMap[d.leave_status] || 'Unknown'}</p>
                         ${d.approver_comment ? `<p><span class="font-medium">Manager Comment:</span> ${d.approver_comment}</p>` : ''}
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 mb-2">Leave Balance</p>
+                        <table class="w-full text-sm text-gray-700">
+                            <thead>
+                                <tr class="text-xs text-gray-500 border-b border-gray-200">
+                                    <th class="text-left py-1 pr-4">Type</th>
+                                    <th class="py-1 pr-4">Used</th>
+                                    <th class="py-1 pr-4">Entitled</th>
+                                    <th class="py-1">Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody>${balanceRows}</tbody>
+                        </table>
                     </div>`;
                 document.getElementById('modalContent').innerHTML = html;
                 const modal = document.getElementById('leaveModal');
