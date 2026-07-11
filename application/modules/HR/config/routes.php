@@ -98,6 +98,10 @@ $route['HR/Config/positionSetting'] = 'Config/addPositionSetting';
 
 $route['HR/Leave/requestLeave'] = 'Leaves/requestLeave';
 $route['HR/Leave/cancelLeave'] = 'Leaves/cancelLeave';
+$route['HR/Leave/approve'] = 'Leaves/approve';
+$route['HR/Leave/reject'] = 'Leaves/reject';
+$route['HR/Leave/details/(:num)'] = 'Leaves/details/$1';
+$route['HR/Leave/ajax_list'] = 'Leaves/ajax_list';
 
 // Documents
 $route['HR/documents'] = 'Document/index';

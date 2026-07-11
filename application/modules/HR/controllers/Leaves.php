@@ -22,12 +22,10 @@ class Leaves extends MY_Controller {
     }
     
     function leaveDashbaord(){
-       
-	  
 	  $location_id = $this->session->userdata('location_id') ?: null;
 
         $summary = $this->Leave_model->get_leave_summary($location_id);
-        $recent = $this->Leave_model->get_leave_requests($location_id, null, 10, 0);
+        $recent = $this->Leave_model->get_leave_requests($location_id, null, 50, 0);
 
         $data = [
             'summary' => $summary,
@@ -35,11 +33,9 @@ class Leaves extends MY_Controller {
             'csrf_name' => $this->security->get_csrf_token_name(),
             'csrf_hash' => $this->security->get_csrf_hash()
         ];
-      $this->load->view('general/header');
-	  $this->load->view('Leaves/leavesDashboardDynamic',$data);
-	  $this->load->view('general/footer');
-        
-        
+
+        // Standalone Tailwind page (renders its own <html>/<head>/<body>)
+        $this->load->view('Leaves/leavesDashboardDynamic', $data);
     }
     
     

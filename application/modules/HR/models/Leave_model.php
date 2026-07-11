@@ -204,7 +204,6 @@ class Leave_model extends CI_Model {
         try {
             $balances_query = $this->tenantDb->select('hl.id AS leave_type_id, hl.leaveTypeName, hl.entitlements')
                 ->from('HR_leaves hl')
-                ->where('hl.status', 1)
                 ->get();
 
             $balances = $this->safe_result_array($balances_query);

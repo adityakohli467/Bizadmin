@@ -116,12 +116,11 @@ public function index($system_id = '')
         $data['attendance'] = $this->attendanceTimeline($empId) ?? [];
         $data['empId'] = $empId;
         
-        // Fetch leave types for leave request form
-        $leaveTypeConditions = ['status' => 1, 'is_deleted' => 0];
+        // Fetch leave types for leave request form (mirror the admin config list)
         $data['leaveTypes'] = $this->common_model->fetchRecordsDynamically(
             'HR_leaves', 
             ['id', 'leaveTypeName', 'entitlements'], 
-            $leaveTypeConditions,
+            [],
             'leaveTypeName ASC'
         ) ?? [];
 
