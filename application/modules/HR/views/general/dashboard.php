@@ -217,7 +217,7 @@
          <?php else: ?>
           <div class="lc-name">No leave types configured.</div>
          <?php endif; ?>
-         <button type="button" class="apply-btn" data-bs-toggle="modal" data-bs-target="#requestLeaveModal">Apply for leave</button>
+         <button type="button" class="apply-btn" id="openRequestLeave">Apply for leave</button>
         </div>
 
         <div class="cal-wrap">
@@ -388,101 +388,57 @@
     
      <?php $this->load->view('unavailabilityCanvas'); ?>
      
-     <!-- Leave Request Modal -->
-     <div class="modal fade" id="requestLeaveModal" tabindex="-1" aria-labelledby="requestLeaveModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-lg">
-             <div class="modal-content">
-                 <div class="modal-header bg-teal text-white">
-                     <h5 class="modal-title" id="requestLeaveModalLabel">
-                         <i class="fa-solid fa-calendar-plus me-2"></i>
-                         Request Leave
-                     </h5>
-                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                 </div>
-                 <div class="modal-body">
-                     <div class="alert alert-success d-none" id="leaveSuccessAlert">
-                         <i class="fa-solid fa-check-circle me-2"></i>
-                         Leave request submitted successfully!
-                     </div>
-                     <div class="alert alert-danger d-none" id="leaveErrorAlert"></div>
-                     
-                     <form id="newLeaveRequestForm" enctype="multipart/form-data">
-                         <input type="hidden" name="emp_id" value="<?= $empId ?? '' ?>">
-                         
-                         <div class="row g-3">
-                             <div class="col-md-6">
-                                 <label for="leave_start_date" class="form-label">
-                                     Start Date <span class="text-danger">*</span>
-                                 </label>
-                                 <input type="date" 
-                                        class="form-control" 
-                                        id="leave_start_date" 
-                                        name="start_date" 
-                                        required>
-                             </div>
-                             
-                             <div class="col-md-6">
-                                 <label for="leave_end_date" class="form-label">
-                                     End Date <span class="text-danger">*</span>
-                                 </label>
-                                 <input type="date" 
-                                        class="form-control" 
-                                        id="leave_end_date" 
-                                        name="end_date" 
-                                        required>
-                             </div>
-                             
-                             <div class="col-md-6">
-                                 <label for="leave_type" class="form-label">
-                                     Leave Type <span class="text-danger">*</span>
-                                 </label>
-                                 <select class="form-select" id="leave_type" name="leave_type" required>
-                                     <option value="">Select Leave Type</option>
-                                     <?php if(isset($leaveTypes) && !empty($leaveTypes)): ?>
-                                         <?php foreach($leaveTypes as $type): ?>
-                                             <option value="<?= $type['id'] ?>"><?= htmlspecialchars($type['leaveTypeName']) ?></option>
-                                         <?php endforeach; ?>
-                                     <?php endif; ?>
-                                 </select>
-                             </div>
-                             
-                             <div class="col-md-6 d-none" id="medicalCertificateField">
-                                 <label for="medical_certificate" class="form-label">
-                                     Medical Certificate <span class="text-danger">*</span>
-                                 </label>
-                                 <input type="file" 
-                                        class="form-control" 
-                                        id="medical_certificate" 
-                                        name="userfile[]" 
-                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                        multiple>
-                                 <small class="text-muted">Accepted: PDF, JPG, PNG, DOC, DOCX (Max 8MB)</small>
-                             </div>
-                             
-                             <div class="col-12">
-                                 <label for="leave_comments" class="form-label">Comments</label>
-                                 <textarea class="form-control" 
-                                           id="leave_comments" 
-                                           name="leaveComments" 
-                                           rows="3" 
-                                           placeholder="Enter reason for leave..."></textarea>
-                             </div>
+     <!-- Leave Request Modal (uniform Tailwind UI) -->
+     <div id="requestLeaveModal" class="fixed inset-0 z-50 hidden items-center justify-center" style="background:rgba(0,0,0,0.5);">
+         <div class="bg-white rounded-xl w-11/12 max-w-2xl overflow-y-auto" style="max-height:90vh;">
+             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                 <h3 class="text-lg font-bold" style="color:#111827;"><i class="fa-solid fa-calendar-plus mr-2" style="color:#4f46e5;"></i>Request Leave</h3>
+                 <button type="button" class="leave-modal-close" style="color:#9ca3af;background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark text-xl"></i></button>
+             </div>
+             <div class="p-6">
+                 <div id="leaveSuccessAlert" class="d-none" style="margin-bottom:1rem;padding:0.75rem 1rem;border-radius:0.5rem;background:#ecfdf5;color:#047857;font-size:0.875rem;"><i class="fa-solid fa-check-circle me-2"></i>Leave request submitted successfully!</div>
+                 <div id="leaveErrorAlert" class="d-none" style="margin-bottom:1rem;padding:0.75rem 1rem;border-radius:0.5rem;background:#fef2f2;color:#b91c1c;font-size:0.875rem;"></div>
+
+                 <form id="newLeaveRequestForm" enctype="multipart/form-data">
+                     <input type="hidden" name="emp_id" value="<?= $empId ?? '' ?>">
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div>
+                             <label for="leave_start_date" class="block text-sm font-medium mb-1" style="color:#374151;">Start Date <span style="color:#ef4444;">*</span></label>
+                             <input type="date" id="leave_start_date" name="start_date" required class="w-full rounded-lg px-3 py-2 text-sm" style="border:1px solid #d1d5db;color:#111827;">
                          </div>
-                     </form>
-                 </div>
-                 <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                         <i class="fa-solid fa-xmark me-1"></i>
-                         Cancel
-                     </button>
-                     <button type="button" class="btn btn-success" id="submitLeaveRequest">
-                         <span class="btn-text">
-                             <i class="fa-solid fa-paper-plane me-1"></i>
-                             Submit Request
-                         </span>
-                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                     </button>
-                 </div>
+                         <div>
+                             <label for="leave_end_date" class="block text-sm font-medium mb-1" style="color:#374151;">End Date <span style="color:#ef4444;">*</span></label>
+                             <input type="date" id="leave_end_date" name="end_date" required class="w-full rounded-lg px-3 py-2 text-sm" style="border:1px solid #d1d5db;color:#111827;">
+                         </div>
+                         <div>
+                             <label for="leave_type" class="block text-sm font-medium mb-1" style="color:#374151;">Leave Type <span style="color:#ef4444;">*</span></label>
+                             <select id="leave_type" name="leave_type" required class="w-full rounded-lg px-3 py-2 text-sm" style="border:1px solid #d1d5db;color:#111827;background:#fff;">
+                                 <option value="">Select Leave Type</option>
+                                 <?php if(isset($leaveTypes) && !empty($leaveTypes)): ?>
+                                     <?php foreach($leaveTypes as $type): ?>
+                                         <option value="<?= $type['id'] ?>"><?= htmlspecialchars($type['leaveTypeName']) ?></option>
+                                     <?php endforeach; ?>
+                                 <?php endif; ?>
+                             </select>
+                         </div>
+                         <div id="medicalCertificateField" class="d-none">
+                             <label for="medical_certificate" class="block text-sm font-medium mb-1" style="color:#374151;">Medical Certificate <span style="color:#ef4444;">*</span></label>
+                             <input type="file" id="medical_certificate" name="userfile[]" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple class="w-full rounded-lg px-3 py-2 text-sm" style="border:1px solid #d1d5db;color:#111827;">
+                             <p class="text-xs mt-1" style="color:#6b7280;">Required for sick leave (PDF, JPG, PNG, DOC, DOCX. Max 8MB).</p>
+                         </div>
+                         <div class="md:col-span-2">
+                             <label for="leave_comments" class="block text-sm font-medium mb-1" style="color:#374151;">Comments</label>
+                             <textarea id="leave_comments" name="leaveComments" rows="3" placeholder="Enter reason for leave..." class="w-full rounded-lg px-3 py-2 text-sm" style="border:1px solid #d1d5db;color:#111827;"></textarea>
+                         </div>
+                     </div>
+                 </form>
+             </div>
+             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
+                 <button type="button" class="leave-modal-close px-4 py-2 text-sm rounded-lg" style="background:#fff;border:1px solid #d1d5db;color:#374151;">Cancel</button>
+                 <button type="button" id="submitLeaveRequest" class="px-4 py-2 text-white text-sm rounded-lg" style="background:#4f46e5;">
+                     <span class="btn-text"><i class="fa-solid fa-paper-plane mr-2"></i>Submit Request</span>
+                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                 </button>
              </div>
          </div>
      </div>
@@ -743,9 +699,9 @@
                          $('#medicalCertificateField').addClass('d-none');
                          
                          setTimeout(function() {
-                             $('#requestLeaveModal').modal('hide');
+                             hideRequestLeaveModal();
                              location.reload();
-                         }, 2000);
+                         }, 1500);
                      } else {
                          $('#leaveErrorAlert').removeClass('d-none').html(
                              '<i class="fa-solid fa-exclamation-circle me-2"></i>' + 
@@ -767,13 +723,20 @@
              });
          });
          
-         // Reset modal on close
-         $('#requestLeaveModal').on('hidden.bs.modal', function() {
+         // Open / close uniform Tailwind leave modal
+         function showRequestLeaveModal() {
+             $('#leaveSuccessAlert, #leaveErrorAlert').addClass('d-none');
+             $('#requestLeaveModal').removeClass('hidden').addClass('flex');
+         }
+         function hideRequestLeaveModal() {
+             $('#requestLeaveModal').addClass('hidden').removeClass('flex');
              $('#newLeaveRequestForm')[0].reset();
              $('#leaveSuccessAlert, #leaveErrorAlert').addClass('d-none');
              $('#medicalCertificateField').addClass('d-none');
              $('#medical_certificate').attr('required', false);
-         });
+         }
+         $('#openRequestLeave').on('click', showRequestLeaveModal);
+         $('.leave-modal-close').on('click', hideRequestLeaveModal);
 
          // Save My Availability (dashboard widget)
          $('#dashboardAvailabilityForm').on('submit', function(e) {
