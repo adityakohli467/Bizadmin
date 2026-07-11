@@ -1635,34 +1635,65 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
         
         document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("loader-overlay").style.display = "none";
-        
-        // Restrict startDatePicker to Mondays only
+
+        // Parse a yyyy-mm-dd string as a LOCAL date (avoids UTC day-shift bug)
+        function parseLocalDate(val) {
+            if (!val) return null;
+            const p = val.split('-');
+            if (p.length !== 3) return null;
+            const d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+            return isNaN(d.getTime()) ? null : d;
+        }
+        function fmtLocalDate(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + dd;
+        }
+        // Monday (start) of the week containing d
+        function mondayOfWeek(d) {
+            const nd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            const day = nd.getDay(); // 0=Sun .. 6=Sat
+            const diff = (day === 0) ? -6 : (1 - day);
+            nd.setDate(nd.getDate() + diff);
+            return nd;
+        }
+        // Sunday (end) of the week containing d
+        function sundayOfWeek(d) {
+            const monday = mondayOfWeek(d);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            return sunday;
+        }
+
         const startDatePicker = document.getElementById('startDatePicker');
+        const endDatePicker = document.getElementById('endDatePicker');
+
+        // Picking any day for the start snaps it to that week's Monday and,
+        // if the end is empty or now earlier than the start, sets the matching Sunday.
         if (startDatePicker) {
-            startDatePicker.addEventListener('input', function(e) {
-                const selectedDate = new Date(this.value);
-                const dayOfWeek = selectedDate.getDay();
-                
-                // Check if selected day is Monday (1)
-                if (dayOfWeek !== 1) {
-                    alert('Please select a Monday for the start date.');
-                    this.value = '';
+            startDatePicker.addEventListener('change', function () {
+                const d = parseLocalDate(this.value);
+                if (!d) return;
+                const monday = mondayOfWeek(d);
+                this.value = fmtLocalDate(monday);
+                if (endDatePicker) {
+                    const endD = parseLocalDate(endDatePicker.value);
+                    if (!endD || endD < monday) {
+                        const sunday = new Date(monday);
+                        sunday.setDate(monday.getDate() + 6);
+                        endDatePicker.value = fmtLocalDate(sunday);
+                    }
                 }
             });
         }
-        
-        // Restrict endDatePicker to Sundays only
-        const endDatePicker = document.getElementById('endDatePicker');
+
+        // Picking any day for the end snaps it to that week's Sunday.
         if (endDatePicker) {
-            endDatePicker.addEventListener('input', function(e) {
-                const selectedDate = new Date(this.value);
-                const dayOfWeek = selectedDate.getDay();
-                
-                // Check if selected day is Sunday (0)
-                if (dayOfWeek !== 0) {
-                    alert('Please select a Sunday for the end date.');
-                    this.value = '';
-                }
+            endDatePicker.addEventListener('change', function () {
+                const d = parseLocalDate(this.value);
+                if (!d) return;
+                this.value = fmtLocalDate(sundayOfWeek(d));
             });
         }
     });
