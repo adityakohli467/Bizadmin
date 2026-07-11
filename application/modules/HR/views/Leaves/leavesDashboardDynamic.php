@@ -42,47 +42,35 @@ $pending_requests = array_values(array_filter($recent_requests, function ($r) {
     </div>
     <div id="stats-section" class="mb-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="pending_count" class="text-3xl font-bold" style="color:#ea580c;"><?php echo $pending_count; ?></h3>
                     <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Awaiting</span>
                 </div>
-                <h3 id="pending_count" class="text-3xl font-bold text-gray-900 mb-1"><?php echo $pending_count; ?></h3>
                 <p class="text-sm text-gray-600">Pending Requests</p>
             </div>
 
-            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-check-circle text-green-600 text-xl"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="approved_count" class="text-3xl font-bold" style="color:#16a34a;"><?php echo $approved_count; ?></h3>
                     <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">Total</span>
                 </div>
-                <h3 id="approved_count" class="text-3xl font-bold text-gray-900 mb-1"><?php echo $approved_count; ?></h3>
                 <p class="text-sm text-gray-600">Approved Leaves</p>
             </div>
 
-            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-times-circle text-red-600 text-xl"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="rejected_count" class="text-3xl font-bold" style="color:#dc2626;"><?php echo $rejected_count; ?></h3>
                     <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">Total</span>
                 </div>
-                <h3 id="rejected_count" class="text-3xl font-bold text-gray-900 mb-1"><?php echo $rejected_count; ?></h3>
                 <p class="text-sm text-gray-600">Rejected Leaves</p>
             </div>
 
-            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-calendar-day text-indigo-600 text-xl"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="upcoming_count" class="text-3xl font-bold" style="color:#4f46e5;"><?php echo $upcoming_count; ?></h3>
                     <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">Next 30 Days</span>
                 </div>
-                <h3 id="upcoming_count" class="text-3xl font-bold text-gray-900 mb-1"><?php echo $upcoming_count; ?></h3>
                 <p class="text-sm text-gray-600">Upcoming Leaves</p>
             </div>
         </div>
