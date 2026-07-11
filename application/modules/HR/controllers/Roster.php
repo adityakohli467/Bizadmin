@@ -104,6 +104,27 @@ class Roster extends MY_Controller {
     $_GET['rosterStartDate'] = $data['rosterStartDate'];
     $_GET['rosterEndDate'] = $data['rosterEndDate'];
 
+    // ---------- Employees on leave during this roster week ----------
+    $data['empLeavesThisWeek'] = [];
+    try {
+        $this->load->model('Leave_model');
+        $weekLeaves = $this->Leave_model->get_leaves_in_range(
+            $data['rosterStartDate'],
+            $data['rosterEndDate'],
+            $locationId
+        );
+        foreach ($weekLeaves as $wl) {
+            if (empty($wl['emp_id'])) { continue; }
+            $data['empLeavesThisWeek'][$wl['emp_id']][] = [
+                'start_date'   => $wl['start_date'],
+                'end_date'     => $wl['end_date'],
+                'leave_status' => (int)$wl['leave_status'],
+            ];
+        }
+    } catch (Throwable $e) {
+        $data['empLeavesThisWeek'] = [];
+    }
+
     // ---------- Fetch Roster ----------
     $rosterData = [];
 
@@ -261,6 +282,23 @@ class Roster extends MY_Controller {
     }
     $data['rosterId'] = $rosterId ?? 0;
     $data['allDayRosterData'] = $allDayRosterData;
+
+    // Employees on leave during this roster week
+    $data['empLeavesThisWeek'] = [];
+    try {
+        $this->load->model('Leave_model');
+        $weekLeaves = $this->Leave_model->get_leaves_in_range($startDateFormatted, $endDateFormatted, $locationId);
+        foreach ($weekLeaves as $wl) {
+            if (empty($wl['emp_id'])) { continue; }
+            $data['empLeavesThisWeek'][$wl['emp_id']][] = [
+                'start_date'   => $wl['start_date'],
+                'end_date'     => $wl['end_date'],
+                'leave_status' => (int)$wl['leave_status'],
+            ];
+        }
+    } catch (Throwable $e) {
+        $data['empLeavesThisWeek'] = [];
+    }
     
     // DEBUG: Add collision info
     $data['debugInfo'] = [
@@ -1152,7 +1190,37 @@ class Roster extends MY_Controller {
     $allDayRosterData[$key] = json_encode($dataEmp);
   }
   $data['allDayRosterData'] = $allDayRosterData;
-  
+
+  // Employees on leave during this roster week
+  $data['empLeavesThisWeek'] = [];
+  try {
+      $leaveStart = '';
+      $leaveEnd   = '';
+      if (!empty($data['rosterInfo'][0]['start_date'])) {
+          $leaveStart = date('Y-m-d', strtotime($data['rosterInfo'][0]['start_date']));
+          $leaveEnd   = !empty($data['rosterInfo'][0]['end_date'])
+              ? date('Y-m-d', strtotime($data['rosterInfo'][0]['end_date']))
+              : date('Y-m-d', strtotime($leaveStart . ' +6 days'));
+      } elseif (!empty($data['rosterStartDate'])) {
+          $leaveStart = date('Y-m-d', strtotime($data['rosterStartDate']));
+          $leaveEnd   = date('Y-m-d', strtotime($leaveStart . ' +6 days'));
+      }
+      if ($leaveStart && $leaveEnd) {
+          $this->load->model('Leave_model');
+          $weekLeaves = $this->Leave_model->get_leaves_in_range($leaveStart, $leaveEnd, $this->location_id);
+          foreach ($weekLeaves as $wl) {
+              if (empty($wl['emp_id'])) { continue; }
+              $data['empLeavesThisWeek'][$wl['emp_id']][] = [
+                  'start_date'   => $wl['start_date'],
+                  'end_date'     => $wl['end_date'],
+                  'leave_status' => (int)$wl['leave_status'],
+              ];
+          }
+      }
+  } catch (Throwable $e) {
+      $data['empLeavesThisWeek'] = [];
+  }
+
       $this->load->view('general/header');
 	  $this->load->view('roster/roster',$data);
 	  $this->load->view('general/footer');

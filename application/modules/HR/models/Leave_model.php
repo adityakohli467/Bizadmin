@@ -169,6 +169,35 @@ class Leave_model extends CI_Model {
     }
 
     /* -----------------------------------------------
+     * Leaves (pending or approved) overlapping a date range.
+     * Used to flag employees on leave in a roster week.
+     * ----------------------------------------------- */
+    public function get_leaves_in_range($start, $end, $location_id = null) {
+
+        try {
+            $this->tenantDb->select('emp_id, start_date, end_date, leave_status')
+                ->from('HR_leave_management')
+                ->where('leave_status !=', 0)   // not cancelled
+                ->where('leave_status !=', 3)   // not rejected
+                ->where('start_date <=', $end)
+                ->where('end_date >=', $start);
+
+            if ($location_id) {
+                $this->tenantDb->where('location_id', (int)$location_id);
+            }
+
+            $this->tenantDb->order_by('start_date', 'ASC');
+
+            $q = $this->tenantDb->get();
+            return $this->safe_result_array($q);
+
+        } catch (Exception $e) {
+            log_message('error', 'get_leaves_in_range failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /* -----------------------------------------------
      * Employee's own leave history (all statuses except cancelled)
      * ----------------------------------------------- */
     public function get_employee_leaves($emp_id) {

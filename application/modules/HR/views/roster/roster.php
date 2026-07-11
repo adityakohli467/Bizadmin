@@ -259,6 +259,31 @@ $avatarText = $showTier ? 'T' . htmlspecialchars($empList['tier']) : (!empty($em
                                            
                                         </p>
                                         
+                                        <?php
+                                        $empLeaves = (isset($empLeavesThisWeek) && isset($empList['emp_id']) && isset($empLeavesThisWeek[$empList['emp_id']]))
+                                            ? $empLeavesThisWeek[$empList['emp_id']] : [];
+                                        if (!empty($empLeaves)) {
+                                            $leaveParts = [];
+                                            foreach ($empLeaves as $lv) {
+                                                $s = strtotime($lv['start_date']);
+                                                $e = strtotime($lv['end_date']);
+                                                if (!$s || !$e) { continue; }
+                                                if (date('Y-m-d', $s) === date('Y-m-d', $e)) {
+                                                    $leaveParts[] = date('j M', $s);
+                                                } elseif (date('M Y', $s) === date('M Y', $e)) {
+                                                    $leaveParts[] = date('j', $s) . '–' . date('j M', $e);
+                                                } else {
+                                                    $leaveParts[] = date('j M', $s) . ' – ' . date('j M', $e);
+                                                }
+                                            }
+                                            if (!empty($leaveParts)) {
+                                                $leaveLabel = 'On leave ' . implode(', ', $leaveParts);
+                                        ?>
+                                        <p class="text-xs mt-1 d-inline-flex align-items-center" style="color:#b45309; background:#fffbeb; border:1px solid #fde68a; border-radius:9999px; padding:2px 8px; gap:4px; line-height:1.2;" title="<?php echo htmlspecialchars($leaveLabel); ?>">
+                                            <i class="fa-solid fa-circle-info" style="color:#d97706;"></i>
+                                            <span><?php echo htmlspecialchars($leaveLabel); ?></span>
+                                        </p>
+                                        <?php } } ?>
                                         
                                         <input type="hidden" class="position_id" value="<?php echo isset($empList['position_id']) ? htmlspecialchars($empList['position_id']) : ''; ?>">
                                         <input type="hidden" class="empId" value="<?php echo isset($empList['emp_id']) ? htmlspecialchars($empList['emp_id']) : ''; ?>">
