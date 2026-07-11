@@ -194,12 +194,6 @@
          </div>
         </div>
 
-        <div>
-         <div class="block-title">Quick stats</div>
-         <div class="qs-row"><span class="qs-label">Hours this week</span><span class="qs-val"><?= htmlspecialchars($hours_this_week) ?></span></div>
-         <div class="qs-row"><span class="qs-label">Attendance rate</span><span class="qs-val teal"><?= htmlspecialchars($attendance_rate) ?>%</span></div>
-        </div>
-
         <?php $leaveBalances = $leaveBalances ?? []; ?>
         <div class="leave-card" id="leave-balance-widget">
          <div class="lc-title">Leave balance</div>
@@ -250,7 +244,7 @@
         <div class="stat-row">
          <a href="<?= base_url('HR/myLeaves') ?>" class="stat-card" style="text-decoration:none;color:inherit;cursor:pointer;"><div class="stat-num"><?= (int) ($leaveRequestCount ?? 0) ?></div><div class="stat-label">Leave requests <i class="fa-solid fa-arrow-right" style="font-size:10px;margin-left:4px;"></i></div></a>
          <div class="stat-card"><div class="stat-num"><?= (int) ($upcomingShiftsCount ?? 0) ?></div><div class="stat-label">Upcoming shifts</div></div>
-         <div class="stat-card"><div class="stat-present <?= $shift_started ? '' : 'absent' ?>"><?= $shift_started ? 'Present' : 'Absent' ?></div><div class="stat-label">Attendance today</div></div>
+         <div class="stat-card"><div class="stat-num"><?= htmlspecialchars($hours_this_week) ?></div><div class="stat-label">Hours this week</div></div>
         </div>
 
          
