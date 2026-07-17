@@ -2,6 +2,15 @@
 <html lang="en" data-layout="horizontal" data-topbar="light" data-sidebar="dark" data-sidebar-size="sm-hover-active" data-sidebar-image="none" data-preloader="disable">
 
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18329612204"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-18329612204');
+    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Bizadmin</title>
   <link rel="shortcut icon" href="<?php echo base_url();?>login-assets/img/favicon.jpeg" />
