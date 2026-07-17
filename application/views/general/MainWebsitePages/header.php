@@ -8,6 +8,23 @@
 
       gtag('config', 'AW-18329612204');
     </script>
+    <!-- Event snippet for Page view conversion page -->
+    <script>
+      function gtag_report_conversion(url) {
+        var callback = function () {
+          if (typeof(url) != 'undefined') {
+            window.location = url;
+          }
+        };
+        gtag('event', 'conversion', {
+            'send_to': 'AW-18329612204/ge7ZCKa1_tEcEKzfnqRE',
+            'value': 1.0,
+            'currency': 'INR',
+            'event_callback': callback
+        });
+        return false;
+      }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>BizAdmin</title>

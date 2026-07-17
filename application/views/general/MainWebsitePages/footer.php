@@ -128,6 +128,9 @@
                     formMessage.classList.add('text-green-600');
                     formMessage.textContent = 'Your message has been sent successfully!';
                     form.reset();
+                    if (typeof gtag_report_conversion === 'function') {
+                        gtag_report_conversion();
+                    }
                 } else {
                     formMessage.classList.remove('text-green-600');
                     formMessage.classList.add('text-red-600');
