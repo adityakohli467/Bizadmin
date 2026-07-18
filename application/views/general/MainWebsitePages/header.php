@@ -28,7 +28,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>BizAdmin</title>
-    <link rel="stylesheet" href="<?php echo base_url(""); ?>theme-assets/css/tailwind.min.css">
+    <?php $tw_css = FCPATH . 'theme-assets/css/tailwind.min.css'; $tw_ver = is_file($tw_css) ? filemtime($tw_css) : time(); ?>
+    <link rel="stylesheet" href="<?php echo base_url(''); ?>theme-assets/css/tailwind.min.css?v=<?php echo $tw_ver; ?>">
     <?php $this->load->view('general/tailwind_common_assets'); ?>
      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     
