@@ -157,23 +157,23 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <section id="features" class="py-14 md:py-20 bg-white">
         <div class="container mx-auto px-4 lg:px-8">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-12">Powerful Features That Help You Grow Faster</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <?php
                 $features = [
-                    ['fa-solid fa-motorcycle', 'text-purple-600 bg-purple-100', 'Commission-Free Delivery', 'Keep 100% of your profits. Zero commission on online orders.'],
-                    ['fa-solid fa-calendar-check', 'text-blue-600 bg-blue-100', 'Accept Bookings 24/7', 'Take online reservations anytime, anywhere. Never miss a customer.'],
-                    ['fa-solid fa-gift', 'text-red-500 bg-red-100', 'Boost Sales with Rewards', 'Easy reward points system to turn first-time customers into loyal fans.'],
-                    ['fa-solid fa-bullhorn', 'text-red-500 bg-red-100', 'Free Marketing Assistance', 'Get personalised marketing support and grow your business — for free!'],
-                    ['fa-solid fa-robot', 'text-blue-600 bg-blue-100', 'Bizzy AI — 24/7 Assistant', 'Handles customer queries, recommends, upsells and helps checkout in 2 clicks.'],
-                    ['fa-brands fa-google', 'text-slate-700 bg-slate-100', 'Google Partner', 'Official Order &amp; Reserve with Google Partner. Get discovered. Get more orders.'],
+                    ['fa-solid fa-motorcycle', 'text-purple-600', 'Commission-Free Delivery', 'Keep 100% of your profits. Zero commission on online orders.'],
+                    ['fa-solid fa-calendar-check', 'text-blue-600', 'Accept Bookings 24/7', 'Take online reservations anytime, anywhere. Never miss a customer.'],
+                    ['fa-solid fa-gift', 'text-red-500', 'Boost Sales with Rewards', 'Easy reward points system to turn first-time customers into loyal fans.'],
+                    ['fa-solid fa-bullhorn', 'text-red-500', 'Free Marketing Assistance', 'Get personalised marketing support and grow your business — for free!'],
+                    ['fa-solid fa-robot', 'text-blue-600', 'Bizzy AI – 24/7 Assistant', 'Handles customer queries, recommends, upsell and helps checkout in 2 clicks.'],
+                    ['fa-brands fa-google', 'text-slate-700', 'Google Partner', 'Official Order &amp; Reserve with Google Partner. Get discovered. Get more orders.'],
                 ];
                 foreach ($features as $f): ?>
-                    <div class="bg-white border border-slate-100 rounded-2xl p-7 text-center shadow-sm hover:shadow-lg transition">
-                        <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-5 <?php echo $f[1]; ?>">
+                    <div class="bg-white border border-slate-100 rounded-2xl px-4 py-6 text-center hover:shadow-md transition">
+                        <div class="text-3xl mb-4 <?php echo $f[1]; ?>">
                             <i class="<?php echo $f[0]; ?>"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2"><?php echo $f[2]; ?></h3>
-                        <p class="text-sm text-gray-600"><?php echo $f[3]; ?></p>
+                        <h3 class="text-sm font-bold text-slate-900 mb-2 leading-snug"><?php echo $f[2]; ?></h3>
+                        <p class="text-xs text-gray-500 leading-relaxed"><?php echo $f[3]; ?></p>
                     </div>
                 <?php endforeach; ?>
             </div>
