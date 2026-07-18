@@ -185,68 +185,66 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
          ============================================================ -->
     <section class="py-14 md:py-20 bg-white">
         <div class="container mx-auto px-4 lg:px-8">
-            <div class="relative rounded-3xl bg-[#0f1e3d] text-white overflow-hidden p-8 md:p-12"
-                 style="background-image:radial-gradient(circle at 20% 20%, rgba(59,130,246,.25), transparent 40%),radial-gradient(circle at 80% 80%, rgba(37,99,235,.2), transparent 40%);">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                    <!-- Robot -->
-                    <div class="lg:col-span-4 flex justify-center">
-                        <div class="relative w-56 h-64 flex items-center justify-center">
-                            <img src="<?php echo $landing_assets; ?>bizzy-robot.png" alt="Bizzy AI assistant" class="relative z-10 max-h-full object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                            <div class="absolute inset-0 hidden items-center justify-center text-center text-blue-200/70 text-sm border border-dashed border-blue-300/30 rounded-2xl" style="flex-direction:column;">
-                                <i class="fa-solid fa-robot text-4xl mb-2"></i>
-                                <span class="font-semibold">bizzy-robot.png</span>
-                                <span class="text-xs">480 × 600 (transparent)</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="bizzy-ai relative rounded-3xl bg-[#0f1e3d] text-white overflow-hidden p-8 md:p-12"
+                 style="background-image:radial-gradient(circle at 15% 15%, rgba(59,130,246,.28), transparent 45%),radial-gradient(circle at 85% 90%, rgba(37,99,235,.18), transparent 45%);">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
-                    <!-- Copy + tags -->
+                    <!-- Left: heading + tags -->
                     <div class="lg:col-span-5">
-                        <h2 class="text-3xl md:text-4xl font-bold mb-1">Meet Bizzy AI</h2>
-                        <p class="text-blue-300 text-xl font-semibold mb-4">Your 24/7 Café Assistant</p>
-                        <p class="text-blue-100/80 mb-6">Bizzy AI handles customer questions, helps with orders, takes bookings, recommends items, and makes checkout incredibly easy — all in just 2 clicks.</p>
-                        <div class="flex flex-wrap gap-3">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-2">Meet Bizzy AI</h2>
+                        <p class="text-blue-300 text-xl md:text-2xl font-semibold mb-5">Your 24/7 Café Assistant</p>
+                        <p class="text-blue-100/80 mb-7 max-w-lg">Bizzy AI handles customer questions, helps with orders, takes bookings, recommends items, and makes checkout incredibly easy — all in just 2 clicks.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                             <?php
                             $tags = [
                                 ['fa-bolt', 'Instant Responses'],
-                                ['fa-wand-magic-sparkles', 'Smart Recommendations'],
-                                ['fa-tags', 'Upsell &amp; Offers'],
+                                ['fa-arrows-rotate', 'Smart Recommendations'],
+                                ['fa-tag', 'Upsell &amp; Offers'],
                                 ['fa-truck-fast', 'Order Tracking'],
                                 ['fa-language', 'Multi-language Support'],
                                 ['fa-hand-pointer', 'Easy 2-Click Checkout'],
                             ];
                             foreach ($tags as $t): ?>
-                                <span class="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-full px-4 py-2 text-sm">
+                                <span class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs md:text-sm">
                                     <i class="fa-solid <?php echo $t[0]; ?> text-blue-300"></i> <?php echo $t[1]; ?>
                                 </span>
                             <?php endforeach; ?>
                         </div>
                     </div>
 
-                    <!-- Chat mock -->
-                    <div class="lg:col-span-3 space-y-3">
-                        <div class="bg-blue-600 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 ml-auto max-w-[220px]">Can I book a table for tonight?</div>
-                        <div class="bg-white text-slate-700 text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[240px]">Sure! How about 7 PM for 4 people?</div>
-                        <div class="bg-blue-600 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 ml-auto max-w-[220px]">Yes, that works. Also, any specials?</div>
-                        <div class="bg-white text-slate-700 text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[240px]">Yes! Today's special is Truffle Pasta. Shall I add it to your order?</div>
-                        <div class="bg-green-500 text-white text-sm font-medium rounded-2xl px-4 py-2 text-center">Yes please! Proceed to checkout.</div>
-                        <div class="bg-white text-slate-800 rounded-xl p-4 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs text-slate-500">2-Click Checkout</p>
-                                <p class="text-sm font-semibold">Fast, simple and secure</p>
-                            </div>
-                            <span class="bg-blue-600 text-white text-xs font-semibold px-3 py-2 rounded-lg">Order Now <i class="fa-solid fa-cart-shopping ml-1"></i></span>
+                    <!-- Middle: chat conversation -->
+                    <div class="lg:col-span-4 flex flex-col gap-3">
+                        <div class="bz-bubble bz-user self-end">Can I book a table for tonight?</div>
+                        <div class="bz-bubble bz-bot self-start">Sure! How about 7 PM for 4 people?</div>
+                        <div class="bz-bubble bz-user self-end">Yes, that works. Also, any specials?</div>
+                        <div class="bz-bubble bz-bot self-start">Yes! Today's special is Truffle Pasta. Shall I add it to your order?</div>
+                        <div class="bz-bubble bz-user self-end">Yes please! Proceed to checkout.</div>
+                    </div>
+
+                    <!-- Right: action cards -->
+                    <div class="lg:col-span-3 flex flex-col gap-4">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                            <p class="text-xs text-blue-200/70">2-Click Checkout</p>
+                            <p class="text-base font-semibold mb-4">Fast, simple and secure</p>
+                            <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2">Order Now <i class="fa-solid fa-cart-shopping"></i></button>
                         </div>
-                        <div class="bg-white text-slate-800 rounded-xl p-4 text-center">
-                            <p class="text-sm font-semibold">Happy Customer</p>
-                            <p class="text-xs text-slate-500">95% satisfaction rate</p>
-                            <p class="text-amber-400">★★★★★</p>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                            <p class="text-base font-semibold">Happy Customer</p>
+                            <p class="text-xs text-blue-200/70 mb-2">95% satisfaction rate</p>
+                            <p class="text-amber-400 text-lg tracking-wide">★★★★★</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <style>
+      .bizzy-ai .bz-bubble{max-width:90%;padding:10px 14px;font-size:13px;line-height:1.45;position:relative;border-radius:16px;}
+      .bizzy-ai .bz-user{background:#2563eb;color:#fff;border-top-right-radius:4px;}
+      .bizzy-ai .bz-bot{background:#ffffff;color:#334155;border-top-left-radius:4px;}
+      .bizzy-ai .bz-user::after{content:"";position:absolute;top:0;right:-6px;width:0;height:0;border:7px solid transparent;border-top-color:#2563eb;border-right-width:0;}
+      .bizzy-ai .bz-bot::after{content:"";position:absolute;top:0;left:-6px;width:0;height:0;border:7px solid transparent;border-top-color:#ffffff;border-left-width:0;}
+    </style>
 
     <!-- ============================================================
          5. REAL RESULTS
