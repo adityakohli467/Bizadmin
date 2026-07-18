@@ -341,32 +341,41 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 <!-- Card 1: Google Partner -->
-                <div class="bg-[#0f1e3d] text-white rounded-2xl p-7 flex flex-col">
-                    <h3 class="text-xl font-bold mb-2">We're an Official Order and Reserve with Google Partner</h3>
-                    <p class="text-blue-100/70 text-sm mb-5">Get discovered on Google Search, Maps and Assistant. More visibility, more bookings, more orders.</p>
-                    <div class="relative rounded-xl overflow-hidden bg-slate-800/50 h-44 flex items-center justify-center mb-5">
-                        <img src="<?php echo $landing_assets; ?>promo-google-map.png" alt="Café on Google Maps" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="bg-[#0f1e3d] text-white rounded-2xl overflow-hidden flex flex-col sm:flex-row">
+                    <div class="p-6 sm:w-1/2 flex flex-col">
+                        <h3 class="text-lg font-bold mb-2 leading-snug">We're an Official Order &amp; Reserve with Google Partner</h3>
+                        <p class="text-blue-100/70 text-xs mb-5">Get discovered on Google Search, Maps and Assistant. More visibility, more bookings, more orders.</p>
+                        <span class="inline-flex items-center gap-2 bg-white text-slate-800 text-sm font-semibold px-4 py-2 rounded-lg self-start mt-auto">
+                            <svg class="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/>
+                                <path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/>
+                                <path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"/>
+                                <path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/>
+                            </svg> Google Partner
+                        </span>
+                    </div>
+                    <div class="sm:w-1/2 relative bg-slate-800/40 min-h-[240px]">
+                        <img src="<?php echo $landing_assets; ?>promo-google-map.png" alt="Café on Google Maps" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-blue-200/60 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-map-location-dot text-2xl mb-1"></i>
                             <span class="font-semibold">promo-google-map.png</span>
                             <span>520 × 400</span>
                         </div>
                     </div>
-                    <span class="inline-flex items-center gap-2 bg-white text-slate-800 text-sm font-semibold px-4 py-2 rounded-lg self-start mt-auto">
-                        <i class="fa-brands fa-google"></i> Google Partner
-                    </span>
                 </div>
 
                 <!-- Card 2: Marketing -->
-                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-7">
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Personalized Sales &amp; Marketing Assistance for Free</h3>
-                    <ul class="space-y-2 my-4">
-                        <?php foreach (['SEO &amp; Google My Business', 'Social Media Strategy', 'Promotions &amp; Campaigns', 'Menu &amp; Pricing Optimization'] as $li): ?>
-                            <li class="flex items-center gap-2 text-sm text-slate-600"><i class="fa-solid fa-circle-check text-green-500"></i> <?php echo $li; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <div class="relative rounded-xl overflow-hidden bg-slate-200 h-40 flex items-center justify-center">
-                        <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="bg-green-50 rounded-2xl overflow-hidden flex flex-col sm:flex-row">
+                    <div class="p-6 sm:w-1/2 flex flex-col justify-center">
+                        <h3 class="text-lg font-bold text-slate-900 mb-3 leading-snug">Personalized Sales &amp; Marketing Assistance for Free</h3>
+                        <ul class="space-y-2.5">
+                            <?php foreach (['SEO &amp; Google My Business', 'Social Media Strategy', 'Promotions &amp; Campaigns', 'Menu &amp; Pricing Optimization'] as $li): ?>
+                                <li class="flex items-center gap-2 text-sm text-slate-700"><i class="fa-solid fa-circle-check text-green-500"></i> <?php echo $li; ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <div class="sm:w-1/2 relative bg-green-100 min-h-[240px]">
+                        <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-user-tie text-2xl mb-1"></i>
                             <span class="font-semibold">promo-marketing-woman.jpg</span>
@@ -376,18 +385,23 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                 </div>
 
                 <!-- Card 3: Commission Free -->
-                <div class="bg-green-50 border border-green-100 rounded-2xl p-7">
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Keep More of Every Order with Commission-Free Online Ordering</h3>
-                    <p class="text-slate-600 text-sm mb-4">Create your own branding, build customer loyalty and increase profits. No middleman. No commission.</p>
-                    <div class="relative rounded-xl overflow-hidden bg-white h-40 flex items-center justify-center mb-4 border border-green-100">
-                        <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="bg-orange-50 rounded-2xl overflow-hidden flex flex-col sm:flex-row">
+                    <div class="p-6 sm:w-1/2 flex flex-col justify-center">
+                        <h3 class="text-lg font-bold text-slate-900 mb-3 leading-snug">Keep More of Every Order with Commission-Free Online Ordering</h3>
+                        <p class="text-slate-600 text-sm mb-5">Create your own branding, build customer loyalty and increase profits. No middleman. No commission.</p>
+                        <span class="inline-flex items-center gap-2 bg-white rounded-xl px-4 py-3 self-start shadow-sm">
+                            <span class="text-2xl font-extrabold text-green-600 leading-none">0%</span>
+                            <span class="text-sm font-semibold text-green-600">Commission</span>
+                        </span>
+                    </div>
+                    <div class="sm:w-1/2 relative bg-orange-100 min-h-[240px]">
+                        <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-mobile-screen text-2xl mb-1"></i>
                             <span class="font-semibold">promo-commission-food.png</span>
                             <span>600 × 520</span>
                         </div>
                     </div>
-                    <span class="inline-block bg-green-500 text-white text-sm font-bold px-4 py-2 rounded-lg">0% Commission</span>
                 </div>
             </div>
         </div>
