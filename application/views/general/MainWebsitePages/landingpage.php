@@ -187,13 +187,25 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
         <div class="container mx-auto px-4 lg:px-8">
             <div class="bizzy-ai relative rounded-3xl bg-[#0f1e3d] text-white overflow-hidden p-8 md:p-12"
                  style="background-image:radial-gradient(circle at 15% 15%, rgba(59,130,246,.28), transparent 45%),radial-gradient(circle at 85% 90%, rgba(37,99,235,.18), transparent 45%);">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
 
-                    <!-- Left: heading + tags -->
-                    <div class="lg:col-span-5">
-                        <h2 class="text-3xl md:text-4xl font-bold mb-2">Meet Bizzy AI</h2>
-                        <p class="text-blue-300 text-xl md:text-2xl font-semibold mb-5">Your 24/7 Café Assistant</p>
-                        <p class="text-blue-100/80 mb-7 max-w-lg">Bizzy AI handles customer questions, helps with orders, takes bookings, recommends items, and makes checkout incredibly easy — all in just 2 clicks.</p>
+                    <!-- Robot -->
+                    <div class="lg:col-span-3 flex justify-center">
+                        <div class="relative w-48 h-60 md:w-56 md:h-72 flex items-center justify-center">
+                            <img src="<?php echo $landing_assets; ?>bizzy-robot.png" alt="Bizzy AI assistant" class="relative z-10 max-h-full object-contain drop-shadow-2xl" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div class="absolute inset-0 hidden items-center justify-center text-center text-blue-200/70 text-sm border border-dashed border-blue-300/30 rounded-2xl" style="flex-direction:column;">
+                                <i class="fa-solid fa-robot text-4xl mb-2"></i>
+                                <span class="font-semibold">bizzy-robot.png</span>
+                                <span class="text-xs">480 × 600 (transparent)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Heading + tags -->
+                    <div class="lg:col-span-4">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-1">Meet Bizzy AI</h2>
+                        <p class="text-white text-xl md:text-2xl font-semibold mb-4">Your 24/7 Café Assistant</p>
+                        <p class="text-blue-100/80 text-sm md:text-base mb-6">Bizzy AI handles customer questions, helps with orders, takes bookings, recommends items, and makes checkout incredibly easy — all in just 2 clicks.</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                             <?php
                             $tags = [
@@ -205,7 +217,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                                 ['fa-hand-pointer', 'Easy 2-Click Checkout'],
                             ];
                             foreach ($tags as $t): ?>
-                                <span class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs md:text-sm">
+                                <span class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-2 text-xs whitespace-nowrap">
                                     <i class="fa-solid <?php echo $t[0]; ?> text-blue-300"></i> <?php echo $t[1]; ?>
                                 </span>
                             <?php endforeach; ?>
@@ -213,7 +225,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                     </div>
 
                     <!-- Middle: chat conversation -->
-                    <div class="lg:col-span-4 flex flex-col gap-3">
+                    <div class="lg:col-span-3 flex flex-col gap-3">
                         <div class="bz-bubble bz-user self-end">Can I book a table for tonight?</div>
                         <div class="bz-bubble bz-bot self-start">Sure! How about 7 PM for 4 people?</div>
                         <div class="bz-bubble bz-user self-end">Yes, that works. Also, any specials?</div>
@@ -222,16 +234,16 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                     </div>
 
                     <!-- Right: action cards -->
-                    <div class="lg:col-span-3 flex flex-col gap-4">
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
-                            <p class="text-xs text-blue-200/70">2-Click Checkout</p>
-                            <p class="text-base font-semibold mb-4">Fast, simple and secure</p>
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                            <p class="text-sm font-semibold">2-Click Checkout</p>
+                            <p class="text-xs text-blue-200/70 mb-3">Fast, simple and secure</p>
                             <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2">Order Now <i class="fa-solid fa-cart-shopping"></i></button>
                         </div>
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-                            <p class="text-base font-semibold">Happy Customer</p>
-                            <p class="text-xs text-blue-200/70 mb-2">95% satisfaction rate</p>
-                            <p class="text-amber-400 text-lg tracking-wide">★★★★★</p>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                            <p class="text-sm font-semibold">Happy Customer</p>
+                            <p class="text-xs text-blue-200/70 mb-1">95% satisfaction rate</p>
+                            <p class="text-amber-400 text-base tracking-wide">★★★★★</p>
                         </div>
                     </div>
                 </div>
