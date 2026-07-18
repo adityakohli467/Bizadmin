@@ -135,12 +135,13 @@
             </div>
 
             <!-- Desktop Menu -->
-            <nav class="hidden md:flex items-center space-x-8">
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="https://bizadmin.com.au/" class="active" >Home</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#feature-section" >Features</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#timeline">Benefits</a></span>
-                <span class="text-gray-700 hover:text-primary cursor-pointer"><a href="#why-choose">Why Choose Us</a></span>
-                <span class="text-gray-700 hover:text-primary flex items-center cursor-pointer" id="platforms-link">Platforms <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
+            <nav class="hidden md:flex items-center space-x-7">
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#features">Features</a></span>
+                <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer" id="platforms-link">Solutions <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer flex items-center gap-1"><a href="#features">AI Assistant</a><span class="bg-blue-100 text-blue-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">New</span></span>
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#">Pricing</a></span>
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#">Success Stories</a></span>
+                <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer"><a href="#">Resources</a> <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
                 <div id="platforms-dropdown" class="hidden absolute top-full left-0 mt-2 bg-white shadow-xl rounded-lg w-[800px] border border-gray-200 z-40">
                     <div class="flex">
                         <!-- Left Menu -->
@@ -239,8 +240,9 @@
             </button>
 
             <!-- Call to Action -->
-            <div class="hidden md:block">
-                <a href="#contact"><span class="bg-accent hover:bg-accent/90 text-white px-5 py-2 rounded-md transition cursor-pointer">Get Started</span></a>
+            <div class="hidden md:flex items-center gap-5">
+                <a href="tel:+61411114916" class="flex items-center gap-2 text-slate-700 font-medium"><i class="fa-solid fa-phone text-blue-600"></i> +61 0411 114 916</a>
+                <a href="#contact"><span class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg transition cursor-pointer font-semibold">Book Free Demo</span></a>
             </div>
         </div>
 
@@ -258,7 +260,8 @@
             <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="temperature">Temperature Recording</a>
             <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="documents">Document Manage</a>
             <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="cash">Cash Management</a>
-            <a href="#contact" class="block text-white bg-accent hover:bg-accent/90 px-5 py-2 rounded-md text-center ">Get Started</a>
+            <a href="tel:+61411114916" class="block text-slate-700"><i class="fa-solid fa-phone text-blue-600 mr-1"></i> +61 0411 114 916</a>
+            <a href="#contact" class="block text-white bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-md text-center ">Book Free Demo</a>
             <button id="close-menu" class="block text-gray-700 hover:text-primary">Close</button>
         </div>
     </div>
