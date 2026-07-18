@@ -354,8 +354,8 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             </svg> Google Partner
                         </span>
                     </div>
-                    <div class="sm:w-1/2 relative bg-slate-800/40 min-h-[240px]">
-                        <img src="<?php echo $landing_assets; ?>promo-google-map.png" alt="Café on Google Maps" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="sm:w-1/2 relative bg-white min-h-[240px]">
+                        <img src="<?php echo $landing_assets; ?>promo-google-map.png" alt="Café on Google Maps" class="absolute inset-0 w-full h-full object-cover object-center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-blue-200/60 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-map-location-dot text-2xl mb-1"></i>
                             <span class="font-semibold">promo-google-map.png</span>
@@ -375,7 +375,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                         </ul>
                     </div>
                     <div class="sm:w-1/2 relative bg-green-100 min-h-[240px]">
-                        <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-user-tie text-2xl mb-1"></i>
                             <span class="font-semibold">promo-marketing-woman.jpg</span>
@@ -394,8 +394,8 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <span class="text-sm font-semibold text-green-600">Commission</span>
                         </span>
                     </div>
-                    <div class="sm:w-1/2 relative bg-orange-100 min-h-[240px]">
-                        <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="sm:w-1/2 relative bg-white min-h-[240px]">
+                        <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="absolute inset-0 w-full h-full object-cover object-center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-mobile-screen text-2xl mb-1"></i>
                             <span class="font-semibold">promo-commission-food.png</span>
