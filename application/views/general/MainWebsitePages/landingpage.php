@@ -14,7 +14,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <!-- ============================================================
          1. HERO
          ============================================================ -->
-    <section id="hero" class="relative bg-gradient-to-b from-blue-50 via-blue-50/40 to-white pt-12 pb-16 md:pt-20 md:pb-24">
+    <section id="hero" class="relative bg-[#eaf4fe] pt-12 pb-16 md:pt-20 md:pb-24">
         <div class="container mx-auto px-4 lg:px-8">
             <div class="flex flex-col lg:flex-row items-center gap-12">
                 <!-- Left copy -->
@@ -64,7 +64,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <?php endfor; ?>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-slate-700">Trusted by 500+ cafés across Australia</p>
+                            <p class="text-sm font-semibold text-slate-700">Trusted by 100+ cafés across Australia</p>
                             <p class="text-sm text-amber-500">★★★★★ <span class="text-slate-500">4.9/5</span></p>
                         </div>
                     </div>
@@ -72,13 +72,11 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
 
                 <!-- Right hero image -->
                 <div class="lg:w-1/2 w-full relative">
-                    <div class="relative rounded-2xl overflow-hidden flex items-center justify-center">
-                        <img src="<?php echo $landing_assets; ?>hero-product.png" alt="BizAdmin dashboard and Bizzy AI on mobile" class="relative z-10 w-full h-auto object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-sm p-6 bg-slate-100 min-h-[340px]" style="flex-direction:column;">
-                            <i class="fa-solid fa-image text-3xl mb-2"></i>
-                            <span class="font-semibold">hero-product.png</span>
-                            <span class="text-xs">1280 × 840 (dashboard + phone)</span>
-                        </div>
+                    <img src="<?php echo $landing_assets; ?>hero-product.png" alt="BizAdmin dashboard and Bizzy AI on mobile" class="relative z-10 w-full h-auto object-contain origin-right lg:scale-[1.12] lg:translate-x-10 xl:translate-x-20" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="hidden items-center justify-center text-center text-slate-400 text-sm p-6 bg-slate-100 rounded-2xl min-h-[340px]" style="flex-direction:column;">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i>
+                        <span class="font-semibold">hero-product.png</span>
+                        <span class="text-xs">1280 × 840 (dashboard + phone)</span>
                     </div>
                 </div>
             </div>
@@ -374,7 +372,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <?php endforeach; ?>
                         </ul>
                     </div>
-                    <div class="sm:w-1/2 relative bg-green-100 min-h-[240px]">
+                    <div class="sm:w-1/2 relative bg-green-50 min-h-[240px]">
                         <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-user-tie text-2xl mb-1"></i>
@@ -394,7 +392,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <span class="text-sm font-semibold text-green-600">Commission</span>
                         </span>
                     </div>
-                    <div class="sm:w-1/2 relative bg-white min-h-[240px]">
+                    <div class="sm:w-1/2 relative bg-orange-50 min-h-[240px]">
                         <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="absolute inset-0 w-full h-full object-cover object-center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-mobile-screen text-2xl mb-1"></i>
