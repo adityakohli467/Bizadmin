@@ -72,9 +72,9 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
 
                 <!-- Right hero image -->
                 <div class="lg:w-1/2 w-full relative">
-                    <div class="relative rounded-2xl overflow-hidden bg-slate-100 min-h-[340px] md:min-h-[420px] flex items-center justify-center shadow-2xl shadow-slate-300/40">
-                        <img src="<?php echo $landing_assets; ?>hero-product.png" alt="BizAdmin dashboard and Bizzy AI on mobile" class="relative z-10 w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-sm p-6" style="flex-direction:column;">
+                    <div class="relative rounded-2xl overflow-hidden flex items-center justify-center">
+                        <img src="<?php echo $landing_assets; ?>hero-product.png" alt="BizAdmin dashboard and Bizzy AI on mobile" class="relative z-10 w-full h-auto object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-sm p-6 bg-slate-100 min-h-[340px]" style="flex-direction:column;">
                             <i class="fa-solid fa-image text-3xl mb-2"></i>
                             <span class="font-semibold">hero-product.png</span>
                             <span class="text-xs">1280 × 840 (dashboard + phone)</span>
