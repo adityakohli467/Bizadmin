@@ -95,61 +95,73 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                     <!-- Intro -->
                     <div class="lg:col-span-3">
                         <h2 class="text-2xl font-bold text-slate-900 mb-3">Why pay separate fees for separate services?</h2>
-                        <p class="text-gray-600 text-sm">BizAdmin offers entire café solution one place — no hidden fees, no extra costs!</p>
+                        <p class="text-gray-600 text-sm">BizAdmin offers entire café solution at one place — no hidden fees, no extra costs!</p>
                     </div>
 
                     <!-- Individual costs -->
-                    <div class="lg:col-span-6">
-                        <div class="flex flex-wrap items-center justify-center gap-3">
-                            <?php
-                            $services = [
-                                ['POS System', '$80', 'fa-cash-register'],
-                                ['Online Ordering', '$120', 'fa-basket-shopping'],
-                                ['Reservations', '$90', 'fa-calendar-check'],
-                                ['Loyalty Program', '$75', 'fa-gift'],
-                                ['Marketing Tools', '$150', 'fa-bullhorn'],
-                                ['AI Chatbot', '$200', 'fa-robot'],
-                                ['HR & Payroll', '$80', 'fa-users'],
-                                ['Inventory', '$120', 'fa-boxes-stacked'],
-                            ];
-                            $last = count($services) - 1;
-                            foreach ($services as $idx => $s): ?>
-                                <div class="text-center bg-white border border-slate-200 rounded-xl px-4 py-3 w-24">
-                                    <i class="fa-solid <?php echo $s[2]; ?> text-blue-500 mb-1"></i>
-                                    <p class="text-[11px] leading-tight text-slate-500"><?php echo $s[0]; ?></p>
-                                    <p class="text-sm font-bold text-slate-800"><?php echo $s[1]; ?><span class="text-[10px] font-normal text-slate-400">/month</span></p>
-                                </div>
-                                <?php if ($idx !== $last): ?><span class="text-slate-300 font-bold">+</span><?php endif; ?>
-                            <?php endforeach; ?>
+                    <div class="lg:col-span-7">
+                        <div class="bg-white border border-slate-200 rounded-2xl px-3 py-5">
+                            <div class="flex items-stretch justify-between">
+                                <?php
+                                $services = [
+                                    ['POS System', '$80', 'fa-cash-register'],
+                                    ['Online Ordering', '$120', 'fa-basket-shopping'],
+                                    ['Reservations', '$90', 'fa-calendar-check'],
+                                    ['Loyalty Program', '$75', 'fa-crown'],
+                                    ['Marketing Tools', '$150', 'fa-bullhorn'],
+                                    ['AI Chatbot', '$200', 'fa-robot'],
+                                    ['HR & Payroll', '$80', 'fa-sitemap'],
+                                    ['Inventory', '$120', 'fa-boxes-stacked'],
+                                ];
+                                $last = count($services) - 1;
+                                foreach ($services as $idx => $s): ?>
+                                    <div class="flex-1 text-center px-1">
+                                        <div class="w-9 h-9 mx-auto mb-2 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 text-sm">
+                                            <i class="fa-solid <?php echo $s[2]; ?>"></i>
+                                        </div>
+                                        <p class="text-[10px] leading-tight text-slate-500 mb-1"><?php echo $s[0]; ?></p>
+                                        <p class="text-sm font-extrabold text-slate-900 leading-none"><?php echo $s[1]; ?></p>
+                                        <p class="text-[9px] text-slate-400 mt-0.5">/month</p>
+                                    </div>
+                                    <?php if ($idx !== $last): ?><div class="flex items-center text-slate-300 font-semibold text-sm">+</div><?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Total -->
-                    <div class="lg:col-span-3">
-                        <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 text-center">
-                            <p class="text-xs text-slate-500 uppercase tracking-wide">Total Cost</p>
-                            <p class="text-3xl font-extrabold text-blue-600">$915<span class="text-sm font-normal text-slate-400">/month</span></p>
+                    <div class="lg:col-span-2">
+                        <div class="bg-blue-50 rounded-2xl p-4 text-center h-full flex flex-col justify-center">
+                            <p class="text-xs font-semibold text-blue-600 mb-1">Total Cost</p>
+                            <p class="text-3xl font-extrabold text-blue-600 leading-none">$915</p>
+                            <p class="text-xs text-slate-400 mt-1">/month</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Everything included banner -->
                 <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                    <div class="lg:col-span-8">
-                        <div class="relative bg-blue-600 text-white font-semibold text-center py-4 rounded-lg">
-                            Everything Included with BizAdmin
-                            <span class="hidden lg:block absolute right-[-18px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[24px] border-b-[24px] border-l-[18px] border-t-transparent border-b-transparent border-l-blue-600"></span>
+                    <div class="lg:col-span-7">
+                        <div class="bz-arrow flex items-center justify-center text-white font-bold text-base md:text-lg" style="clip-path:polygon(0 16%, 84% 16%, 84% 0, 100% 50%, 84% 100%, 84% 84%, 0 84%);min-height:70px;">
+                            <span class="pr-[12%]">Everything Included with BizAdmin</span>
                         </div>
                     </div>
-                    <div class="lg:col-span-4 text-center lg:text-left">
-                        <p class="text-sm text-slate-500">One Affordable Platform</p>
-                        <p class="text-4xl font-extrabold text-slate-900">$149<span class="text-base font-normal text-slate-400">/month</span></p>
-                        <span class="inline-block mt-1 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Save $766 Every Month</span>
+                    <div class="lg:col-span-5">
+                        <div class="flex items-center gap-4">
+                            <p class="text-lg font-extrabold text-slate-900 leading-tight">One Affordable<br>Platform</p>
+                            <div>
+                                <p class="text-4xl font-extrabold text-slate-900 leading-none">$149<span class="text-base font-normal text-slate-400">/month</span></p>
+                                <span class="inline-block mt-2 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Save $766 Every Month</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <style>
+      .bz-arrow{background:#1d4ed8;}
+    </style>
 
     <!-- ============================================================
          3. POWERFUL FEATURES
