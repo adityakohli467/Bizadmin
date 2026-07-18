@@ -304,27 +304,29 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                 <?php
                 $modules = [
-                    ['fa-cash-register', 'text-blue-500', 'POS &amp; Billing'],
-                    ['fa-basket-shopping', 'text-purple-500', 'Online Ordering'],
-                    ['fa-calendar-check', 'text-red-500', 'Reservations'],
-                    ['fa-display', 'text-green-500', 'Kitchen Display'],
-                    ['fa-boxes-stacked', 'text-amber-500', 'Inventory'],
-                    ['fa-book-open', 'text-blue-500', 'Recipes &amp; Menu Costing'],
-                    ['fa-users', 'text-purple-500', 'Staff &amp; Roster'],
-                    ['fa-file-export', 'text-green-500', 'Payroll Export'],
-                    ['fa-temperature-half', 'text-red-500', 'Temperature Logs'],
-                    ['fa-broom', 'text-blue-500', 'Cleaning Tasks'],
-                    ['fa-sack-dollar', 'text-amber-500', 'Cash Management'],
-                    ['fa-file-lines', 'text-slate-500', 'Documents'],
-                    ['fa-chart-pie', 'text-purple-500', 'Analytics &amp; Reports'],
-                    ['fa-bullhorn', 'text-red-500', 'Marketing Tools'],
-                    ['fa-star', 'text-amber-500', 'Loyalty &amp; Rewards'],
-                    ['fa-gift', 'text-green-500', 'Gift Cards'],
+                    ['fa-cash-register', 'text-blue-500', 'bg-blue-100', 'POS &amp; Billing'],
+                    ['fa-basket-shopping', 'text-purple-500', 'bg-purple-100', 'Online Ordering'],
+                    ['fa-calendar-check', 'text-red-500', 'bg-red-100', 'Reservations'],
+                    ['fa-display', 'text-green-500', 'bg-green-100', 'Kitchen Display'],
+                    ['fa-boxes-stacked', 'text-amber-500', 'bg-amber-100', 'Inventory'],
+                    ['fa-book-open', 'text-blue-500', 'bg-blue-100', 'Recipes &amp; Menu Costing'],
+                    ['fa-users', 'text-purple-500', 'bg-purple-100', 'Staff &amp; Roster'],
+                    ['fa-file-export', 'text-green-500', 'bg-green-100', 'Payroll Export'],
+                    ['fa-temperature-half', 'text-red-500', 'bg-red-100', 'Temperature Logs'],
+                    ['fa-broom', 'text-blue-500', 'bg-blue-100', 'Cleaning Tasks'],
+                    ['fa-sack-dollar', 'text-amber-500', 'bg-amber-100', 'Cash Management'],
+                    ['fa-file-lines', 'text-slate-500', 'bg-slate-100', 'Documents'],
+                    ['fa-chart-pie', 'text-purple-500', 'bg-purple-100', 'Analytics &amp; Reports'],
+                    ['fa-bullhorn', 'text-red-500', 'bg-red-100', 'Marketing Tools'],
+                    ['fa-star', 'text-amber-500', 'bg-amber-100', 'Loyalty &amp; Rewards'],
+                    ['fa-gift', 'text-green-500', 'bg-green-100', 'Gift Cards'],
                 ];
                 foreach ($modules as $m): ?>
-                    <div class="bg-white rounded-xl p-4 text-center border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition">
-                        <i class="fa-solid <?php echo $m[0]; ?> <?php echo $m[1]; ?> text-xl mb-2"></i>
-                        <p class="text-xs font-medium text-slate-600 leading-tight"><?php echo $m[2]; ?></p>
+                    <div class="bg-white rounded-2xl p-3 flex flex-col items-center justify-center text-center border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition aspect-square">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-3 <?php echo $m[2]; ?>">
+                            <i class="fa-solid <?php echo $m[0]; ?> <?php echo $m[1]; ?> text-lg"></i>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-700 leading-tight"><?php echo $m[3]; ?></p>
                     </div>
                 <?php endforeach; ?>
             </div>
