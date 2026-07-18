@@ -206,7 +206,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                         <h2 class="text-3xl md:text-4xl font-bold mb-1">Meet Bizzy AI</h2>
                         <p class="text-white text-xl md:text-2xl font-semibold mb-4">Your 24/7 Café Assistant</p>
                         <p class="text-blue-100/80 text-sm md:text-base mb-6">Bizzy AI handles customer questions, helps with orders, takes bookings, recommends items, and makes checkout incredibly easy — all in just 2 clicks.</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                        <div class="flex flex-wrap gap-2">
                             <?php
                             $tags = [
                                 ['fa-bolt', 'Instant Responses'],
@@ -217,7 +217,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                                 ['fa-hand-pointer', 'Easy 2-Click Checkout'],
                             ];
                             foreach ($tags as $t): ?>
-                                <span class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-2 text-xs whitespace-nowrap">
+                                <span class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5 text-xs whitespace-nowrap">
                                     <i class="fa-solid <?php echo $t[0]; ?> text-blue-300"></i> <?php echo $t[1]; ?>
                                 </span>
                             <?php endforeach; ?>
@@ -251,11 +251,11 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
         </div>
     </section>
     <style>
-      .bizzy-ai .bz-bubble{max-width:90%;padding:10px 14px;font-size:13px;line-height:1.45;position:relative;border-radius:16px;}
-      .bizzy-ai .bz-user{background:#2563eb;color:#fff;border-top-right-radius:4px;}
-      .bizzy-ai .bz-bot{background:#ffffff;color:#334155;border-top-left-radius:4px;}
-      .bizzy-ai .bz-user::after{content:"";position:absolute;top:0;right:-6px;width:0;height:0;border:7px solid transparent;border-top-color:#2563eb;border-right-width:0;}
-      .bizzy-ai .bz-bot::after{content:"";position:absolute;top:0;left:-6px;width:0;height:0;border:7px solid transparent;border-top-color:#ffffff;border-left-width:0;}
+      .bizzy-ai .bz-bubble{max-width:88%;padding:10px 14px;font-size:13px;line-height:1.45;position:relative;border-radius:16px;}
+      .bizzy-ai .bz-user{background:#2563eb;color:#fff;border-top-right-radius:2px;}
+      .bizzy-ai .bz-bot{background:#ffffff;color:#334155;border-top-left-radius:2px;}
+      .bizzy-ai .bz-user::after{content:"";position:absolute;top:5px;right:-7px;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:8px solid #2563eb;}
+      .bizzy-ai .bz-bot::after{content:"";position:absolute;top:5px;left:-7px;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-right:8px solid #ffffff;}
     </style>
 
     <!-- ============================================================
