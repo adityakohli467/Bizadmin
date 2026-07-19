@@ -84,6 +84,35 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     </section>
 
     <!-- ============================================================
+         1b. PARTNER / TRUST LOGO BAR
+         ============================================================ -->
+    <section class="bg-white py-8 border-y border-slate-100">
+        <div class="container mx-auto px-4 lg:px-8">
+            <p class="text-center text-slate-500 text-sm mb-6">Rated 4.9/5 by café owners across Australia</p>
+            <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
+                <?php
+                // [Display name, logo domain, fallback Font Awesome icon]
+                $partners = [
+                    ['Square', 'squareup.com', 'fa-square'],
+                    ['Uber Eats', 'ubereats.com', 'fa-motorcycle'],
+                    ['Google', 'google.com', 'fa-google'],
+                    ['Xero', 'xero.com', 'fa-circle'],
+                    ['DoorDash', 'doordash.com', 'fa-bag-shopping'],
+                    ['MYOB', 'myob.com', 'fa-m'],
+                ];
+                foreach ($partners as $p): ?>
+                    <div class="flex items-center gap-2 text-slate-500">
+                        <img src="https://www.google.com/s2/favicons?sz=64&domain=<?php echo $p[1]; ?>" alt="<?php echo $p[0]; ?> logo" class="w-6 h-6 object-contain" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+                        <i class="fa-solid <?php echo $p[2]; ?> text-lg" style="display:none;"></i>
+                        <span class="font-semibold text-slate-600"><?php echo $p[0]; ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
          2. PRICING COMPARISON
          ============================================================ -->
     <section class="py-14 md:py-20 bg-white">
