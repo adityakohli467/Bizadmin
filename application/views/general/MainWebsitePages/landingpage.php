@@ -191,6 +191,95 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     </style>
 
     <!-- ============================================================
+         2b. PRICING PLANS (3 tiers)
+         ============================================================ -->
+    <section id="pricing" class="py-14 md:py-20 bg-slate-50 scroll-mt-24">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Simple, Transparent Pricing</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Pay per location. No hidden fees — pick the plan that fits your café.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch max-w-6xl mx-auto">
+                <?php
+                $plans = [
+                    [
+                        'name'       => 'Starter',
+                        'icon'       => 'fa-mug-hot',
+                        'icon_bg'    => 'bg-purple-100',
+                        'icon_color' => 'text-purple-600',
+                        'accent'     => 'text-slate-900',
+                        'desc'       => 'Everything you need to run compliant, organised operations.',
+                        'price'      => '99',
+                        'features'   => ['HR System', 'Temperature System', 'Supplier System', 'Document Management System'],
+                        'popular'    => false,
+                        'check'      => 'text-blue-500',
+                        'btn'        => 'border border-blue-600 text-blue-600 hover:bg-blue-50',
+                    ],
+                    [
+                        'name'       => 'Standard',
+                        'icon'       => 'fa-store',
+                        'icon_bg'    => 'bg-blue-100',
+                        'icon_color' => 'text-blue-600',
+                        'accent'     => 'text-blue-600',
+                        'desc'       => 'All the essentials plus AI — built to run your café efficiently.',
+                        'price'      => '149',
+                        'features'   => ['All Starter Systems', 'AI Chat Assistant', 'All Other Systems Included', 'Priority Email Support'],
+                        'popular'    => true,
+                        'check'      => 'text-blue-600',
+                        'btn'        => 'bg-blue-600 text-white hover:bg-blue-700',
+                    ],
+                    [
+                        'name'       => 'Pro',
+                        'icon'       => 'fa-crown',
+                        'icon_bg'    => 'bg-green-100',
+                        'icon_color' => 'text-green-600',
+                        'accent'     => 'text-green-600',
+                        'desc'       => 'For growing cafés that need power, marketing and support.',
+                        'price'      => '199',
+                        'features'   => ['All Systems Included', 'SEO', 'Customized Marketing Assistant', '24/7 Support', 'Customized Website'],
+                        'popular'    => false,
+                        'check'      => 'text-green-500',
+                        'btn'        => 'bg-green-600 text-white hover:bg-green-700',
+                    ],
+                ];
+                foreach ($plans as $plan): ?>
+                    <div class="relative bg-white rounded-3xl p-8 flex flex-col <?php echo $plan['popular'] ? 'border-2 border-blue-500 shadow-xl md:-mt-4 md:mb-4' : 'border border-slate-200 shadow-sm'; ?>">
+                        <?php if ($plan['popular']): ?>
+                            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold tracking-wide px-4 py-1.5 rounded-full uppercase">Most Popular</span>
+                        <?php endif; ?>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 <?php echo $plan['icon_bg']; ?> rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid <?php echo $plan['icon']; ?> <?php echo $plan['icon_color']; ?> text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-2"><?php echo $plan['name']; ?></h3>
+                            <p class="text-sm text-gray-500 mb-5 min-h-[40px]"><?php echo $plan['desc']; ?></p>
+                            <div class="mb-1">
+                                <span class="text-2xl font-extrabold align-top <?php echo $plan['accent']; ?>">$</span><span class="text-5xl font-extrabold <?php echo $plan['accent']; ?>"><?php echo $plan['price']; ?></span><span class="text-gray-400 text-base font-medium"> / location</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-6">per month</p>
+                        </div>
+
+                        <hr class="border-slate-100 mb-6">
+
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <?php foreach ($plan['features'] as $feat): ?>
+                                <li class="flex items-center gap-3 text-sm text-slate-700">
+                                    <i class="fa-solid fa-circle-check <?php echo $plan['check']; ?> text-base"></i>
+                                    <span><?php echo $feat; ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                        <a href="#contact" class="block text-center font-semibold px-5 py-3 rounded-xl transition <?php echo $plan['btn']; ?>">Get Started</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
          3. POWERFUL FEATURES
          ============================================================ -->
     <section id="features" class="py-14 md:py-20 bg-white">

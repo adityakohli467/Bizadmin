@@ -139,7 +139,7 @@
                 <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#features">Features</a></span>
                 <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer" id="platforms-link">Solutions <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
                 <span class="text-gray-700 hover:text-blue-600 cursor-pointer flex items-center gap-1"><a href="#features">AI Assistant</a><span class="bg-blue-100 text-blue-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">New</span></span>
-                <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#">Pricing</a></span>
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#pricing">Pricing</a></span>
                 <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#">Success Stories</a></span>
                 <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer"><a href="#">Resources</a> <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
                 <div id="platforms-dropdown" class="hidden absolute top-full left-0 mt-2 bg-white shadow-xl rounded-lg w-[800px] border border-gray-200 z-40">
@@ -250,6 +250,7 @@
         <div id="mobileMenu" class="md:hidden mt-4 space-y-4 fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
             <a href="https://bizadmin.com.au/" class="block text-gray-700 hover:text-primary" data-page="homepage">Home</a>
             <a href="#feature-section" class="block text-gray-700 hover:text-primary" >Features</a>
+            <a href="#pricing" class="block text-gray-700 hover:text-primary">Pricing</a>
             <a href="#benefits" class="block text-gray-700 hover:text-primary ">Benefits</a>
             <a href="#why-choose" class="block text-gray-700 hover:text-primary">Why Choose Us</a>
             <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="hrm">HR & Onboarding</a>
