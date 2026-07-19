@@ -20,7 +20,7 @@
 </div>
 
 
-        <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100 text-left">
+        <div class="w-full mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100 text-left">
     <div class="mb-8 text-center">
         <h3 class="text-2xl font-bold text-primary mb-2">Get in touch</h3>
         <p class="text-gray-500 text-sm">Fill in your details and our team will reach out within one business day.</p>
