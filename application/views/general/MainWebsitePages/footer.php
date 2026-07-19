@@ -28,14 +28,7 @@
     <form id="contact-form" action="<?php echo site_url('home/submit'); ?>" method="POST" class="space-y-6">
 
         <!-- Grid container for all fields -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-                <label for="name" class="block text-left text-primary font-medium mb-2">Name</label>
-                <div class="relative">
-                    <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="name" name="name" placeholder="Your full name" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition" required>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
                 <label for="email" class="block text-left text-primary font-medium mb-2">Email</label>
                 <div class="relative">
@@ -95,14 +88,13 @@
             e.preventDefault();
 
             // Client-side validation
-            const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const contactNumber = document.getElementById('contact_number').value.trim();
             const captcha = document.getElementById('captcha').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
 
-            if (!name || !email || !contactNumber || !captcha) {
+            if (!email || !contactNumber || !captcha) {
                 formMessage.classList.remove('hidden', 'text-green-600');
                 formMessage.classList.add('text-red-600');
                 formMessage.textContent = 'Please fill out all fields.';

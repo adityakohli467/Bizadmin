@@ -39,7 +39,6 @@ class Home extends MY_Controller {
         $response = ['success' => false, 'message' => ''];
 
         // Validate form data
-        $name = $this->input->post('name', TRUE);
         $email = $this->input->post('email', TRUE);
         $contact_number = $this->input->post('contact_number', TRUE);
         $captcha = $this->input->post('captcha', TRUE);
@@ -53,7 +52,7 @@ class Home extends MY_Controller {
         }
 
         // Validate other fields
-        if (empty($name) || empty($email) || empty($contact_number)) {
+        if (empty($email) || empty($contact_number)) {
             $response['message'] = 'All fields are required.';
             echo json_encode($response);
             return;
@@ -69,7 +68,6 @@ class Home extends MY_Controller {
         $to = 'kaushika@aaria.com.au';
         $subject = 'Bizadmin New Contact Form Submission';
         $message = "
-    <strong>Name:</strong> $name<br>
     <strong>Email:</strong> $email<br>
     <strong>Contact Number:</strong> $contact_number";
         
