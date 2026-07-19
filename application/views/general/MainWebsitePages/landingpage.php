@@ -315,7 +315,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
                 <?php
                 $stats = [
-                    ['fa-crown', 'text-amber-500', '500+', 'Cafés Trust BizAdmin'],
+                    ['fa-crown', 'text-amber-500', '100+', 'Cafés Trust BizAdmin'],
                     ['fa-arrow-trend-up', 'text-green-500', '+28%', 'Average Revenue Increase'],
                     ['fa-chart-line', 'text-blue-500', '+63%', 'Increase in Online Orders'],
                     ['fa-shield-halved', 'text-purple-500', '-25%', 'Operational Costs'],
@@ -342,13 +342,13 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-5">
                 <?php
                 $modules = [
-                    ['fa-cash-register', 'text-blue-500', 'bg-blue-100', 'POS &amp; Billing'],
+                    ['fa-clipboard-check', 'text-blue-500', 'bg-blue-100', 'Compliance Forms'],
                     ['fa-basket-shopping', 'text-purple-500', 'bg-purple-100', 'Online Ordering'],
                     ['fa-calendar-check', 'text-red-500', 'bg-red-100', 'Reservations'],
                     ['fa-boxes-stacked', 'text-amber-500', 'bg-amber-100', 'Inventory'],
                     ['fa-book-open', 'text-blue-500', 'bg-blue-100', 'Recipes &amp; Menu Costing'],
                     ['fa-users', 'text-purple-500', 'bg-purple-100', 'Staff &amp; Roster'],
-                    ['fa-file-export', 'text-green-500', 'bg-green-100', 'Payroll Export'],
+                    ['fa-file-export', 'text-green-500', 'bg-green-100', 'Payroll Integration'],
                     ['fa-temperature-half', 'text-red-500', 'bg-red-100', 'Temperature Logs'],
                     ['fa-broom', 'text-blue-500', 'bg-blue-100', 'Cleaning Tasks'],
                     ['fa-sack-dollar', 'text-amber-500', 'bg-amber-100', 'Cash Management'],
