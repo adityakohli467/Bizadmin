@@ -20,44 +20,57 @@
 </div>
 
 
-        <div class="max-w-6xl mx-auto bg-white p-6 rounded-lg">
+        <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100 text-left">
+    <div class="mb-8 text-center">
+        <h3 class="text-2xl font-bold text-primary mb-2">Get in touch</h3>
+        <p class="text-gray-500 text-sm">Fill in your details and our team will reach out within one business day.</p>
+    </div>
     <form id="contact-form" action="<?php echo site_url('home/submit'); ?>" method="POST" class="space-y-6">
-        
+
         <!-- Grid container for all fields -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <label for="name" class="block text-left text-primary font-medium mb-2">Name</label>
-                <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                <div class="relative">
+                    <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="name" name="name" placeholder="Your full name" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition" required>
+                </div>
             </div>
             <div>
                 <label for="email" class="block text-left text-primary font-medium mb-2">Email</label>
-                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                <div class="relative">
+                    <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition" required>
+                </div>
             </div>
-            
+
             <div>
                 <label for="contact_number" class="block text-left text-primary font-medium mb-2">Contact Number</label>
-                <input type="text" id="contact_number" name="contact_number" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"  title="Please enter a  phone number" required>
+                <div class="relative">
+                    <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="contact_number" name="contact_number" placeholder="+61 4XX XXX XXX" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition" title="Please enter a  phone number" required>
+                </div>
             </div>
-            
-             <div>
-                    <label for="captcha" class="block text-left text-primary font-medium mb-2">CAPTCHA: Enter code <?php echo $captcha_question; ?></label>
-                    <input type="text" id="captcha" name="captcha" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" pattern="[0-9]{4}" title="Please enter a 4-digit code" required>
+
+            <div>
+                <label for="captcha" class="block text-left text-primary font-medium mb-2">CAPTCHA: Enter code <?php echo $captcha_question; ?></label>
+                <div class="relative">
+                    <i class="fas fa-shield-halved absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="captcha" name="captcha" placeholder="4-digit code" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition" pattern="[0-9]{4}" title="Please enter a 4-digit code" required>
                     <input type="hidden" name="captcha_answer" value="<?php echo $captcha_answer; ?>">
                 </div>
-          
-          <div>
-            <button type="submit" id="submit-btn" class="md:mt-5 w-full bg-primary hover:bg-orange-600 text-white font-medium px-8 py-4 rounded-lg transition-colors flex items-center justify-center">
-                <span id="btn-text">Submit</span>
-                <svg id="btn-loader" class="hidden animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
-                </svg>
-            </button>
-        </div>
+            </div>
         </div>
 
         <!-- Submit button -->
-        
+        <button type="submit" id="submit-btn" class="w-full bg-accent hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+            <i class="fas fa-paper-plane"></i>
+            <span id="btn-text">Send Message</span>
+            <svg id="btn-loader" class="hidden animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+            </svg>
+        </button>
 
         <div id="form-message" class="hidden text-center text-lg"></div>
     </form>
