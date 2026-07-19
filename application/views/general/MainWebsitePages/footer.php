@@ -20,7 +20,7 @@
 </div>
 
 
-        <div class="w-full mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100 text-left">
+        <div class="w-full mx-auto bg-white p-6 md:p-10 rounded-2xl border border-gray-100 text-left">
     <div class="mb-8 text-center">
         <h3 class="text-2xl font-bold text-primary mb-2">Get in touch</h3>
         <p class="text-gray-500 text-sm">Fill in your details and our team will reach out within one business day.</p>
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Submit button -->
-        <button type="submit" id="submit-btn" class="w-full bg-accent hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20">
+        <button type="submit" id="submit-btn" class="w-full bg-accent hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
             <i class="fas fa-paper-plane"></i>
             <span id="btn-text">Send Message</span>
             <svg id="btn-loader" class="hidden animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -156,25 +156,66 @@
 </script>
     
     <!-- Footer -->
-  <footer id="footer" class="bg-white border-t border-gray-200 py-12">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex justify-center space-x-4 mb-6">
-               <img class="logo-img" alt="bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/logo.jpg" style="height: 36px;width: 130px;">
+  <footer id="footer" class="bg-white border-t border-gray-200 pt-14 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+
+                <!-- Brand column -->
+                <div class="lg:col-span-2">
+                    <img class="logo-img" alt="bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/logo.jpg" style="height: 36px;width: 130px;">
+                    <p class="text-gray-500 text-sm mt-4 max-w-xs leading-relaxed">The all-in-one platform to run, grow and manage your café — orders, bookings, HR, compliance and more.</p>
+                    <div class="mt-5 space-y-1 text-sm text-gray-600">
+                        <p><i class="fas fa-envelope text-primary mr-2"></i>info@bizadmin.com.au</p>
+                        <p><i class="fas fa-phone text-primary mr-2"></i>+61 0411 114 916</p>
+                    </div>
+                    <div class="flex space-x-3 mt-5">
+                        <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-primary hover:text-white text-gray-600 flex items-center justify-center transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="LinkedIn" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-primary hover:text-white text-gray-600 flex items-center justify-center transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-primary hover:text-white text-gray-600 flex items-center justify-center transition-colors"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h4 class="text-primary font-semibold mb-4">Product</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><a href="#features" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#features" class="hover:text-primary transition-colors">AI Assistant</a></li>
+                        <li><a href="#contact" class="hover:text-primary transition-colors">Book a Demo</a></li>
+                    </ul>
+                </div>
+
+                <!-- Solutions -->
+                <div>
+                    <h4 class="text-primary font-semibold mb-4">Solutions</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-primary transition-colors">HR &amp; Onboarding</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Suppliers</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Ordering Portal</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Checklists</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-primary font-semibold mb-4">Company</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-primary transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Resources</a></li>
+                    </ul>
+                </div>
             </div>
-            <p class="text-gray-600 mb-6">info@bizadmin.com.au<br>+61 0411 114 916</p>
-            <div class="flex justify-center space-x-4 mb-8">
-                <span class="text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                    <i class="text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-facebook-f" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="facebook-f" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></i>
-                </span>
-                
-                <span class="text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                    <i class="text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-linkedin-in" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="linkedin-in" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"></path></svg></i>
-                </span>
-                <span class="text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                    <i class="text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-instagram" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="instagram" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"></path></svg></i>
-                </span>
+
+            <div class="border-t border-gray-200 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+                <p class="text-gray-500 text-sm">© <?php echo date('Y') ?> BizAdmin. All rights reserved.</p>
+                <div class="flex gap-5 text-sm text-gray-500">
+                    <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-primary transition-colors">Terms of Service</a>
+                </div>
             </div>
-            <p class="text-gray-500 text-sm">© <?php echo date('Y') ?> BizAdmin. All rights reserved.</p>
         </div>
     </footer>
 
