@@ -330,13 +330,12 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <section class="py-14 md:py-20 bg-slate-50">
         <div class="container mx-auto px-4 lg:px-8">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-12">All-in-One Café Management Solution</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-5">
                 <?php
                 $modules = [
                     ['fa-cash-register', 'text-blue-500', 'bg-blue-100', 'POS &amp; Billing'],
                     ['fa-basket-shopping', 'text-purple-500', 'bg-purple-100', 'Online Ordering'],
                     ['fa-calendar-check', 'text-red-500', 'bg-red-100', 'Reservations'],
-                    ['fa-display', 'text-green-500', 'bg-green-100', 'Kitchen Display'],
                     ['fa-boxes-stacked', 'text-amber-500', 'bg-amber-100', 'Inventory'],
                     ['fa-book-open', 'text-blue-500', 'bg-blue-100', 'Recipes &amp; Menu Costing'],
                     ['fa-users', 'text-purple-500', 'bg-purple-100', 'Staff &amp; Roster'],
@@ -344,18 +343,17 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                     ['fa-temperature-half', 'text-red-500', 'bg-red-100', 'Temperature Logs'],
                     ['fa-broom', 'text-blue-500', 'bg-blue-100', 'Cleaning Tasks'],
                     ['fa-sack-dollar', 'text-amber-500', 'bg-amber-100', 'Cash Management'],
-                    ['fa-file-lines', 'text-slate-500', 'bg-slate-100', 'Documents'],
-                    ['fa-chart-pie', 'text-purple-500', 'bg-purple-100', 'Analytics &amp; Reports'],
+                    ['fa-file-lines', 'text-slate-500', 'bg-slate-100', 'Document Management'],
                     ['fa-bullhorn', 'text-red-500', 'bg-red-100', 'Marketing Tools'],
                     ['fa-star', 'text-amber-500', 'bg-amber-100', 'Loyalty &amp; Rewards'],
                     ['fa-gift', 'text-green-500', 'bg-green-100', 'Gift Cards'],
                 ];
                 foreach ($modules as $m): ?>
-                    <div class="bg-white rounded-2xl p-3 flex flex-col items-center justify-center text-center border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition aspect-square">
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-3 <?php echo $m[2]; ?>">
-                            <i class="fa-solid <?php echo $m[0]; ?> <?php echo $m[1]; ?> text-lg"></i>
+                    <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition aspect-square">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 <?php echo $m[2]; ?>">
+                            <i class="fa-solid <?php echo $m[0]; ?> <?php echo $m[1]; ?> text-2xl"></i>
                         </div>
-                        <p class="text-xs font-semibold text-slate-700 leading-tight"><?php echo $m[3]; ?></p>
+                        <p class="text-sm font-semibold text-slate-700 leading-tight"><?php echo $m[3]; ?></p>
                     </div>
                 <?php endforeach; ?>
             </div>
