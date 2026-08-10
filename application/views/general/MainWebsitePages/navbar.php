@@ -64,6 +64,27 @@
             $mobileMenu.removeClass('is-open');
         });
 
+        // Systems submenu toggle (mobile drawer)
+        $('#systems-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('#systems-submenu').slideToggle(200);
+            $('#systems-chevron').toggleClass('rotate-180');
+        });
+
+        // Mobile anchor links: close drawer + smooth scroll to the target section
+        $('.mobile-anchor').on('click', function(e) {
+            const target = $(this).attr('href');
+            $mobileMenu.removeClass('is-open');
+            if (target && target.charAt(0) === '#' && target.length > 1) {
+                const $t = $(target);
+                if ($t.length) {
+                    e.preventDefault();
+                    $('html, body').animate({ scrollTop: $t.offset().top - 80 }, 400);
+                }
+            }
+        });
+
         // Close mobile menu when clicking outside
         $(document).on('click', function(e) {
             if (!$mobileMenu.is(e.target) && !$mobileMenu.find('*').is(e.target) && !$burgerMenu.is(e.target) && !$burgerMenu.find('*').is(e.target)) {
@@ -136,7 +157,7 @@
             <nav class="hidden md:flex items-center space-x-7">
                 <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#features">Features</a></span>
                 <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer" id="platforms-link">Solutions <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
-                <span class="text-gray-700 hover:text-blue-600 cursor-pointer flex items-center gap-1"><a href="#features">AI Assistant</a><span class="bg-blue-100 text-blue-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">New</span></span>
+                <span class="text-gray-700 hover:text-blue-600 cursor-pointer flex items-center gap-1"><a href="#ai-assistant">AI Assistant</a><span class="bg-blue-100 text-blue-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">New</span></span>
                 <span class="text-gray-700 hover:text-blue-600 cursor-pointer"><a href="#pricing">Pricing</a></span>
                 <span class="text-gray-700 hover:text-blue-600 flex items-center cursor-pointer"><a href="#">Resources</a> <i class="fa-solid fa-chevron-down ml-1 text-xs"></i></span>
                 <div id="platforms-dropdown" class="hidden absolute top-full left-0 mt-2 bg-white shadow-xl rounded-lg w-[800px] border border-gray-200 z-40">
@@ -244,23 +265,45 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden mt-4 space-y-4 fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 overflow-y-auto">
-            <a href="https://bizadmin.com.au/" class="block text-gray-700 hover:text-primary" data-page="homepage">Home</a>
-            <a href="#feature-section" class="block text-gray-700 hover:text-primary" >Features</a>
-            <a href="#pricing" class="block text-gray-700 hover:text-primary">Pricing</a>
-            <a href="#benefits" class="block text-gray-700 hover:text-primary ">Benefits</a>
-            <a href="#why-choose" class="block text-gray-700 hover:text-primary">Why Choose Us</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="hrm">HR & Onboarding</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="suppliers">Suppliers</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="catering">Ordering Portal</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="checklists">Checklists</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="cleaning">Cleaning Schedule</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="temperature">Temperature Recording</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="documents">Document Manage</a>
-            <a href="#" class="block text-gray-700 hover:text-primary menu-item" data-page="cash">Cash Management</a>
-            <a href="tel:+61411114916" class="block text-slate-700"><i class="fa-solid fa-phone text-blue-600 mr-1"></i> +61 0411 114 916</a>
-            <a href="#contact" class="block text-white bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-md text-center ">Book Free Demo</a>
-            <button id="close-menu" class="block text-gray-700 hover:text-primary">Close</button>
+        <div id="mobileMenu" class="md:hidden fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-white shadow-2xl z-50 overflow-y-auto">
+            <!-- Drawer header with close (X) -->
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+                <img class="logo-img" alt="bizadmin" src="https://bizadmin.com.au/theme-assets/Landingpageassets/assets/logo.jpg" style="height:28px;width:auto;">
+                <button id="close-menu" type="button" aria-label="Close menu" class="w-9 h-9 flex items-center justify-center rounded-full text-gray-500 hover:text-primary hover:bg-gray-100 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+            </div>
+
+            <nav class="p-5 space-y-4">
+                <a href="https://bizadmin.com.au/" class="block text-gray-700 hover:text-primary font-medium" data-page="homepage">Home</a>
+                <a href="#features" class="mobile-anchor block text-gray-700 hover:text-primary font-medium">Features</a>
+                <a href="#pricing" class="mobile-anchor block text-gray-700 hover:text-primary font-medium">Pricing</a>
+                <a href="#benefits" class="mobile-anchor block text-gray-700 hover:text-primary font-medium">Benefits</a>
+                <a href="#why-choose" class="mobile-anchor block text-gray-700 hover:text-primary font-medium">Why Choose Us</a>
+
+                <!-- Systems (collapsible submenu) -->
+                <div class="border-t border-gray-100 pt-4">
+                    <button id="systems-toggle" type="button" class="w-full flex items-center justify-between text-gray-700 hover:text-primary font-medium focus:outline-none">
+                        <span>Systems</span>
+                        <i id="systems-chevron" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                    </button>
+                    <div id="systems-submenu" class="hidden mt-3 pl-3 border-l-2 border-gray-100 space-y-3">
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="hrm">HR &amp; Onboarding</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="suppliers">Suppliers</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="catering">Ordering Portal</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="checklists">Checklists</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="cleaning">Cleaning Schedule</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="temperature">Temperature Recording</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="documents">Document Manage</a>
+                        <a href="#" class="block text-gray-600 hover:text-primary menu-item" data-page="cash">Cash Management</a>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 space-y-4">
+                    <a href="tel:+61411114916" class="block text-slate-700"><i class="fa-solid fa-phone text-blue-600 mr-1"></i> +61 0411 114 916</a>
+                    <a href="#contact" class="mobile-anchor block text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-md text-center font-semibold">Book Free Demo</a>
+                </div>
+            </nav>
         </div>
     </div>
 </header>

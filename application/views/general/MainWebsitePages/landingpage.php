@@ -47,15 +47,15 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                     </div>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap gap-4 mb-8">
-                        <a href="#contact" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-7 py-3.5 rounded-lg shadow-lg shadow-blue-600/20 transition">Book a Free Demo</a>
-                        <a href="#features" class="inline-flex items-center gap-2 border border-slate-300 hover:border-blue-600 text-slate-700 hover:text-blue-600 font-semibold px-7 py-3.5 rounded-lg transition">
+                    <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 mb-8">
+                        <a href="#contact" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-7 py-3.5 rounded-lg shadow-lg shadow-blue-600/20 transition text-center">Book a Free Demo</a>
+                        <a href="#features" class="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-blue-600 text-slate-700 hover:text-blue-600 font-semibold px-7 py-3.5 rounded-lg transition">
                             See How It Works <i class="fa-solid fa-circle-play"></i>
                         </a>
                     </div>
 
                     <!-- Trust -->
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-center sm:justify-start gap-4">
                         <div class="flex -space-x-3">
                             <?php for ($i = 1; $i <= 4; $i++): ?>
                             <span class="w-10 h-10 rounded-full ring-2 ring-white bg-slate-200 overflow-hidden inline-flex items-center justify-center text-slate-400 text-xs">
@@ -127,8 +127,8 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
 
                     <!-- Individual costs -->
                     <div class="lg:col-span-7">
-                        <div class="bg-white border border-slate-200 rounded-2xl px-3 py-5">
-                            <div class="flex items-stretch justify-between">
+                        <div class="bg-white border border-slate-200 rounded-2xl p-3 md:px-3 md:py-5">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 lg:flex lg:items-stretch lg:justify-between lg:gap-0">
                                 <?php
                                 $services = [
                                     ['POS System', '$80', 'fa-cash-register'],
@@ -142,15 +142,15 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                                 ];
                                 $last = count($services) - 1;
                                 foreach ($services as $idx => $s): ?>
-                                    <div class="flex-1 text-center px-1">
-                                        <div class="w-9 h-9 mx-auto mb-2 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 text-sm">
+                                    <div class="flex-1 text-center px-1 py-3 rounded-xl border border-slate-100 bg-slate-50 lg:py-0 lg:px-1 lg:border-0 lg:bg-transparent lg:rounded-none">
+                                        <div class="w-9 h-9 mx-auto mb-2 rounded-lg bg-white lg:bg-slate-100 flex items-center justify-center text-blue-600 text-sm shadow-sm lg:shadow-none">
                                             <i class="fa-solid <?php echo $s[2]; ?>"></i>
                                         </div>
-                                        <p class="text-[10px] leading-tight text-slate-500 mb-1"><?php echo $s[0]; ?></p>
-                                        <p class="text-sm font-extrabold text-slate-900 leading-none"><?php echo $s[1]; ?></p>
-                                        <p class="text-[9px] text-slate-400 mt-0.5">/month</p>
+                                        <p class="text-xs lg:text-[10px] leading-tight text-slate-500 mb-1"><?php echo $s[0]; ?></p>
+                                        <p class="text-base lg:text-sm font-extrabold text-slate-900 leading-none"><?php echo $s[1]; ?></p>
+                                        <p class="text-[10px] lg:text-[9px] text-slate-400 mt-0.5">/month</p>
                                     </div>
-                                    <?php if ($idx !== $last): ?><div class="flex items-center text-slate-300 font-semibold text-sm">+</div><?php endif; ?>
+                                    <?php if ($idx !== $last): ?><div class="hidden lg:flex items-center text-slate-300 font-semibold text-sm">+</div><?php endif; ?>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -167,15 +167,15 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                 </div>
 
                 <!-- Everything included banner -->
-                <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
                     <div class="lg:col-span-7">
-                        <div class="bz-arrow flex items-center justify-center text-white font-bold text-base md:text-lg" style="clip-path:polygon(0 16%, 84% 16%, 84% 0, 100% 50%, 84% 100%, 84% 84%, 0 84%);min-height:70px;">
-                            <span class="pr-[12%]">Everything Included with BizAdmin</span>
+                        <div class="bz-arrow flex items-center justify-center text-white font-bold text-base md:text-lg">
+                            <span class="bz-arrow-text lg:pr-[12%]">Everything Included with BizAdmin</span>
                         </div>
                     </div>
                     <div class="lg:col-span-5">
-                        <div class="flex items-center gap-4">
-                            <p class="text-lg font-extrabold text-slate-900 leading-tight">One Affordable<br>Platform</p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 text-center sm:text-left">
+                            <p class="text-lg font-extrabold text-slate-900 leading-tight">One Affordable Platform</p>
                             <div>
                                 <p class="text-4xl font-extrabold text-slate-900 leading-none">$149<span class="text-base font-normal text-slate-400">/month</span></p>
                                 <span class="inline-block mt-2 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Save $766 Every Month</span>
@@ -187,7 +187,11 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
         </div>
     </section>
     <style>
-      .bz-arrow{background:#1d4ed8;}
+      .bz-arrow{background:#1d4ed8;min-height:70px;clip-path:polygon(0 16%, 84% 16%, 84% 0, 100% 50%, 84% 100%, 84% 84%, 0 84%);}
+      @media (max-width:1023px){
+        .bz-arrow{clip-path:polygon(0 0, 100% 0, 100% 68%, 60% 68%, 50% 100%, 40% 68%, 0 68%);min-height:88px;border-radius:14px;}
+        .bz-arrow .bz-arrow-text{padding-bottom:16px;}
+      }
     </style>
 
     <!-- ============================================================
@@ -231,7 +235,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <!-- ============================================================
          4. MEET BIZZY AI
          ============================================================ -->
-    <section class="py-14 md:py-20 bg-white">
+    <section id="ai-assistant" class="py-14 md:py-20 bg-white scroll-mt-24">
         <div class="container mx-auto px-4 lg:px-8">
             <div class="bizzy-ai relative rounded-3xl bg-[#0f1e3d] text-white overflow-hidden p-8 md:p-12"
                  style="background-image:radial-gradient(circle at 15% 15%, rgba(59,130,246,.28), transparent 45%),radial-gradient(circle at 85% 90%, rgba(37,99,235,.18), transparent 45%);">
@@ -309,7 +313,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <!-- ============================================================
          5. REAL RESULTS
          ============================================================ -->
-    <section class="py-14 md:py-20 bg-white">
+    <section id="benefits" class="py-14 md:py-20 bg-white scroll-mt-24">
         <div class="container mx-auto px-4 lg:px-8">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-12">Real Results. Real Impact.</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
@@ -336,7 +340,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <!-- ============================================================
          6. ALL-IN-ONE SOLUTION GRID
          ============================================================ -->
-    <section class="py-14 md:py-20 bg-slate-50">
+    <section id="solutions" class="py-14 md:py-20 bg-slate-50 scroll-mt-24">
         <div class="container mx-auto px-4 lg:px-8">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-12">All-in-One Café Management Solution</h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-5">
@@ -390,7 +394,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             </svg> Google Partner
                         </span>
                     </div>
-                    <div class="sm:w-1/2 relative bg-white min-h-[240px]">
+                    <div class="hidden sm:block sm:w-1/2 relative bg-white min-h-[240px]">
                         <img src="<?php echo $landing_assets; ?>promo-google-map.png" alt="Café on Google Maps" class="absolute inset-0 w-full h-full object-cover object-center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-blue-200/60 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-map-location-dot text-2xl mb-1"></i>
@@ -410,7 +414,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <?php endforeach; ?>
                         </ul>
                     </div>
-                    <div class="sm:w-1/2 relative bg-green-50 min-h-[240px]">
+                    <div class="hidden sm:block sm:w-1/2 relative bg-green-50 min-h-[240px]">
                         <img src="<?php echo $landing_assets; ?>promo-marketing-woman.jpg" alt="Marketing assistant" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-user-tie text-2xl mb-1"></i>
@@ -430,7 +434,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
                             <span class="text-sm font-semibold text-green-600">Commission</span>
                         </span>
                     </div>
-                    <div class="sm:w-1/2 relative bg-orange-50 min-h-[240px]">
+                    <div class="hidden sm:block sm:w-1/2 relative bg-orange-50 min-h-[240px]">
                         <img src="<?php echo $landing_assets; ?>promo-commission-food.png" alt="Commission-free ordering" class="absolute inset-0 w-full h-full object-cover object-center" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="absolute inset-0 hidden items-center justify-center text-center text-slate-400 text-xs" style="flex-direction:column;">
                             <i class="fa-solid fa-mobile-screen text-2xl mb-1"></i>
@@ -446,7 +450,7 @@ $landing_assets = base_url('theme-assets/Landingpageassets/assets/landing/');
     <!-- ============================================================
          8. TESTIMONIALS
          ============================================================ -->
-    <section class="py-14 md:py-20 bg-slate-50">
+    <section id="why-choose" class="py-14 md:py-20 bg-slate-50 scroll-mt-24">
         <div class="container mx-auto px-4 lg:px-8">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-12">Loved by Café Owners Across Australia</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
